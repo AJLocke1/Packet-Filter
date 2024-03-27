@@ -1,6 +1,8 @@
 import customtkinter as ctk
 from Frames import homeframe, loginframe, signupframe, optionsframe, miframe, protocolfilterframe, portfilterframe, addressfilterframe
 import json
+import os
+from datamanager import Data_Manager
 
 class Application(ctk.CTk):
     def __init__(self):
@@ -16,6 +18,12 @@ class Application(ctk.CTk):
         self.current_theme_name = "green"
         self.theme = self.open_theme(self.current_theme_name)   
         self.navbar_color = self.theme["CTkButton"]["fg_color"][1]
+        self.conn, self.cur = Data_Manager.connectToDatabase()
+        self.default_user, self.default_pass = "user", "pass"
+
+        if self.is_first_time_running() == True:
+            self.initiate_database(self.default_user, self.default_pass)
+            self.create_marker_file()
 
         #Initialise GUI components
         self.frame_list = self.initiate_frames()
@@ -49,10 +57,28 @@ class Application(ctk.CTk):
                 frame.tkraise()
 
     def open_theme(self, theme):
-        file = open("Themes/"+theme+".json")
+        file = open("Data/Themes/"+theme+".json")
         theme = json.load(file)
         file.close()
         return theme
+    
+    def is_first_time_running(self):
+        marker_path = "Data/marker_file.txt"  # Define the path for the marker file
+        # Check if the marker file exists
+        if os.path.exists(marker_path):
+            return False  # Application has been run before
+        else:
+            return True
+    
+    def create_marker_file(self):
+        marker_path = "Data/marker_file.txt"
+        with open(marker_path, "w") as marker_file:
+            marker_file.write("This file marks that the application has been run.")
+
+    def initiate_database(self, default_user, default_pass):
+        Data_Manager.createDatabase(self.conn, self.cur)
+        Data_Manager.insertUser(self.conn, self.cur, default_user, default_pass)
+
 
 
 if __name__ == "__main__" :

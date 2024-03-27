@@ -1,5 +1,7 @@
 from Frames.custom_components import Container, Scrolable_Container, Cutsom_Frame
 import customtkinter as ctk
+from datamanager import Data_Manager
+import hashlib as hl
 
 class Login_Frame(Cutsom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):
@@ -28,4 +30,19 @@ class Login_Frame(Cutsom_Frame):
         self.checkBox.grid(pady=12, padx=10, row=5, column=0)
 
     def login(self, App, username, password):
-        App.raise_frame("Address_Frame")
+        try:
+            fetched = Data_Manager.findPassword(App.conn, App.cur, username)
+            encodedpass = fetched[0][0]
+            if hl.sha256(password.encode()).hexdigest() == encodedpass:
+                #change frame
+                self.App.raise_frame("Address_Filter")
+                self.errorLabel.configure(text="")
+                self.errorLabel.grid_remove()
+            else:
+                self.errorLabel.grid()
+                self.errorLabel.configure(text= "inccorect password")
+        except IndexError:
+            encodedpass = ""
+            self.errorLabel.grid()
+            self.errorLabel.configure(text="User not Found")
+

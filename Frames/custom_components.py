@@ -56,8 +56,8 @@ class Scrolable_Container(Custom_Container, ctk.CTkScrollableFrame):
 #_____REUSED_COMPONENTS____________________________________________________________________________
 class Navbar(ctk.CTkFrame):
     def __init__(self, master, App):
-        super().__init__(master, fg_color=App.navbar_color, border_width=1)
-        self.image = ctk.CTkImage(Image.open("Data/Images/firewallicon.png"))
+        super().__init__(master, fg_color=App.theme_color, border_width=1)
+        self.image = ctk.CTkImage(light_image=Image.open("Data/Images/firewallicon.png"),dark_image=Image.open("Data/Images/firewalliconLight.png"))
         self.place_navbar(master)
     
     def place_navbar(self, master):
@@ -66,11 +66,11 @@ class Navbar(ctk.CTkFrame):
     
     def populate_navbar(self, master, App, frame_list):
         #is a button because labels are slightly bigger
-        self.label = ctk.CTkButton(self,text="Packet Filter", height=30, corner_radius=0,hover_color=App.navbar_color)
+        self.label = ctk.CTkButton(self,text="Packet Filter", height=30, corner_radius=0,hover_color=App.theme_color)
         self.label.grid(column=0, row=0, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
 
-        self.filterImage = ctk.CTkButton(self,image=self.image, height=30, corner_radius=0,hover_color=App.navbar_color, text="", width =30)
+        self.filterImage = ctk.CTkButton(self,image=self.image, height=30, corner_radius=0,hover_color=App.theme_color, text="", width =30)
         self.filterImage.grid(column=1, row=0, sticky="nsew")
         self.grid_columnconfigure(1, weight=1)
 
@@ -95,31 +95,58 @@ class Sidebar_Button(ctk.CTkButton):
     def change_color(self, App):
         if self.__class__.lastclicked != None:
             self.__class__.lastclicked.configure(fg_color = "transparent") 
-        self.configure(fg_color=App.navbar_color)
+        self.configure(fg_color=App.theme_color)
         self.__class__.lastclicked = self
 
-class Filter_Head(ctk.CTkFrame):
-    def __init__(self, master, App, filter_name, filter_description, color="transparent"):
-        super().__init__(master = master, bg_color=color)
+class Filter_Head(Container):
+    def __init__(self, master, App, filter_name, filter_description, padx = None, pady = None):
+        self.color = App.frame_color
+        super().__init__(master, App, isCentered=False, color=self.color)
+        self.image = ctk.CTkImage(light_image=Image.open("Data/Images/PlusSymbol.png"),dark_image=Image.open("Data/Images/PlusSymbolLight.png"))
+
         self.filter_name = filter_name
         self.filter_description = filter_description
-        self.grid(row=0, column=0, sticky="new")
-        
+
+        self.grid(row=0, column=0, sticky="new", padx = padx, pady = pady)
         master.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
         self.label = ctk.CTkLabel(self, text=filter_name)
-        self.label.grid(row=0, column = 0)
+        self.label.grid(row=0, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
-        self.add_rule = ctk.CTkButton(self, text="Add Rule", command = lambda: self.add_rule())
+        self.add_rule = ctk.CTkButton(self, text="", width=30, image=self.image, command = lambda: self.add_rule())
         self.add_rule.grid(row=0, column = 1, sticky="e", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.label2 = ctk.CTkLabel(self, text=filter_description)
-        self.label2.grid(row=1, column = 0, sticky="nsew", columnspan = 2)
+        self.label2.grid(row=1, column = 0, sticky="nsew", columnspan = 2, padx=[5,5], pady = [5,5])
+        self.label2.bind('<Configure>', lambda event: self.update_wraplength())
 
     def add_rule(self):
         pass
+
+    def update_wraplength(self):
+        self.label2.update_idletasks()
+        self.label2.configure(wraplength=self.winfo_width() - 100)
+
+class Filter_Table(Container):
+    def __init__(self, master, App, padx = None, pady = None):
+        self.color = App.frame_color
+        super().__init__(master, App, isCentered=False, color=self.color)
+
+        self.grid(row=2, column=0, sticky="nsew", padx = padx, pady = pady)
+        master.grid_columnconfigure(0, weight=1)
+
+class Filter_Container(Scrolable_Container):
+    def __init__(self, master, App, filter_name, filter_description, padx = None, pady = None):
+        self.color = App.frame_color_2
+        super().__init__(master, App, isCentered=False, column = 0, row = 0, sticky="nsew", color=self.color) 
+
+        self.instantiate_components(App, filter_name, filter_description, padx, pady)
+    
+    def instantiate_components(self, App, filter_name, filter_description, padx, pady):
+        self.filter_head = Filter_Head(self, App, filter_name, filter_description, padx, pady)
+        self.filter_table = Filter_Table(self, App, padx, pady)
 
     
 

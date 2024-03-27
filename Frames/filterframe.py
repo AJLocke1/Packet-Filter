@@ -1,4 +1,4 @@
-from Frames.custom_components import Container, Scrolable_Container, Custom_Frame, Sidebar_Button, Filter_Head
+from Frames.custom_components import Container, Scrolable_Container, Custom_Frame, Sidebar_Button, Filter_Container
 import customtkinter as ctk
 
 class Filter_Frame(Custom_Frame):
@@ -12,15 +12,12 @@ class Filter_Frame(Custom_Frame):
         self.main_container.grid_columnconfigure(0, weight=1)
         self.main_container.grid_rowconfigure(0, weight=1)
 
-        self.filter_container_1 = Scrolable_Container(self.main_container, App, isCentered=False, column = 0, row = 0, sticky="nsew", color="green")
-        self.filter_container_2 = Scrolable_Container(self.main_container, App, isCentered=False, column = 0, row = 0, sticky="nsew", color="red")
-        self.filter_container_3 = Scrolable_Container(self.main_container, App, isCentered=False, column = 0, row = 0, sticky="nsew", color="blue")
-        self.filter_container_4 = Scrolable_Container(self.main_container, App, isCentered=False, column = 0, row = 0, sticky="nsew", color="pink")
-        self.filter_container_5 = Scrolable_Container(self.main_container, App, isCentered=False, column = 0, row = 0, sticky="nsew", color="purple")
+        self.filter_container_1 = Filter_Container(self.main_container, App, filter_name="Address", filter_description="whitelist and blacklist different IP addresses", pady=App.uniform_padding_y)
+        self.filter_container_2 = Filter_Container(self.main_container, App, filter_name="Port", filter_description="whitelist and blacklist different ports", pady=App.uniform_padding_y)
+        self.filter_container_3 = Filter_Container(self.main_container, App, filter_name="Protocol", filter_description="whitelist and blacklist different Protocols", pady=App.uniform_padding_y)
+        self.filter_container_4 = Filter_Container(self.main_container, App, filter_name="Machine Learning", filter_description="Toggle machine learning based packet filtering", pady=App.uniform_padding_y)
+        self.filter_container_5 = Filter_Container(self.main_container, App, filter_name="Compound Rules", filter_description="Define compound rules based on combinations of ports, IP Addresses and Protocols", pady=App.uniform_padding_y)
         self.subcontainers = [self.filter_container_1, self.filter_container_2, self.filter_container_3, self.filter_container_4, self.filter_container_5]
-
-        self.add_head(App)
-        self.define_rule_tables(App)
 
         self.sidebar_container = Container(self, App, isCentered=False, column = 0, row = 1, color="transparent", sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
         self.sidebar_container.grid_columnconfigure(0, weight=1)
@@ -32,16 +29,5 @@ class Filter_Frame(Custom_Frame):
         label = ctk.CTkLabel(self.sidebar_container, text="Filters")
         label.grid(row=0, column =0)
         for i, subcontainer in enumerate(subcontainers):
-            print(subcontainer)
-            button = Sidebar_Button(self.sidebar_container, App, text=subcontainer.filter_container_head.filter_name, command=lambda c=subcontainer: self.sidebar_container.raise_subcontainer(c))
+            button = Sidebar_Button(self.sidebar_container, App, text=subcontainer.filter_head.filter_name, command=lambda c=subcontainer: self.sidebar_container.raise_subcontainer(c))
             button.grid(row=i+1, column=0, sticky="ew")
-
-    def add_head(self, App):
-        self.filter_container_1.filter_container_head = Filter_Head(self.filter_container_1, App, "Address", "whitelist and blacklist different IP addresses", color="blue")
-        self.filter_container_2.filter_container_head = Filter_Head(self.filter_container_2, App, "Port", "whitelist and blacklist different ports")
-        self.filter_container_3.filter_container_head = Filter_Head(self.filter_container_3, App, "Protocol", "whitelist and blacklist different Protocols")
-        self.filter_container_4.filter_container_head = Filter_Head(self.filter_container_4, App, "Machine Learning", "Toggle machine learning based packet filtering")
-        self.filter_container_5.filter_container_head = Filter_Head(self.filter_container_5, App, "Compound Rules", "Define compound rules based on combinations of ports, IP Addresses and Protocols")
-    
-    def define_rule_tables(self, App):
-        pass

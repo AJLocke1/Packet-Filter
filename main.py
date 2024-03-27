@@ -18,7 +18,9 @@ class Application(ctk.CTk):
         self.uniform_padding_y = (5,5)
         self.current_theme_name = "green"
         self.theme = Data_Manager.open_theme(self.current_theme_name)   
-        self.navbar_color = self.theme["CTkButton"]["fg_color"][1]
+        self.theme_color = self.theme["CTkButton"]["fg_color"][1]
+        self.frame_color_2 = self.theme["CTkFrame"]["top_fg_color"][1]
+        self.frame_color = self.theme["CTkFrame"]["fg_color"][1]
         self.conn, self.cur = self.data_manager.connectToDatabase()
         self.default_user, self.default_pass = "user", "pass"
 

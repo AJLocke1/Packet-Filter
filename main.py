@@ -1,24 +1,25 @@
 import customtkinter as ctk
-from Frames import homeframe, loginframe, signupframe, optionsframe, miframe, protocolfilterframe, portfilterframe, addressfilterframe
-import json
+from Frames import filterframe, homeframe, loginframe, signupframe, optionsframe, logframe
 import os
 from datamanager import Data_Manager
 
 class Application(ctk.CTk):
     def __init__(self):
         super().__init__()
+        #load extra functionality
+        self.data_manager = Data_Manager
         #Set Default Settings
-        self.geometry("1000x700")
-        self.title("Firewall")
+        self.geometry("800x550")
+        self.title("Packet Filter")
         ctk.set_appearance_mode("dark") 
         ctk.set_default_color_theme("green")
         ctk.set_widget_scaling(1.2)
         self.uniform_padding_x = (5,5)
         self.uniform_padding_y = (5,5)
         self.current_theme_name = "green"
-        self.theme = self.open_theme(self.current_theme_name)   
+        self.theme = Data_Manager.open_theme(self.current_theme_name)   
         self.navbar_color = self.theme["CTkButton"]["fg_color"][1]
-        self.conn, self.cur = Data_Manager.connectToDatabase()
+        self.conn, self.cur = self.data_manager.connectToDatabase()
         self.default_user, self.default_pass = "user", "pass"
 
         if self.is_first_time_running() == True:
@@ -36,11 +37,9 @@ class Application(ctk.CTk):
         self.login_frame = loginframe.Login_Frame(self, has_navbar=False)
         self.signup_frame = signupframe.Signup_Frame(self, has_navbar=False)
         self.options_frame = optionsframe.Options_Frame(self, has_navbar=True, navbar_name = "Options")
-        self.mi_frame = miframe.MI_Frame(self, has_navbar=True, navbar_name = "Machine Learning")
-        self.protocol_frame = protocolfilterframe.Protocol_Frame(self, has_navbar=True, navbar_name = "Filter Protocols")
-        self.port_frame = portfilterframe.Port_Frame(self, has_navbar=True, navbar_name = "Filter Ports")
-        self.address_frame = addressfilterframe.Address_Frame(self,has_navbar=True, navbar_name = "Filter Addresses")
-        return[self.login_frame, self.home_frame, self.signup_frame, self.options_frame, self.mi_frame, self.port_frame, self.protocol_frame, self.address_frame]
+        self.filter_frame = filterframe.Filter_Frame(self,has_navbar=True, navbar_name = "Filter")
+        self.log_frame = logframe.Log_Frame(self, has_navbar=True, navbar_name="Statistics")
+        return[self.login_frame, self.home_frame, self.signup_frame, self.options_frame, self.filter_frame, self.log_frame]
     
     def populate_navbars(self, frame_list):
         for frame in frame_list:
@@ -55,12 +54,6 @@ class Application(ctk.CTk):
         for frame in self.frame_list:
             if frame.__class__.__name__ == frame_string:
                 frame.tkraise()
-
-    def open_theme(self, theme):
-        file = open("Data/Themes/"+theme+".json")
-        theme = json.load(file)
-        file.close()
-        return theme
     
     def is_first_time_running(self):
         marker_path = "Data/marker_file.txt"  # Define the path for the marker file
@@ -76,8 +69,8 @@ class Application(ctk.CTk):
             marker_file.write("This file marks that the application has been run.")
 
     def initiate_database(self, default_user, default_pass):
-        Data_Manager.createDatabase(self.conn, self.cur)
-        Data_Manager.insertUser(self.conn, self.cur, default_user, default_pass)
+        self.data_manager.createDatabase(self.conn, self.cur)
+        self.data_manager.insertUser(self.conn, self.cur, default_user, default_pass)
 
 
 

@@ -32,10 +32,10 @@ class Login_Frame(Cutsom_Frame):
     def login(self, App, username, password):
         try:
             fetched = Data_Manager.findPassword(App.conn, App.cur, username)
-            encodedpass = fetched[0][0]
-            if hl.sha256(password.encode()).hexdigest() == encodedpass:
+            storedpass = fetched[0][0]
+            if App.data_manager.encryptPassword(password) == storedpass:
                 #change frame
-                self.App.raise_frame("Address_Filter")
+                App.raise_frame("Filter_Frame")
                 self.errorLabel.configure(text="")
                 self.errorLabel.grid_remove()
             else:

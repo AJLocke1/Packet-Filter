@@ -1,5 +1,6 @@
 import sqlite3 as sql
 import hashlib as hl
+import json
 
 class Data_Manager():
     def connectToDatabase():
@@ -35,15 +36,18 @@ class Data_Manager():
         connection.commit()
 
     def insertUser(connection, cur, username, password):
-        encrypted_pass = hl.sha256(password.encode()).hexdigest()
+        encrypted_pass = encrypted_pass(password)
         try:
             cur.execute("""
-            INSERT INTO userdata (user, pass) VALUES (?,? )           
+            INSERT INTO userdata (username, password) VALUES (?,?)           
             """, (username, encrypted_pass))
             connection.commit()
         except:
             sql.IntegrityError()
             return("Unique Username is Required")
+        
+    def encryptPassword(password):
+        return hl.sha256(password.encode()).hexdigest()
 
     def findPassword(connection, cur, username):
         print(username)
@@ -51,3 +55,9 @@ class Data_Manager():
         print(cur.fetchall())
         cur.execute("SELECT password FROM userdata WHERE username IS ?", (username,))
         return(cur.fetchall())
+    
+    def open_theme(theme):
+        file = open("Data/Themes/"+theme+".json")
+        theme = json.load(file)
+        file.close()
+        return theme

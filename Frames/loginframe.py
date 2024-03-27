@@ -1,9 +1,9 @@
-from Frames.custom_components import Container, Scrolable_Container, Cutsom_Frame
+from Frames.custom_components import Container, Scrolable_Container, Custom_Frame
 import customtkinter as ctk
 from datamanager import Data_Manager
 import hashlib as hl
 
-class Login_Frame(Cutsom_Frame):
+class Login_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):
         super().__init__(App, has_navbar=has_navbar, navbar_name=navbar_name)
     def initialise_containers(self, App):

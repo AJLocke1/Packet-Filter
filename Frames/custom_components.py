@@ -2,7 +2,7 @@ import customtkinter as ctk
 from PIL import Image
 
 #_____CUSTOM_FRAME_________________________________________________________________________________
-class Cutsom_Frame(ctk.CTkFrame):
+class Custom_Frame(ctk.CTkFrame):
     def __init__(self, App, has_navbar, navbar_name = None):
         super().__init__(App)
         self.has_navbar = has_navbar
@@ -29,6 +29,7 @@ class Cutsom_Frame(ctk.CTkFrame):
 class Custom_Container():
     def __init__(self, master, App, isCentered, row=None, column=None, color="transparent", sticky=None, padx=None, pady=None, max_width = None):
         super().__init__(master, fg_color=color)
+        self.filter_container_head = None
         self.column = column
         self.row = row
         self.max_width = max_width
@@ -97,7 +98,30 @@ class Sidebar_Button(ctk.CTkButton):
         self.configure(fg_color=App.navbar_color)
         self.__class__.lastclicked = self
 
+class Filter_Head(ctk.CTkFrame):
+    def __init__(self, master, App, filter_name, filter_description, color="transparent"):
+        super().__init__(master = master, bg_color=color)
+        self.filter_name = filter_name
+        self.filter_description = filter_description
+        self.grid(row=0, column=0, sticky="new")
+        
+        master.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
 
+        self.label = ctk.CTkLabel(self, text=filter_name)
+        self.label.grid(row=0, column = 0)
+
+        self.add_rule = ctk.CTkButton(self, text="Add Rule", command = lambda: self.add_rule())
+        self.add_rule.grid(row=0, column = 1, sticky="e", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.label2 = ctk.CTkLabel(self, text=filter_description)
+        self.label2.grid(row=1, column = 0, sticky="nsew", columnspan = 2)
+
+    def add_rule(self):
+        pass
+
+    
 
             
             

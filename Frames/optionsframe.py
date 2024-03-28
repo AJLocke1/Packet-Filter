@@ -19,7 +19,7 @@ class Options_Frame(Custom_Frame):
         self.change_appearance_option_container = Container(self.UI_option_container, App, isCentered=False, color = App.frame_color, padx=App.uniform_padding_x, pady=App.uniform_padding_y, row = 0, column = 1)
 
         self.subcontainers = [self.UI_option_container]
-        self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="options", subcontainers=self.subcontainers)
+        self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Options", subcontainers=self.subcontainers, loadedcontainer=self.UI_option_container)
 
     def populate_containers(self, App):
         self.populate_change_theme_option_container(App, self.change_theme_option_container)

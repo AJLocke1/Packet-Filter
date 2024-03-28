@@ -19,7 +19,7 @@ class Filter_Frame(Custom_Frame):
         self.filter_container_5 = Filter_Container(self.main_container, App, filter_name="Compound Rules", filter_description="Define compound rules based on combinations of ports, IP Addresses and Protocols", pady=App.uniform_padding_y)
         self.subcontainers = [self.filter_container_1, self.filter_container_2, self.filter_container_3, self.filter_container_4, self.filter_container_5]
 
-        self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Filters", subcontainers=self.subcontainers)
+        self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Filters", subcontainers=self.subcontainers, loadedcontainer=self.filter_container_1)
 
     def populate_containers(self, App):
         pass

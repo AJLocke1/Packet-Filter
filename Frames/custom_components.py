@@ -98,27 +98,29 @@ class Sidebar_Button(ctk.CTkButton):
         self.master.lastclicked = self
 
 class Sidebar(Container):
-    def __init__(self, master, App, title,  subcontainers, padx = None, pady = None):
+    def __init__(self, master, App, title,  subcontainers, loadedcontainer, padx = None, pady = None):
         self.color = App.frame_color
         super().__init__(master, App, isCentered=False, color=self.color, row = 1, column =0, sticky="ns")
         self.lastclicked = None
         self.title = title
         self.subcontainers = subcontainers
+        self.loaded_container = loadedcontainer
 
-        self.populate_sidebar_container(App, self.subcontainers, self.title)
+        self.populate_sidebar_container(App, self.subcontainers, self.title, self.loaded_container)
 
-    def populate_sidebar_container(self, App, subcontainers, title):
-        label = ctk.CTkLabel(self, text=title, font=("", 30))
-        label.grid(row=0, column =0, pady=(App.uniform_padding_y[0]*3,App.uniform_padding_y[1]*3))
+    def populate_sidebar_container(self, App, subcontainers, title, loaded_container):
+        self.title = ctk.CTkLabel(self, text=title, font=("", 30))
+        self.title.grid(row=0, column =0, pady=(App.uniform_padding_y[0]*3,App.uniform_padding_y[1]*3))
 
         if App.appearance_mode_string == "Light":
-            text_color = "Black"
+            self.text_color = "Black"
         else:
-            text_color = "white"
+            self.text_color = "white"
         for i, subcontainer in enumerate(subcontainers):
-            print(subcontainer.name)
-            button = Sidebar_Button(self, App, text=subcontainer.name, text_color=text_color, command=lambda c=subcontainer: self.raise_subcontainer(c))
-            button.grid(row=i+1, column=0, sticky="ew", pady =App.uniform_padding_y)
+            self.button = Sidebar_Button(self, App, text=subcontainer.name, text_color=self.text_color, command=lambda c=subcontainer: self.raise_subcontainer(c))
+            self.button.grid(row=i+1, column=0, sticky="ew", pady =App.uniform_padding_y)
+            if subcontainer == loaded_container:
+                self.button.change_color(App)
 
 class Filter_Head(Container):
     def __init__(self, master, App, filter_name, filter_description, padx = None, pady = None):

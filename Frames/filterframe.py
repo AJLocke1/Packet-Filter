@@ -1,4 +1,4 @@
-from Frames.custom_components import Container, Scrolable_Container, Custom_Frame, Sidebar_Button, Filter_Container
+from Frames.custom_components import Container, Scrolable_Container, Custom_Frame, Sidebar_Button, Filter_Container, Sidebar
 import customtkinter as ctk
 
 class Filter_Frame(Custom_Frame):
@@ -19,19 +19,7 @@ class Filter_Frame(Custom_Frame):
         self.filter_container_5 = Filter_Container(self.main_container, App, filter_name="Compound Rules", filter_description="Define compound rules based on combinations of ports, IP Addresses and Protocols", pady=App.uniform_padding_y)
         self.subcontainers = [self.filter_container_1, self.filter_container_2, self.filter_container_3, self.filter_container_4, self.filter_container_5]
 
-        self.sidebar_container = Container(self, App, isCentered=False, column = 0, row = 1, sticky="nsew", padx=(App.uniform_padding_x[0],0), pady=App.uniform_padding_y)
-        self.sidebar_container.grid_columnconfigure(0, weight=1)
+        self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Filters", subcontainers=self.subcontainers)
 
     def populate_containers(self, App):
-        self.populate_sidebar_container(App, self.subcontainers)
-
-    def populate_sidebar_container(self, App, subcontainers):
-        label = ctk.CTkLabel(self.sidebar_container, text="Filters")
-        label.grid(row=0, column =0)
-        if App.appearance_mode_string == "Light":
-            text_color = "Black"
-        else:
-            text_color = "white"
-        for i, subcontainer in enumerate(subcontainers):
-            button = Sidebar_Button(self.sidebar_container, App, text=subcontainer.filter_head.filter_name, text_color=text_color, command=lambda c=subcontainer: self.sidebar_container.raise_subcontainer(c))
-            button.grid(row=i+1, column=0, sticky="ew")
+        pass

@@ -27,9 +27,10 @@ class Custom_Frame(ctk.CTkFrame):
     
 #_____CONTAINERS____________________________________________________________________________
 class Custom_Container():
-    def __init__(self, master, App, isCentered, row=None, column=None, color="transparent", sticky=None, padx=None, pady=None, max_width = None):
+    def __init__(self, master, App, isCentered, row=None, column=None, color="transparent", sticky=None, padx=None, pady=None, max_width = None, name=None):
         super().__init__(master, fg_color=color)
         self.filter_container_head = None
+        self.name = name
         self.column = column
         self.row = row
         self.max_width = max_width
@@ -86,17 +87,38 @@ class Navbar(ctk.CTkFrame):
                 count +=1
 
 class Sidebar_Button(ctk.CTkButton):
-    lastclicked = None
     def __init__(self, master, App, text_color, **kwargs):
-        super().__init__(master, fg_color="transparent", border_width=1, width=60, text_color = text_color, **kwargs)
-
+        super().__init__(master, fg_color="transparent", width=60, text_color = text_color, **kwargs)
         self.bind("<Button-1>", lambda event: self.change_color(App))
 
     def change_color(self, App):
-        if self.__class__.lastclicked != None:
-            self.__class__.lastclicked.configure(fg_color = "transparent") 
+        if self.master.lastclicked != None:
+            self.master.lastclicked.configure(fg_color = "transparent") 
         self.configure(fg_color=App.theme_color)
-        self.__class__.lastclicked = self
+        self.master.lastclicked = self
+
+class Sidebar(Container):
+    def __init__(self, master, App, title,  subcontainers, padx = None, pady = None):
+        self.color = App.frame_color
+        super().__init__(master, App, isCentered=False, color=self.color, row = 1, column =0, sticky="ns")
+        self.lastclicked = None
+        self.title = title
+        self.subcontainers = subcontainers
+
+        self.populate_sidebar_container(App, self.subcontainers, self.title)
+
+    def populate_sidebar_container(self, App, subcontainers, title):
+        label = ctk.CTkLabel(self, text=title, font=("", 30))
+        label.grid(row=0, column =0, pady=(App.uniform_padding_y[0]*3,App.uniform_padding_y[1]*3))
+
+        if App.appearance_mode_string == "Light":
+            text_color = "Black"
+        else:
+            text_color = "white"
+        for i, subcontainer in enumerate(subcontainers):
+            print(subcontainer.name)
+            button = Sidebar_Button(self, App, text=subcontainer.name, text_color=text_color, command=lambda c=subcontainer: self.raise_subcontainer(c))
+            button.grid(row=i+1, column=0, sticky="ew", pady =App.uniform_padding_y)
 
 class Filter_Head(Container):
     def __init__(self, master, App, filter_name, filter_description, padx = None, pady = None):
@@ -106,7 +128,6 @@ class Filter_Head(Container):
 
         self.filter_name = filter_name
         self.filter_description = filter_description
-
         self.grid(row=0, column=0, sticky="new", padx = padx, pady = pady)
         master.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
@@ -140,7 +161,7 @@ class Filter_Table(Container):
 class Filter_Container(Scrolable_Container):
     def __init__(self, master, App, filter_name, filter_description, padx = None, pady = None):
         self.color = App.frame_color_2
-        super().__init__(master, App, isCentered=False, column = 0, row = 0, sticky="nsew", color=self.color) 
+        super().__init__(master, App, isCentered=False, column = 0, row = 0, sticky="nsew", color=self.color, name = filter_name) 
 
         self.instantiate_components(App, filter_name, filter_description, padx, pady)
     

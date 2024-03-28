@@ -1,4 +1,4 @@
-from Frames.custom_components import Container, Scrolable_Container, Custom_Frame
+from Frames.custom_components import Container, Scrolable_Container, Custom_Frame, Sidebar
 import customtkinter as ctk
 from os import listdir
 from os.path import isfile, join
@@ -7,12 +7,19 @@ class Options_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):
         super().__init__(App, has_navbar=has_navbar, navbar_name=navbar_name)
 
+        self.grid_columnconfigure(0, weight = 1)
+        self.grid_columnconfigure(1, weight = 10)
+
     def initialise_containers(self, App):
-        self.main_container = Scrolable_Container(self, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=1, column=0)
+        self.main_container = Scrolable_Container(self, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=1, column=1)
 
-        self.change_theme_option_container = Container(self.main_container, App, isCentered=False, color = App.frame_color, padx=App.uniform_padding_x, pady=App.uniform_padding_y, row = 0, column = 0)
-        self.change_appearance_option_container = Container(self.main_container, App, isCentered=False, color = App.frame_color, padx=App.uniform_padding_x, pady=App.uniform_padding_y, row = 0, column = 1)
+        self.UI_option_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="UI")
 
+        self.change_theme_option_container = Container(self.UI_option_container, App, isCentered=False, color = App.frame_color, padx=App.uniform_padding_x, pady=App.uniform_padding_y, row = 0, column = 0)
+        self.change_appearance_option_container = Container(self.UI_option_container, App, isCentered=False, color = App.frame_color, padx=App.uniform_padding_x, pady=App.uniform_padding_y, row = 0, column = 1)
+
+        self.subcontainers = [self.UI_option_container]
+        self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="options", subcontainers=self.subcontainers)
 
     def populate_containers(self, App):
         self.populate_change_theme_option_container(App, self.change_theme_option_container)

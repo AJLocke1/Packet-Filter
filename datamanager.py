@@ -61,3 +61,18 @@ class Data_Manager():
         theme = json.load(file)
         file.close()
         return theme
+    
+    def read_settings():
+        file = open("Data/settings.json")
+        settings = json.load(file)
+        file.close
+        return settings
+    
+    def update_setting(setting, new_value):
+        file = open("Data/settings.json", "r+")
+        settings = json.load(file)
+        settings[setting] = new_value
+        file.seek(0)
+        json.dump(settings, file, indent=4)
+        file.truncate()
+        file.close

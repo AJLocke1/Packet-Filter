@@ -1,29 +1,24 @@
 import customtkinter as ctk
+from CTkMessagebox import CTkMessagebox
 from Frames import filterframe, homeframe, loginframe, signupframe, optionsframe, logframe
 import os
 from datamanager import Data_Manager
+import time
 
 class Application(ctk.CTk):
     def __init__(self):
         super().__init__()
         #load extra functionality
         self.data_manager = Data_Manager
-        #Set Default Settings
-        self.geometry("800x550")
-        self.title("Packet Filter")
-        ctk.set_appearance_mode("dark") 
-        ctk.set_default_color_theme("green")
-        ctk.set_widget_scaling(1.2)
-        self.uniform_padding_x = (5,5)
-        self.uniform_padding_y = (5,5)
-        self.current_theme_name = "green"
-        self.theme = Data_Manager.open_theme(self.current_theme_name)   
-        self.theme_color = self.theme["CTkButton"]["fg_color"][1]
-        self.frame_color_2 = self.theme["CTkFrame"]["top_fg_color"][1]
-        self.frame_color = self.theme["CTkFrame"]["fg_color"][1]
         self.conn, self.cur = self.data_manager.connectToDatabase()
         self.default_user, self.default_pass = "user", "pass"
-
+        #define what happend on appplication close
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
+        #Read Settings
+        self.settings = Data_Manager.read_settings()
+        #Set Settings
+        self.set_settings(self.settings)
+        #Check if first time running
         if self.is_first_time_running() == True:
             self.initiate_database(self.default_user, self.default_pass)
             self.create_marker_file()
@@ -31,8 +26,45 @@ class Application(ctk.CTk):
         #Initialise GUI components
         self.frame_list = self.initiate_frames()
         self.stack_frames(self.frame_list)
-        self.raise_frame("Home_Frame")
         self.populate_navbars(self.frame_list)
+        self.raise_frame("Home_Frame")
+    
+    def set_settings(self, settings):
+        self.geometry(settings["geometry"])
+        self.title(settings["application name"])
+        try:
+            ctk.set_widget_scaling(settings["widget scaling"])
+        except Exception as e:
+            print(e)
+        self.uniform_padding_x = (5,5)
+        self.uniform_padding_y = (5,5)
+        self.current_theme_name = settings["theme"]
+        self.appearance_mode_string = settings["appearance mode"]
+        ctk.set_appearance_mode(self.appearance_mode_string) 
+        self.set_color_theme(self.current_theme_name, self.appearance_mode_string)
+    
+    def set_color_theme(self, theme, appearance_mode_string):
+        if appearance_mode_string == "Dark":
+            index=1
+        else:
+            index=0
+        ctk.set_default_color_theme("Data/Themes/"+theme+".json")
+        self.theme = Data_Manager.open_theme(self.current_theme_name)
+        self.theme_color = self.theme["CTkButton"]["fg_color"][index]
+        self.frame_color_2 = self.theme["CTkFrame"]["top_fg_color"][index]
+        self.frame_color = self.theme["CTkFrame"]["fg_color"][index]
+
+    def on_setting_change(self):
+        for frame in self.frame_list:
+            frame.destroy()
+
+        self.settings = Data_Manager.read_settings()
+        self.set_settings(self.settings)
+
+        self.frame_list = self.initiate_frames()
+        self.stack_frames(self.frame_list)
+        self.populate_navbars(self.frame_list)
+        self.raise_frame("Options_Frame")
 
     def initiate_frames(self):
         self.home_frame = homeframe.Home_Frame(self, has_navbar=False, navbar_name = "Home")
@@ -41,7 +73,7 @@ class Application(ctk.CTk):
         self.options_frame = optionsframe.Options_Frame(self, has_navbar=True, navbar_name = "Options")
         self.filter_frame = filterframe.Filter_Frame(self,has_navbar=True, navbar_name = "Filter")
         self.log_frame = logframe.Log_Frame(self, has_navbar=True, navbar_name="Statistics")
-        return[self.login_frame, self.home_frame, self.signup_frame, self.options_frame, self.filter_frame, self.log_frame]
+        return[self.options_frame, self.login_frame, self.home_frame, self.signup_frame, self.filter_frame, self.log_frame]
     
     def populate_navbars(self, frame_list):
         for frame in frame_list:
@@ -74,8 +106,10 @@ class Application(ctk.CTk):
         self.data_manager.createDatabase(self.conn, self.cur)
         self.data_manager.insertUser(self.conn, self.cur, default_user, default_pass)
 
-
-
+    def on_closing(self):
+       if (CTkMessagebox(title="Quit", message="Do you want to quit?, packet filtering will be disabled", option_1="No", option_2="yes")).get() == "yes":
+           self.destroy()
+        
 if __name__ == "__main__" :
     app = Application()
     app.mainloop()

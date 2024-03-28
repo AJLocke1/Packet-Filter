@@ -37,7 +37,7 @@ class Custom_Container():
 
     def configure_placement(self, isCentered, sticky, padx, pady, max_width):
         if isCentered:
-            self.place(relx=0.5, rely=0.5, anchor="center")
+            self.place(relx=0.5, rely=0.5, anchor="center", padx = padx, pady = pady)
         else:
             self.grid(column=self.column, row=self.row, sticky=sticky, padx = padx, pady = pady)
 
@@ -62,7 +62,7 @@ class Navbar(ctk.CTkFrame):
     
     def place_navbar(self, master):
         master_columns = master.grid_size()[0]
-        self.grid(row=0, column=0, columnspan=master_columns)
+        self.grid(row=0, column=0, columnspan=master_columns, sticky = "ew")
     
     def populate_navbar(self, master, App, frame_list):
         #is a button because labels are slightly bigger
@@ -87,8 +87,8 @@ class Navbar(ctk.CTkFrame):
 
 class Sidebar_Button(ctk.CTkButton):
     lastclicked = None
-    def __init__(self, master, App, **kwargs):
-        super().__init__(master, fg_color="transparent", border_width=1, width=60, **kwargs)
+    def __init__(self, master, App, text_color, **kwargs):
+        super().__init__(master, fg_color="transparent", border_width=1, width=60, text_color = text_color, **kwargs)
 
         self.bind("<Button-1>", lambda event: self.change_color(App))
 

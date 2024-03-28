@@ -189,7 +189,13 @@ class Options_Container(Container):
         self.title.grid(row=0, column = 0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w", columnspan=100)
 
         self.description = ctk.CTkLabel(self, text=description)
-        self.description.grid(row=1, column = 0, sticky="w", columnspan =100)
+        self.description.grid(row=1, column = 0, sticky="w", columnspan = 3, padx=[5,5], pady = [5,5])
+        self.description.bind('<Configure>', lambda event: self.update_wraplength())
+    
+    def update_wraplength(self):
+        self.description.update_idletasks()
+        self.description.configure(wraplength=self.winfo_width()-100)
+
 
 
 

@@ -14,11 +14,15 @@ class Options_Frame(Custom_Frame):
         self.main_container = Scrolable_Container(self, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=1, column=1)
 
         self.user_option_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="User")
+        self.user_option_container.grid_columnconfigure(0, weight = 1)
         self.filter_option_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="Filter")
+        self.filter_option_container.grid_columnconfigure(0, weight = 1)
         self.UI_option_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="UI")
-        
+        self.UI_option_container.grid_columnconfigure(0, weight = 1)
+
         self.change_theme_option_container = Options_Container(self.UI_option_container, App, row = 0, column = 0, title="Change Theme", description="Change the look of the application.")
         self.change_appearance_option_container = Options_Container(self.UI_option_container, App, row = 1, column = 0, title="Change Appearance Mode", description="Select light or dark mode.")
+        self.change_wiget_scaling_container = Options_Container(self.UI_option_container, App, row = 2, column = 0, title="Change UI component scale", description="Increase or decreasee the size of all UI components. Note large values may not work well with small windows")
 
         self.subcontainers = [self.UI_option_container, self.user_option_container, self.filter_option_container]
         self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Options", subcontainers=self.subcontainers, loadedcontainer=self.UI_option_container)
@@ -26,6 +30,7 @@ class Options_Frame(Custom_Frame):
     def populate_containers(self, App):
         self.populate_change_theme_option_container(App, self.change_theme_option_container)
         self.populate_change_appearance_option_container(App, self.change_appearance_option_container)
+        self.populate_change_widget_scaling_container(App, self.change_wiget_scaling_container)
 
     def populate_change_theme_option_container(self, App, container):
         self.theme_dropdown_value = ctk.StringVar(value = App.current_theme_name)
@@ -49,3 +54,14 @@ class Options_Frame(Custom_Frame):
         value = self.appearance_mode_radio_value.get()
         App.data_manager.update_setting("appearance mode", value)
         App.on_setting_change()
+
+    def populate_change_widget_scaling_container(self, App, container):
+        self.widget_scale_dropdown_value = ctk.StringVar(value = App.widget_scaling_value)
+        self.widget_scale_dropdown = ctk.CTkOptionMenu(container, values=["50","75","100","125","150"], command=lambda value: self.change_widget_scale(App), variable=self.widget_scale_dropdown_value)
+        self.widget_scale_dropdown.grid(row=3, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+    
+    def change_widget_scale(self, App):
+        value = int((self.widget_scale_dropdown_value.get()))/100
+        App.data_manager.update_setting("widget scaling", value)
+        App.on_setting_change()
+

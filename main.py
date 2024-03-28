@@ -32,8 +32,9 @@ class Application(ctk.CTk):
     def set_settings(self, settings):
         self.geometry(settings["geometry"])
         self.title(settings["application name"])
+        self.widget_scaling_value = settings["widget scaling"]
         try:
-            ctk.set_widget_scaling(settings["widget scaling"])
+            ctk.set_widget_scaling(self.widget_scaling_value)
         except Exception as e:
             print(e)
         self.uniform_padding_x = (5,5)

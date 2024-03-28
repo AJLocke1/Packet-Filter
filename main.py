@@ -70,10 +70,10 @@ class Application(ctk.CTk):
         self.home_frame = homeframe.Home_Frame(self, has_navbar=False, navbar_name = "Home")
         self.login_frame = loginframe.Login_Frame(self, has_navbar=False)
         self.signup_frame = signupframe.Signup_Frame(self, has_navbar=False)
-        self.options_frame = optionsframe.Options_Frame(self, has_navbar=True, navbar_name = "Options")
-        self.filter_frame = filterframe.Filter_Frame(self,has_navbar=True, navbar_name = "Filter")
+        self.filter_frame = filterframe.Filter_Frame(self,has_navbar=True, navbar_name = "Filters")
         self.log_frame = logframe.Log_Frame(self, has_navbar=True, navbar_name="Statistics")
-        return[self.options_frame, self.login_frame, self.home_frame, self.signup_frame, self.filter_frame, self.log_frame]
+        self.options_frame = optionsframe.Options_Frame(self, has_navbar=True, navbar_name = "Options")
+        return[self.login_frame, self.home_frame, self.signup_frame, self.filter_frame, self.log_frame, self.options_frame]
     
     def populate_navbars(self, frame_list):
         for frame in frame_list:

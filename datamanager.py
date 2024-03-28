@@ -50,9 +50,7 @@ class Data_Manager():
         return hl.sha256(password.encode()).hexdigest()
 
     def findPassword(connection, cur, username):
-        print(username)
         cur.execute("SELECT * FROM userdata")
-        print(cur.fetchall())
         cur.execute("SELECT password FROM userdata WHERE username IS ?", (username,))
         return(cur.fetchall())
     

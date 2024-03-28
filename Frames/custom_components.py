@@ -112,13 +112,17 @@ class Sidebar(Container):
         self.title = ctk.CTkLabel(self, text=title, font=("", 30))
         self.title.grid(row=0, column =0, pady=(App.uniform_padding_y[0]*3,App.uniform_padding_y[1]*3))
 
+        self.seperator_image = ctk.CTkImage(light_image=Image.open("Data/Images/seperator.png"),dark_image=Image.open("Data/Images/seperatorLight.png"), size=(120,10))
+        self.seperator = ctk.CTkLabel(self, text="", image=self.seperator_image)
+        self.seperator.grid(row=1, column=0)
+
         if App.appearance_mode_string == "Light":
             self.text_color = "Black"
         else:
             self.text_color = "white"
         for i, subcontainer in enumerate(subcontainers):
             self.button = Sidebar_Button(self, App, text=subcontainer.name, text_color=self.text_color, command=lambda c=subcontainer: self.raise_subcontainer(c))
-            self.button.grid(row=i+1, column=0, sticky="ew", pady =App.uniform_padding_y)
+            self.button.grid(row=i+2, column=0, sticky="ew", pady =App.uniform_padding_y)
             if subcontainer == loaded_container:
                 self.button.change_color(App)
 
@@ -170,6 +174,24 @@ class Filter_Container(Scrolable_Container):
     def instantiate_components(self, App, filter_name, filter_description, padx, pady):
         self.filter_head = Filter_Head(self, App, filter_name, filter_description, padx, pady)
         self.filter_table = Filter_Table(self, App, padx, pady)
+
+class Options_Container(Container):
+    def __init__(self, master, App, title, description, column, row):
+        self.color = App.frame_color_2
+        self.title = title
+        self.description = description
+        super().__init__(master, App, isCentered=False, column = column, row = row, sticky="nsew", color=self.color, padx=App.uniform_padding_x, pady=(App.uniform_padding_y[0], App.uniform_padding_y[1]*3)) 
+
+        self.instantiate_components(App, self.title, self.description)
+    
+    def instantiate_components(self, App, title, description):
+        self.title = ctk.CTkLabel(self, text=title, font=("", 20))
+        self.title.grid(row=0, column = 0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w", columnspan=100)
+
+        self.description = ctk.CTkLabel(self, text=description)
+        self.description.grid(row=1, column = 0, sticky="w", columnspan =100)
+
+
 
     
 

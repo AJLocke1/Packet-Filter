@@ -16,21 +16,13 @@ class Data_Manager():
                     password VARCHAR(255) NOT NULL
         )            
         """)
-        cur.execute("""
-        CREATE TABLE IF NOT EXISTS usersettings (
-                    id INTEGER PRIMARY KEY,
-                    apperancemode BOOL,
-                    colortheme VARCHAR(10),
-                    FOREIGN KEY (id) REFERENCES userdata (id)
-        )
-        """)
         #type: IP, Port, Protocol. WHitlisttype: white or black. 
         cur.execute("""
         CREATE TABLE IF NOT EXISTS Whitelists (
-                    id INTEGER PRIMARY KEY,
                     name VARCHAR(255) NOT NULL,
                     type VARCHAR(16) NOT NULL,
-                    whitelisttype BOOL NOT NULL
+                    whitelisttype BOOL NOT NULL,
+                    PRIMARY KEY (name, type, whitelisttype)
         )
         """)
         connection.commit()
@@ -74,3 +66,23 @@ class Data_Manager():
         json.dump(settings, file, indent=4)
         file.truncate()
         file.close
+
+    def remove_rule(type, target, iswhitelisted):
+        print("Removing Rule" + type + " " + target + " " + iswhitelisted)
+
+    def add_rule(type, target, iswhitelisted, cur, connection):
+        print("Adding Rule" + type + " " + target + " " + iswhitelisted)
+        try:
+            cur.execute("""
+                INSERT INTO whitelists (name, type, whitlisttype) VALUES (?, ?, ?)           
+                """, (target, type, iswhitelisted))
+            connection.commit()
+        except:
+            sql.IntegrityError()
+            return("Unique Rule is Required")
+        
+    def load_rules(cur):
+        cur.execute("SELECT * FROM userdata")
+        rules=cur.fetchall()
+        for rule in rules:
+            print(rule)

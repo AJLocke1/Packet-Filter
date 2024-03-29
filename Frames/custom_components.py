@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from CTkMessagebox import CTkMessagebox
 from PIL import Image
 
 #_____CUSTOM_FRAME_________________________________________________________________________________
@@ -27,23 +28,26 @@ class Custom_Frame(ctk.CTkFrame):
     
 #_____CONTAINERS____________________________________________________________________________
 class Custom_Container():
-    def __init__(self, master, App, isCentered, row=None, column=None, color="transparent", sticky=None, padx=None, pady=None, max_width = None, name=None):
+    def __init__(self, master, App, isCentered, row=None, column=None, color="transparent", sticky=None, padx=None, pady=None, max_width = None, name=None, placeself = None):
         super().__init__(master, fg_color=color)
         self.filter_container_head = None
         self.name = name
         self.column = column
         self.row = row
         self.max_width = max_width
-        self.configure_placement(isCentered, sticky, padx, pady, max_width)
+        self.configure_placement(isCentered, sticky, padx, pady, max_width, placeself)
 
-    def configure_placement(self, isCentered, sticky, padx, pady, max_width):
-        if isCentered:
-            self.place(relx=0.5, rely=0.5, anchor="center", padx = padx, pady = pady)
+    def configure_placement(self, isCentered, sticky, padx, pady, max_width, placeself):
+        if placeself == None:
+            if isCentered:
+                self.place(relx=0.5, rely=0.5, anchor="center", padx = padx, pady = pady)
+            else:
+                self.grid(column=self.column, row=self.row, sticky=sticky, padx = padx, pady = pady)
+
+            if self.max_width:
+                self.configure(width=self.max_width)
         else:
-            self.grid(column=self.column, row=self.row, sticky=sticky, padx = padx, pady = pady)
-
-        if self.max_width:
-            self.configure(width=self.max_width)
+            pass
 
     def raise_subcontainer(self, Subcontainer):
         Subcontainer.lift()
@@ -110,7 +114,7 @@ class Sidebar(Container):
 
     def populate_sidebar_container(self, App, subcontainers, title, loaded_container):
         self.title = ctk.CTkLabel(self, text=title, font=("", 30))
-        self.title.grid(row=0, column =0, pady=(App.uniform_padding_y[0]*3,App.uniform_padding_y[1]*3))
+        self.title.grid(row=0, column =0, pady=(App.uniform_padding_y[0]*5,App.uniform_padding_y[1]*3))
 
         self.seperator_image = ctk.CTkImage(light_image=Image.open("Data/Images/seperator.png"),dark_image=Image.open("Data/Images/seperatorLight.png"), size=(120,10))
         self.seperator = ctk.CTkLabel(self, text="", image=self.seperator_image)
@@ -139,27 +143,88 @@ class Filter_Head(Container):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
-        self.label = ctk.CTkLabel(self, text=filter_name)
-        self.label.grid(row=0, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.rule_creation_window = None
 
-        self.add_rule = ctk.CTkButton(self, text="", width=30, image=self.image, command = lambda: self.add_rule())
-        self.add_rule.grid(row=0, column = 1, sticky="e", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.label = ctk.CTkLabel(self, text=filter_name)
+        self.label.grid(row=0, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        self.add_rule_button = ctk.CTkButton(self, text="", width=30, image=self.image, command = lambda: self.add_rule(App, filter_name))
+        self.add_rule_button.grid(row=0, column = 1, sticky="e", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.label2 = ctk.CTkLabel(self, text=filter_description)
-        self.label2.grid(row=1, column = 0, sticky="nsew", columnspan = 2, padx=[5,5], pady = [5,5])
+        self.label2.grid(row=1, column = 0, sticky="w", columnspan = 2, padx=[5,5], pady = [5,5])
         self.label2.bind('<Configure>', lambda event: self.update_wraplength())
 
-    def add_rule(self):
-        pass
+    def add_rule(self, App, filter_name):
+        if self.rule_creation_window is None or not self.rule_creation_window.winfo_exists():
+            self.rule_creation_window = Rule_Creation_Window(self, App, filter_name)  # create window if its None or destroyed
+        else:
+            self.rule_creation_window.focus() 
 
     def update_wraplength(self):
         self.label2.update_idletasks()
         self.label2.configure(wraplength=self.winfo_width() - 100)
 
+class Rule_Creation_Window(ctk.CTkToplevel):
+    def __init__(self, master, App, type):
+        super().__init__(master)
+        self.type = type
+        self.is_whitlisted_string = None
+
+        self.label = ctk.CTkLabel(self, text="Create Rule")
+        self.label.grid(row = 0, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, columnspan = 3, sticky="ew")
+
+        self.Entry = ctk.CTkEntry(self, placeholder_text=type)
+        self.Entry.grid(row = 1, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.label_2 = ctk.CTkLabel(self, text="Blacklist")
+        self.label_2.grid(row = 1, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.is_whitlisted_value =ctk.StringVar(self.is_whitlisted_string)
+        self.is_whitlisted = ctk.CTkSwitch(self, text="Whitelist", variable=self.is_whitlisted_value, onvalue="Whitelist", offvalue="Blacklist")
+        self.is_whitlisted.grid(row =1, column = 2, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.enter_rule = ctk.CTkButton(self, text = "Enter Rule", command=lambda: self.add_rule(master, App, self.type, self.Entry.get(), self.is_whitlisted.get()))
+        self.enter_rule.grid(row=2, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, columnspan =3, sticky="ew")
+
+    def add_rule(self, master, App, type, target, iswhitelisted):
+        if (CTkMessagebox(title="Add Rule?", message= "Are you sure you want to "+iswhitelisted+" The "+type+" "+target+" ", option_1="No", option_2="yes")).get() == "yes":
+           App.data_manager.add_rule(type, target, iswhitelisted, App.cur, App.conn)
+           rule = Rule(master.master.filter_table, App, type, target, iswhitelisted)
+           self.destroy()
+
+        
+
+
+class Rule(Container):
+    def __init__(self, master, App, type, target, iswhitelisted, padx = None, pady = None):
+        super().__init__(master, App, isCentered=False, color=App.frame_color, placeself = False)
+
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1)
+
+        self.instantiate_components(App, type, target, iswhitelisted, padx, pady)
+        self.pack(fill = "x")
+    
+    def instantiate_components(self, App, type, target, iswhitelisted, padx, pady):
+        self.title = ctk.CTkLabel(self, text=target)
+        self.title.grid(row=0, column = 0, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.whitelisted = ctk.CTkLabel(self, text=iswhitelisted)
+        self.whitelisted.grid(row=0, column = 1, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.delete_rule_button = ctk.CTkButton(self, text="Remove Rule", command=lambda: self.remove_rule(App, type, target, iswhitelisted))
+        self.delete_rule_button.grid(row = 0, column = 3, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+
+    def remove_rule(self, App, type, target, iswhitelisted):
+        App.data_manager.remove_rule(type, target, iswhitelisted)
+        self.destroy()
+
+
 class Filter_Table(Container):
     def __init__(self, master, App, padx = None, pady = None):
-        self.color = App.frame_color
-        super().__init__(master, App, isCentered=False, color=self.color)
+        super().__init__(master, App, isCentered=False, color=App.frame_color)
 
         self.grid(row=2, column=0, sticky="nsew", padx = padx, pady = pady)
         master.grid_columnconfigure(0, weight=1)
@@ -177,24 +242,28 @@ class Filter_Container(Scrolable_Container):
 
 class Options_Container(Container):
     def __init__(self, master, App, title, description, column, row):
-        self.color = App.frame_color_2
+        super().__init__(master, App, isCentered=False, column = column, row = row, sticky="nsew", color=App.frame_color_2, padx=App.uniform_padding_x, pady=(App.uniform_padding_y[0], App.uniform_padding_y[1]*6)) 
         self.title = title
         self.description = description
-        super().__init__(master, App, isCentered=False, column = column, row = row, sticky="nsew", color=self.color, padx=App.uniform_padding_x, pady=(App.uniform_padding_y[0], App.uniform_padding_y[1]*3)) 
-
-        self.instantiate_components(App, self.title, self.description)
+        self.row_offset = 3
+        master.grid_columnconfigure(0, weight=1)
+        self.instantiate_components(master, App, self.title, self.description)
     
-    def instantiate_components(self, App, title, description):
+    def instantiate_components(self, master, App, title, description):
         self.title = ctk.CTkLabel(self, text=title, font=("", 20))
         self.title.grid(row=0, column = 0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w", columnspan=100)
 
-        self.description = ctk.CTkLabel(self, text=description)
-        self.description.grid(row=1, column = 0, sticky="w", columnspan = 3, padx=[5,5], pady = [5,5])
-        self.description.bind('<Configure>', lambda event: self.update_wraplength())
-    
-    def update_wraplength(self):
+        self.seperator_image = ctk.CTkImage(light_image=Image.open("Data/Images/seperator.png"),dark_image=Image.open("Data/Images/seperatorLight.png"), size=(250,10))
+        self.seperator = ctk.CTkLabel(self, text="", image=self.seperator_image)
+        self.seperator.grid(row=1, column=0, columnspan = 100, sticky ="w")
+
+        self.description = ctk.CTkLabel(self, text=description, anchor = "w", justify = "left")
+        self.description.grid(row=3, column = 0, sticky="w", columnspan = 100, padx=[5,5], pady = [5,5])
+        self.description.bind('<Configure>', lambda event: self.update_wraplength(master))
+
+    def update_wraplength(self, master):
         self.description.update_idletasks()
-        self.description.configure(wraplength=self.winfo_width()-100)
+        self.description.configure(wraplength=master.master.winfo_width() - 100)
 
 
 

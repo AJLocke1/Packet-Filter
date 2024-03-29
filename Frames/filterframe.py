@@ -14,7 +14,7 @@ class Filter_Frame(Custom_Frame):
 
         self.filter_container_2 = Filter_Container(self.main_container, App, filter_name="Port", filter_description="whitelist and blacklist different ports", pady=App.uniform_padding_y)
         self.filter_container_3 = Filter_Container(self.main_container, App, filter_name="Protocol", filter_description="whitelist and blacklist different Protocols", pady=App.uniform_padding_y)
-        self.filter_container_4 = Filter_Container(self.main_container, App, filter_name="Machine Learning", filter_description="Toggle machine learning based packet filtering", pady=App.uniform_padding_y)
+        self.filter_container_4 = Filter_Container(self.main_container, App, filter_name="A.I", filter_description="Toggle machine learning based packet filtering", pady=App.uniform_padding_y)
         self.filter_container_5 = Filter_Container(self.main_container, App, filter_name="Compound Rules", filter_description="Define compound rules based on combinations of ports, IP Addresses and Protocols", pady=App.uniform_padding_y)
         self.filter_container_1 = Filter_Container(self.main_container, App, filter_name="Address", filter_description="whitelist and blacklist different IP addresses", pady=App.uniform_padding_y)
         

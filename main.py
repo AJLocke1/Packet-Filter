@@ -67,7 +67,7 @@ class Application(ctk.CTk):
         self.raise_frame("Options_Frame")
 
     def initiate_frames(self):
-        self.home_frame = homeframe.Home_Frame(self, has_navbar=False, navbar_name = "Home")
+        self.home_frame = homeframe.Home_Frame(self, has_navbar=False)
         self.login_frame = loginframe.Login_Frame(self, has_navbar=False)
         self.signup_frame = signupframe.Signup_Frame(self, has_navbar=False)
         self.filter_frame = filterframe.Filter_Frame(self,has_navbar=True, navbar_name = "Filters")

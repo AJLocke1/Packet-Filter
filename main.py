@@ -3,7 +3,6 @@ from CTkMessagebox import CTkMessagebox
 from Frames import filterframe, homeframe, loginframe, signupframe, optionsframe, logframe
 import os
 from datamanager import Data_Manager
-import time
 
 class Application(ctk.CTk):
     def __init__(self):

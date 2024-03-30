@@ -189,8 +189,9 @@ class Rule_Creation_Window(ctk.CTkToplevel):
 
     def add_rule(self, master, App, type, target, iswhitelisted):
         if (CTkMessagebox(title="Add Rule?", message= "Are you sure you want to "+iswhitelisted+" The "+type+" "+target+" ", option_1="No", option_2="yes")).get() == "yes":
-           App.data_manager.add_rule(type, target, iswhitelisted, App.cur, App.conn)
-           rule = Rule(master.master.filter_table, App, type, target, iswhitelisted)
+           Added = App.data_manager.add_rule(type, target, iswhitelisted, App.cur, App.conn)
+           if Added == "Added":
+            rule = Rule(master.master.filter_table, App, type, target, iswhitelisted)
            self.destroy()
 
         
@@ -218,7 +219,7 @@ class Rule(Container):
         self.delete_rule_button.grid(row = 0, column = 3, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
 
     def remove_rule(self, App, type, target, iswhitelisted):
-        App.data_manager.remove_rule(type, target, iswhitelisted)
+        App.data_manager.remove_rule(type, target, iswhitelisted, App.cur, App.conn)
         self.destroy()
 
 

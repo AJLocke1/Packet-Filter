@@ -22,7 +22,7 @@ class Data_Manager():
                     name VARCHAR(255) NOT NULL,
                     type VARCHAR(16) NOT NULL,
                     whitelisttype BOOL NOT NULL,
-                    PRIMARY KEY (name, type, whitelisttype)
+                    PRIMARY KEY (name, type)
         )
         """)
         connection.commit()
@@ -67,8 +67,14 @@ class Data_Manager():
         file.truncate()
         file.close
 
-    def remove_rule(type, target, iswhitelisted):
+    def remove_rule(type, target, iswhitelisted, cur, connection):
         print("Removing Rule" + type + " " + target + " " + iswhitelisted)
+        cur.execute("""
+            DELETE FROM whitelists WHERE name=? AND type=? AND whitelisttype=?           
+            """, (target, type, iswhitelisted))
+        connection.commit()
+        print("Rule " + type + " " + target + " " + iswhitelisted+" removed")
+        
 
     def add_rule(type, target, iswhitelisted, cur, connection):
         print("Adding Rule" + type + " " + target + " " + iswhitelisted)
@@ -78,6 +84,7 @@ class Data_Manager():
                 """, (target, type, iswhitelisted))
             connection.commit()
             print("Rule " + type + " " + target + " " + iswhitelisted+" Added")
+            return("Added")
         except:
             sql.IntegrityError()
             return("Unique Rule is Required")

@@ -200,9 +200,9 @@ class Rule(Container):
     def __init__(self, master, App, type, target, iswhitelisted, padx = None, pady = None):
         super().__init__(master, App, isCentered=False, color=App.frame_color, placeself = False)
 
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_columnconfigure(2, weight=1)
+        self.grid_columnconfigure(0, weight=1, uniform="uniform")
+        self.grid_columnconfigure(1, weight=1, uniform="uniform")
+        self.grid_columnconfigure(2, weight=1, uniform="uniform")
 
         self.instantiate_components(App, type, target, iswhitelisted, padx, pady)
         self.pack(fill = "x")

@@ -229,6 +229,15 @@ class Filter_Table(Container):
         self.grid(row=2, column=0, sticky="nsew", padx = padx, pady = pady)
         master.grid_columnconfigure(0, weight=1)
 
+        self.load_rules(App, master.name)
+    
+    def load_rules(self, App, type):
+        rules = App.data_manager.fetch_rules(App.cur, type)
+        for rule in rules:
+            rule = Rule(self, App, rule[1], rule[0], rule[2])
+            
+        
+
 class Filter_Container(Scrolable_Container):
     def __init__(self, master, App, filter_name, filter_description, padx = None, pady = None):
         self.color = App.frame_color_2

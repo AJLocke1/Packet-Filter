@@ -23,4 +23,4 @@ class Filter_Frame(Custom_Frame):
         self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Filters", subcontainers=self.subcontainers, loadedcontainer=self.filter_container_1)
 
     def populate_containers(self, App):
-        pass
+       pass

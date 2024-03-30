@@ -18,7 +18,7 @@ class Data_Manager():
         """)
         #type: IP, Port, Protocol. WHitlisttype: white or black. 
         cur.execute("""
-        CREATE TABLE IF NOT EXISTS Whitelists (
+        CREATE TABLE IF NOT EXISTS whitelists (
                     name VARCHAR(255) NOT NULL,
                     type VARCHAR(16) NOT NULL,
                     whitelisttype BOOL NOT NULL,
@@ -28,7 +28,7 @@ class Data_Manager():
         connection.commit()
 
     def insertUser(connection, cur, username, password):
-        encrypted_pass = encrypted_pass(password)
+        encrypted_pass = Data_Manager.encryptPassword(password)
         try:
             cur.execute("""
             INSERT INTO userdata (username, password) VALUES (?,?)           
@@ -74,15 +74,14 @@ class Data_Manager():
         print("Adding Rule" + type + " " + target + " " + iswhitelisted)
         try:
             cur.execute("""
-                INSERT INTO whitelists (name, type, whitlisttype) VALUES (?, ?, ?)           
+                INSERT INTO whitelists (name, type, whitelisttype) VALUES (?, ?, ?)           
                 """, (target, type, iswhitelisted))
             connection.commit()
+            print("Rule " + type + " " + target + " " + iswhitelisted+" Added")
         except:
             sql.IntegrityError()
             return("Unique Rule is Required")
         
-    def load_rules(cur):
-        cur.execute("SELECT * FROM userdata")
-        rules=cur.fetchall()
-        for rule in rules:
-            print(rule)
+    def fetch_rules(cur, type):
+        cur.execute("SELECT * FROM whitelists WHERE type IS ?", (type,))
+        return cur.fetchall()

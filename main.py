@@ -27,9 +27,6 @@ class Application(ctk.CTk):
         self.stack_frames(self.frame_list)
         self.populate_navbars(self.frame_list)
         self.raise_frame("Home_Frame")
-
-        #Load Rules into GUI
-        self.data_manager.load_rules(self.cur)
     
     def set_settings(self, settings):
         self.geometry(settings["geometry"])

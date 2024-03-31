@@ -44,6 +44,9 @@ class Options_Frame(Custom_Frame):
         self.populate_change_appearance_option_container(App, self.change_appearance_option_container)
         self.populate_change_widget_scaling_container(App, self.change_wiget_scaling_container)
 
+        self.populate_change_user_container(App, self.change_user_container)
+        self.populate_allow_bypass_login_container(App, self.allow_bypass_login_container)
+
     def populate_change_theme_option_container(self, App, container):
         self.theme_dropdown_value = ctk.StringVar(value = App.current_theme_name)
         self.theme_dropdown = ctk.CTkOptionMenu(container, values=[f.split(".", 1)[0] for f in listdir("Data/Themes/") if isfile(join("Data/Themes/", f))], command=lambda value: self.change_theme(App), variable=self.theme_dropdown_value)
@@ -58,12 +61,12 @@ class Options_Frame(Custom_Frame):
         self.dark_label = ctk.CTkLabel(container, text="Dark Mode")
         self.dark_label.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        self.appearance_mode_radio_value = ctk.StringVar(value = App.appearance_mode_string)
-        self.appearance_mode_radio = ctk.CTkSwitch(container, text="Light Mode", command= lambda: self.toggle_appearance_mode(App), variable=self.appearance_mode_radio_value, onvalue="Light", offvalue="Dark")
-        self.appearance_mode_radio.grid(row=container.row_offset+1, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+        self.appearance_mode_switch_value = ctk.StringVar(value = App.appearance_mode_string)
+        self.appearance_mode_switch = ctk.CTkSwitch(container, text="Light Mode", command= lambda: self.toggle_appearance_mode(App), variable=self.appearance_mode_switch_value, onvalue="Light", offvalue="Dark")
+        self.appearance_mode_switch.grid(row=container.row_offset+1, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
     def toggle_appearance_mode(self, App):
-        value = self.appearance_mode_radio_value.get()
+        value = self.appearance_mode_switch_value.get()
         App.data_manager.update_setting("appearance mode", value)
         App.on_setting_change()
 
@@ -76,4 +79,47 @@ class Options_Frame(Custom_Frame):
         value = int((self.widget_scale_dropdown_value.get()))/100
         App.data_manager.update_setting("widget scaling", value)
         App.on_setting_change()
+
+    def populate_change_user_container(self, App, container):
+        self.userEntry = ctk.CTkEntry(container, placeholder_text="Username")
+        self.userEntry.grid(pady=12, padx=10, row=container.row_offset+1, column=0)
+
+        self.passEntry = ctk.CTkEntry(container, placeholder_text="Password", show="*")
+        self.passEntry.grid(pady=12, padx=10, row=container.row_offset+2, column=0) 
+
+        self.passConfirmationEntry = ctk.CTkEntry(container, placeholder_text="Re enter Password", show="*")
+        self.passConfirmationEntry.grid(pady=12, padx=10, row=container.row_offset+3, column=0) 
+
+        self.change_user_info_label = ctk.CTkLabel(container, text="")
+        self.change_user_info_label.grid(pady=6, padx=10, row=container.row_offset+4, column=0)
+        self.change_user_info_label.grid_remove()
+
+        self.loginButton = ctk.CTkButton(container, text="Change", command=lambda : self.change_user_details(App, self.userEntry.get(), self.passEntry.get(), self.passConfirmationEntry.get()))
+        self.loginButton.grid(pady=12, padx=10, row=container.row_offset+5, column=0)
+
+    def change_user_details(self, App, username, password, passsword_confirmation):
+        if password == passsword_confirmation:
+            App.data_manager.removeUsers(App.conn, App.cur)
+            App.data_manager.insertUser(App.conn, App.cur, username, password)
+            self.change_user_info_label.grid()
+            self.change_user_info_label.configure(text = "User Details Updated", text_color="green")
+            self.userEntry.delete(0, len(username))
+            self.passEntry.delete(0, len(password))
+            self.passConfirmationEntry.delete(0, len(passsword_confirmation))
+            App.after(10000, lambda : (self.change_user_info_label.grid_remove()))
+        else:
+            self.change_user_info_label.grid()
+            self.change_user_info_label.configure(text = "Passwords do not Match", text_color="red")
+
+    def populate_allow_bypass_login_container(self, App, container):
+        self.deny_label = ctk.CTkLabel(container, text="Deny")
+        self.deny_label.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        self.bypass_login_switch_value = ctk.StringVar(value = App.bypass_login_string)
+        self.bypass_login_switch = ctk.CTkSwitch(container, text="Allow", command= lambda: self.toggle_bypass_login(App), variable=self.bypass_login_switch_value, onvalue="True", offvalue="False")
+        self.bypass_login_switch.grid(row=container.row_offset+1, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+    def toggle_bypass_login(self, App):
+        value = self.bypass_login_switch_value.get()
+        App.data_manager.update_setting("bypass login", value)
 

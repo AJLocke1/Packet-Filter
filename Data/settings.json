@@ -3,6 +3,7 @@
     "theme": "dark-blue",
     "appearance mode": "Dark",
     "application name": "Packet Filter",
-    "geometry": "809x317",
-    "fullscreen": "0"
+    "geometry": "585x368",
+    "fullscreen": "0",
+    "bypass login": "True"
 }

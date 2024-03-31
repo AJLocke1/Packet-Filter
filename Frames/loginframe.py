@@ -1,7 +1,6 @@
-from Frames.custom_components import Container, Scrolable_Container, Custom_Frame
+from Frames.custom_components import Container, Custom_Frame
 import customtkinter as ctk
 from datamanager import Data_Manager
-import hashlib as hl
 
 class Login_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):
@@ -39,7 +38,6 @@ class Login_Frame(Custom_Frame):
                 self.errorLabel.grid()
                 self.errorLabel.configure(text= "inccorect password")
         except IndexError:
-            encodedpass = ""
             self.errorLabel.grid()
             self.errorLabel.configure(text="User not Found")
 

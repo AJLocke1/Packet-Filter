@@ -34,12 +34,18 @@ class Data_Manager():
             INSERT INTO userdata (username, password) VALUES (?,?)           
             """, (username, encrypted_pass))
             connection.commit()
-        except:
+        except Exception as e:
             sql.IntegrityError()
-            return("Unique Username is Required")
+            return("Unique Username is Required", e)
         
     def encryptPassword(password):
         return hl.sha256(password.encode()).hexdigest()
+    
+    def removeUsers(connection, cur):
+        cur.execute("""
+            DELETE FROM userdata          
+            """)
+        connection.commit()
 
     def findPassword(connection, cur, username):
         cur.execute("SELECT * FROM userdata")
@@ -85,7 +91,7 @@ class Data_Manager():
             connection.commit()
             print("Rule " + type + " " + target + " " + iswhitelisted+" Added")
             return("Added")
-        except:
+        except Exception:
             sql.IntegrityError()
             return("Unique Rule is Required")
         

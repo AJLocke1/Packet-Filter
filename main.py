@@ -18,7 +18,7 @@ class Application(ctk.CTk):
         #Set Settings
         self.set_settings(self.settings)
         #Check if first time running
-        if self.is_first_time_running() == True:
+        if self.is_first_time_running() is True:
             self.initiate_database(self.default_user, self.default_pass)
             self.create_marker_file()
 
@@ -26,12 +26,16 @@ class Application(ctk.CTk):
         self.frame_list = self.initiate_frames()
         self.stack_frames(self.frame_list)
         self.populate_navbars(self.frame_list)
-        self.raise_frame("Login_Frame")
+        if self.settings["bypass login"] == "True":
+            self.raise_frame("Filter_Frame")
+        else:
+            self.raise_frame("Login_Frame")
     
     def set_settings(self, settings):
         self.geometry(settings["geometry"])
         self.attributes("-fullscreen", settings["fullscreen"])
         self.title(settings["application name"])
+        self.bypass_login_string = settings["bypass login"]
         self.widget_scaling_value = settings["widget scaling"]
         try:
             ctk.set_widget_scaling(self.widget_scaling_value)
@@ -77,7 +81,7 @@ class Application(ctk.CTk):
     
     def populate_navbars(self, frame_list):
         for frame in frame_list:
-            if frame.has_navbar == True:
+            if frame.has_navbar is True:
                 frame.navbar.populate_navbar(frame, self, frame_list)
 
     def stack_frames(self, frame_list):

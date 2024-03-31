@@ -11,7 +11,7 @@ class Custom_Frame(ctk.CTkFrame):
         self.navbar_name = navbar_name
         self.initialise_containers(App)
         self.populate_containers(App)
-        if has_navbar == True:
+        if has_navbar is True:
             self.initialise_navbar(App)
 
     def initialise_containers(self):
@@ -39,7 +39,7 @@ class Custom_Container():
         self.configure_placement(isCentered, sticky, padx, pady, max_width, placeself)
 
     def configure_placement(self, isCentered, sticky, padx, pady, max_width, placeself):
-        if placeself == None:
+        if placeself is None:
             if isCentered:
                 self.place(relx=0.5, rely=0.5, anchor="center", padx = padx, pady = pady)
             else:
@@ -83,7 +83,7 @@ class Navbar(ctk.CTkFrame):
         self.buttons = []
         count = 0
         for i in range(len(frame_list)):
-            if frame_list[i].has_navbar == True or frame_list[i].navbar_name != None:
+            if frame_list[i].has_navbar is True or frame_list[i].navbar_name is not None:
                 frame = frame_list[i].__class__.__name__
                 #f frame needs to be used due to a binding issue taking the value of teh wrong iteration of frame.
                 self.buttons.append(ctk.CTkButton(self, text=frame_list[i].navbar_name, height=30, corner_radius=0, command=lambda f=frame: App.raise_frame(f)))
@@ -97,7 +97,7 @@ class Sidebar_Button(ctk.CTkButton):
         self.bind("<Button-1>", lambda event: self.change_color(App))
 
     def change_color(self, App):
-        if self.master.lastclicked != None:
+        if self.master.lastclicked is not None:
             self.master.lastclicked.configure(fg_color = "transparent") 
         self.configure(fg_color=App.theme_color)
         self.master.lastclicked = self
@@ -190,19 +190,18 @@ class Rule_Creation_Window(ctk.CTkToplevel):
 
     def add_rule(self, master, App, type, target, iswhitelisted):
         is_valid = self.check_rule(type, target)
-        if is_valid == True:
+        if is_valid is True:
             if (CTkMessagebox(title="Add Rule?", message= "Are you sure you want to "+iswhitelisted+" The "+type+" "+target+" ", option_1="No", option_2="yes")).get() == "yes":
                 Added = App.data_manager.add_rule(type, target, iswhitelisted, App.cur, App.conn)
                 if Added == "Added":
-                    rule = Rule(master.master.filter_table, App, type, target, iswhitelisted)
+                    Rule(master.master.filter_table, App, type, target, iswhitelisted)
                 self.destroy()
         
     def check_rule(self, type, target):
         match type:
             case "Address":
                 IPv4_regex = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
-                IPv6_regex = "((([0-9a-fA-F]){1,4})\\:){7}"\
-                             "([0-9a-fA-F]){1,4}"
+                IPv6_regex = "((([0-9a-fA-F]){1,4})\:){7}([0-9a-fA-F]){1,4}"
                 IPv4_regex = re.compile(IPv4_regex)
                 IPv6_regex = re.compile(IPv6_regex)
                 if (re.search(IPv4_regex, target)):

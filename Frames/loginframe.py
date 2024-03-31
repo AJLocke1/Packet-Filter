@@ -26,9 +26,6 @@ class Login_Frame(Custom_Frame):
         self.loginButton = ctk.CTkButton(self.container, text="Login", command=lambda : self.login(App, self.userEntry.get(), self.passEntry.get()))
         self.loginButton.grid(pady=12, padx=10, row=4, column=0)
 
-        self.checkBox = ctk.CTkCheckBox(self.container, text="Remember Me")
-        self.checkBox.grid(pady=12, padx=10, row=5, column=0)
-
     def login(self, App, username, password):
         try:
             fetched = Data_Manager.findPassword(App.conn, App.cur, username)

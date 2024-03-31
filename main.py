@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
-from Frames import filterframe, homeframe, loginframe, signupframe, optionsframe, logframe
+from Frames import filterframe, loginframe, signupframe, optionsframe, logframe
 import os
 from datamanager import Data_Manager
 
@@ -26,7 +26,7 @@ class Application(ctk.CTk):
         self.frame_list = self.initiate_frames()
         self.stack_frames(self.frame_list)
         self.populate_navbars(self.frame_list)
-        self.raise_frame("Home_Frame")
+        self.raise_frame("Login_Frame")
     
     def set_settings(self, settings):
         self.geometry(settings["geometry"])
@@ -67,13 +67,12 @@ class Application(ctk.CTk):
         self.raise_frame("Options_Frame")
 
     def initiate_frames(self):
-        self.home_frame = homeframe.Home_Frame(self, has_navbar=False)
         self.login_frame = loginframe.Login_Frame(self, has_navbar=False)
         self.signup_frame = signupframe.Signup_Frame(self, has_navbar=False)
         self.filter_frame = filterframe.Filter_Frame(self,has_navbar=True, navbar_name = "Filters")
         self.log_frame = logframe.Log_Frame(self, has_navbar=True, navbar_name="Statistics")
         self.options_frame = optionsframe.Options_Frame(self, has_navbar=True, navbar_name = "Options")
-        return[self.login_frame, self.home_frame, self.signup_frame, self.filter_frame, self.log_frame, self.options_frame]
+        return[self.login_frame, self.signup_frame, self.filter_frame, self.log_frame, self.options_frame]
     
     def populate_navbars(self, frame_list):
         for frame in frame_list:

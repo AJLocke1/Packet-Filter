@@ -13,6 +13,7 @@ class Options_Frame(Custom_Frame):
     def initialise_containers(self, App):
         self.main_container = Scrolable_Container(self, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=1, column=1)
 
+        #the subcontainers of the main container
         self.user_option_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="User")
         self.user_option_container.grid_columnconfigure(0, weight = 1)
         self.filter_option_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="Filter")
@@ -20,11 +21,22 @@ class Options_Frame(Custom_Frame):
         self.UI_option_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="UI")
         self.UI_option_container.grid_columnconfigure(0, weight = 1)
 
+        #The options for the UI subcontainer
         self.change_theme_option_container = Options_Container(self.UI_option_container, App, row = 0, column = 0, title="Change Theme", description="Change the look of the application.")
         self.change_appearance_option_container = Options_Container(self.UI_option_container, App, row = 1, column = 0, title="Change Appearance Mode", description="Select light or dark mode.")
         self.change_wiget_scaling_container = Options_Container(self.UI_option_container, App, row = 2, column = 0, title="Change UI component scale", description="Increase or decreasee the size of all UI components. Note large values may not work well with small windows")
-
         self.subcontainers = [self.UI_option_container, self.user_option_container, self.filter_option_container]
+
+        #The options for the user subcontainer
+        self.change_user_container = Options_Container(self.user_option_container, App, row = 0, column = 0, title="Change User Credentials", description="Change the user credentials to acccess the application, ensure to make not of the username and password chosen as there is no way to restore the infomation if forgoten")
+        self.allow_bypass_login_container = Options_Container(self.user_option_container, App, row =1, column=0, title="Bypass Login on Startup", description="When enabled automatic login will be enabled, allowing for use of the application without loging in")
+
+        #the options for the filter subcontainer
+        self.enable_machine_learning_container = Options_Container(self.filter_option_container, App, row=0, column=0, title="Enable Machine Learning", description="Toggle whether a machine learning alogrithm will be used alongside user created rules for filtering")
+        self.set_machine_learning_priority = Options_Container(self.filter_option_container, App, row = 1, column = 0, title="Set Machine Learning Priority", description="Set whether the machine learning algorithm will take priority over the user created rules")
+        self.disable_filter = Options_Container(self.filter_option_container, App,  row = 1, column=0, title="Disable Filtering", description="Disable all packet filtering functionality")
+
+        #Create the sidebar
         self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Options", subcontainers=self.subcontainers, loadedcontainer=self.UI_option_container)
 
     def populate_containers(self, App):

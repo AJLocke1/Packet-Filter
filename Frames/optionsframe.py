@@ -33,8 +33,8 @@ class Options_Frame(Custom_Frame):
 
         #the options for the filter subcontainer
         self.enable_machine_learning_container = Options_Container(self.filter_option_container, App, row=0, column=0, title="Enable Machine Learning", description="Toggle whether a machine learning alogrithm will be used alongside user created rules for filtering")
-        self.set_machine_learning_priority = Options_Container(self.filter_option_container, App, row = 1, column = 0, title="Set Machine Learning Priority", description="Set whether the machine learning algorithm will take priority over the user created rules")
-        self.disable_filter = Options_Container(self.filter_option_container, App,  row = 2, column=0, title="Disable Filtering", description="Disable all packet filtering functionality")
+        self.set_machine_learning_priority_container = Options_Container(self.filter_option_container, App, row = 1, column = 0, title="Set Machine Learning Priority", description="Set whether the machine learning algorithm will take priority over the user created rules")
+        self.disable_filter_container = Options_Container(self.filter_option_container, App,  row = 2, column=0, title="Disable Filtering", description="Disable all packet filtering functionality")
 
         #Create the sidebar
         self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Options", subcontainers=self.subcontainers, loadedcontainer=self.UI_option_container)
@@ -112,8 +112,8 @@ class Options_Frame(Custom_Frame):
             self.change_user_info_label.configure(text = "Passwords do not Match", text_color="red")
 
     def populate_allow_bypass_login_container(self, App, container):
-        self.deny_label = ctk.CTkLabel(container, text="Deny")
-        self.deny_label.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+        self.deny_bypass_label = ctk.CTkLabel(container, text="Deny")
+        self.deny_bypass_label.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
         self.bypass_login_switch_value = ctk.StringVar(value = App.bypass_login_string)
         self.bypass_login_switch = ctk.CTkSwitch(container, text="Allow", command= lambda: self.toggle_bypass_login(App), variable=self.bypass_login_switch_value, onvalue="True", offvalue="False")
@@ -123,3 +123,19 @@ class Options_Frame(Custom_Frame):
         value = self.bypass_login_switch_value.get()
         App.data_manager.update_setting("bypass login", value)
 
+    def populate_enable_machine_learning_container(self, App, container):
+        self.deny_ML_label = ctk.CTkLabel(container, text="Deny")
+        self.deny_ML_label.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        self.enable_ML_switch_value = ctk.StringVar(value = App.enable_ML_string)
+        self.enable_ML_switch = ctk.CTkSwitch(container, text="Allow", command= lambda: self.toggle_ML(App), variable=self.enable_ML_switch_value, onvalue="True", offvalue="False")
+        self.enable_ML_switch.grid(row=container.row_offset+1, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+    def toggle_ML(self, App):
+        pass #Tell the packet manager not to use the ML algorithm
+
+    def populate_set_machine_learning_priority_container(self, App, container):
+        pass
+
+    def populate_ddisable_filter_container(self, App, container):
+        pass

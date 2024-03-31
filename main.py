@@ -37,6 +37,7 @@ class Application(ctk.CTk):
         self.title(settings["application name"])
         self.bypass_login_string = settings["bypass login"]
         self.widget_scaling_value = settings["widget scaling"]
+        self.enable_ML_string = settings["enable machine learning"]
         try:
             ctk.set_widget_scaling(self.widget_scaling_value)
         except Exception as e:

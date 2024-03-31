@@ -57,7 +57,7 @@ class Options_Frame(Custom_Frame):
 
     def populate_change_widget_scaling_container(self, App, container):
         self.widget_scale_dropdown_value = ctk.StringVar(value = App.widget_scaling_value)
-        self.widget_scale_dropdown = ctk.CTkOptionMenu(container, values=["50","75","100","125","150"], command=lambda value: self.change_scale(App), variable=self.widget_scale_dropdown_value)
+        self.widget_scale_dropdown = ctk.CTkOptionMenu(container, values=["25","50","65","75","85","100","115","125","150"], command=lambda value: self.change_scale(App), variable=self.widget_scale_dropdown_value)
         self.widget_scale_dropdown.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
     
     def change_scale(self, App):

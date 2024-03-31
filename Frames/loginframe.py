@@ -33,9 +33,6 @@ class Login_Frame(Custom_Frame):
         try:
             fetched = Data_Manager.findPassword(App.conn, App.cur, username)
             storedpass = fetched[0][0]
-            print(storedpass)
-            print(password)
-            print(App.data_manager.encryptPassword(password))
             if App.data_manager.encryptPassword(password) == storedpass:
                 #change frame
                 App.raise_frame("Filter_Frame")

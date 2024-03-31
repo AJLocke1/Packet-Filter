@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from PIL import Image
+import re
 
 #_____CUSTOM_FRAME_________________________________________________________________________________
 class Custom_Frame(ctk.CTkFrame):
@@ -188,14 +189,39 @@ class Rule_Creation_Window(ctk.CTkToplevel):
         self.enter_rule.grid(row=2, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, columnspan =3, sticky="ew")
 
     def add_rule(self, master, App, type, target, iswhitelisted):
-        if (CTkMessagebox(title="Add Rule?", message= "Are you sure you want to "+iswhitelisted+" The "+type+" "+target+" ", option_1="No", option_2="yes")).get() == "yes":
-           Added = App.data_manager.add_rule(type, target, iswhitelisted, App.cur, App.conn)
-           if Added == "Added":
-            rule = Rule(master.master.filter_table, App, type, target, iswhitelisted)
-           self.destroy()
-
+        is_valid = self.check_rule(type, target)
+        if is_valid == True:
+            if (CTkMessagebox(title="Add Rule?", message= "Are you sure you want to "+iswhitelisted+" The "+type+" "+target+" ", option_1="No", option_2="yes")).get() == "yes":
+                Added = App.data_manager.add_rule(type, target, iswhitelisted, App.cur, App.conn)
+                if Added == "Added":
+                    rule = Rule(master.master.filter_table, App, type, target, iswhitelisted)
+                self.destroy()
         
-
+    def check_rule(self, type, target):
+        match type:
+            case "Address":
+                IPv4_regex = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
+                IPv6_regex = "((([0-9a-fA-F]){1,4})\\:){7}"\
+                             "([0-9a-fA-F]){1,4}"
+                IPv4_regex = re.compile(IPv4_regex)
+                IPv6_regex = re.compile(IPv6_regex)
+                if (re.search(IPv4_regex, target)):
+                    return True
+                elif (re.search(IPv6_regex, target)):
+                    return True
+                else:
+                    return False
+            case "Port":
+                try:
+                    target = int(target)
+                    return True
+                except ValueError:
+                    return False
+            case "Protocol":
+                if target in ["TCP", "UDP", "ICMP", 1, 6, 17]:
+                    return True
+                else:
+                    return False
 
 class Rule(Container):
     def __init__(self, master, App, type, target, iswhitelisted, padx = None, pady = None):
@@ -206,7 +232,7 @@ class Rule(Container):
         self.grid_columnconfigure(2, weight=1, uniform="uniform")
 
         self.instantiate_components(App, type, target, iswhitelisted, padx, pady)
-        self.pack(fill = "x")
+        self.pack(fill = "x", pady = App.uniform_padding_y)
     
     def instantiate_components(self, App, type, target, iswhitelisted, padx, pady):
         self.title = ctk.CTkLabel(self, text=target)
@@ -225,7 +251,7 @@ class Rule(Container):
 
 class Filter_Table(Container):
     def __init__(self, master, App, padx = None, pady = None):
-        super().__init__(master, App, isCentered=False, color=App.frame_color)
+        super().__init__(master, App, isCentered=False, color=App.frame_color_2)
 
         self.grid(row=2, column=0, sticky="nsew", padx = padx, pady = pady)
         master.grid_columnconfigure(0, weight=1)

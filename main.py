@@ -30,6 +30,7 @@ class Application(ctk.CTk):
     
     def set_settings(self, settings):
         self.geometry(settings["geometry"])
+        self.attributes("-fullscreen", settings["fullscreen"])
         self.title(settings["application name"])
         self.widget_scaling_value = settings["widget scaling"]
         try:
@@ -107,6 +108,8 @@ class Application(ctk.CTk):
 
     def on_closing(self):
        if (CTkMessagebox(title="Quit", message="Do you want to quit?, packet filtering will be disabled", option_1="No", option_2="yes")).get() == "yes":
+           self.data_manager.update_setting("geometry", str(self.winfo_width())+"x"+str(self.winfo_height()))
+           self.data_manager.update_setting("fullscreen", str(self.attributes("-fullscreen")))
            self.destroy()
         
 if __name__ == "__main__" :

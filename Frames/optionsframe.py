@@ -34,7 +34,7 @@ class Options_Frame(Custom_Frame):
         #the options for the filter subcontainer
         self.enable_machine_learning_container = Options_Container(self.filter_option_container, App, row=0, column=0, title="Enable Machine Learning", description="Toggle whether a machine learning alogrithm will be used alongside user created rules for filtering")
         self.set_machine_learning_priority_container = Options_Container(self.filter_option_container, App, row = 1, column = 0, title="Set Machine Learning Priority", description="Set whether the machine learning algorithm will take priority over the user created rules")
-        self.disable_filter_container = Options_Container(self.filter_option_container, App,  row = 2, column=0, title="Disable Filtering", description="Disable all packet filtering functionality")
+        self.disable_filter_container = Options_Container(self.filter_option_container, App,  row = 2, column=0, title="Enable Filtering", description="Enable all packet filtering functionality. On by default. Dont't turn off unless necessary")
 
         #Create the sidebar
         self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Options", subcontainers=self.subcontainers, loadedcontainer=self.UI_option_container)
@@ -46,6 +46,9 @@ class Options_Frame(Custom_Frame):
 
         self.populate_change_user_container(App, self.change_user_container)
         self.populate_allow_bypass_login_container(App, self.allow_bypass_login_container)
+
+        self.populate_enable_machine_learning_container(App, self.enable_machine_learning_container)
+        self.populate_disable_filter_container(App, self.disable_filter_container)
 
     def populate_change_theme_option_container(self, App, container):
         self.theme_dropdown_value = ctk.StringVar(value = App.current_theme_name)
@@ -124,18 +127,29 @@ class Options_Frame(Custom_Frame):
         App.data_manager.update_setting("bypass login", value)
 
     def populate_enable_machine_learning_container(self, App, container):
-        self.deny_ML_label = ctk.CTkLabel(container, text="Deny")
-        self.deny_ML_label.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+        self.disable_ML_label = ctk.CTkLabel(container, text="Disable")
+        self.disable_ML_label.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
         self.enable_ML_switch_value = ctk.StringVar(value = App.enable_ML_string)
-        self.enable_ML_switch = ctk.CTkSwitch(container, text="Allow", command= lambda: self.toggle_ML(App), variable=self.enable_ML_switch_value, onvalue="True", offvalue="False")
+        self.enable_ML_switch = ctk.CTkSwitch(container, text="Enable", command= lambda: self.toggle_ML(App), variable=self.enable_ML_switch_value, onvalue="True", offvalue="False")
         self.enable_ML_switch.grid(row=container.row_offset+1, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
     def toggle_ML(self, App):
-        pass #Tell the packet manager not to use the ML algorithm
+        value = self.enable_ML_switch_value.get()
+        App.data_manager.update_setting("enable machine learning", value)
 
     def populate_set_machine_learning_priority_container(self, App, container):
         pass
+        
 
-    def populate_ddisable_filter_container(self, App, container):
-        pass
+    def populate_disable_filter_container(self, App, container):
+        self.disable_filter_label = ctk.CTkLabel(container, text="Disable")
+        self.disable_filter_label.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        self.enable_filter_switch_value = ctk.StringVar(value = App.enable_filter_string)
+        self.enable_filter_switch = ctk.CTkSwitch(container, text="Enable", command= lambda: self.toggle_filter(App), variable=self.enable_filter_switch_value, onvalue="True", offvalue="False")
+        self.enable_filter_switch.grid(row=container.row_offset+1, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+    def toggle_filter(self, App):
+        value = self.enable_filter_switch_value.get()
+        App.data_manager.update_setting("enable filtering", value)

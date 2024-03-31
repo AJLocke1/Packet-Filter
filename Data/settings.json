@@ -6,7 +6,7 @@
     "geometry": "585x368",
     "fullscreen": "0",
     "bypass login": "True",
-    "disable filtering" : "False",
-    "enable machine learning" : "True",
-    "machine learning priorit" : "Low"
+    "enable filtering": "False",
+    "enable machine learning": "True",
+    "machine learning priorit": "Low"
 }

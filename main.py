@@ -1,7 +1,7 @@
+import os
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from Frames import filterframe, loginframe, signupframe, optionsframe, logframe
-import os
 from datamanager import Data_Manager
 
 class Application(ctk.CTk):
@@ -79,6 +79,7 @@ class Application(ctk.CTk):
         for frame in self.frame_list:
             frame.destroy()
 
+        self.data_manager.update_setting("fullscreen", str(self.attributes("-fullscreen")))
         self.settings = Data_Manager.read_settings()
         self.set_settings(self.settings)
 

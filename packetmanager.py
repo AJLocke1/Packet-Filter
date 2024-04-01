@@ -1,35 +1,44 @@
 #Only works on Linux Systems
+import subprocess
 import scapy
 from netfilterqueue import NetfilterQueue
 
 class PacketManager():
     def initiatePacketCapture(self):
-        self.nfqueue = NetfilterQueue()
-        self.nfqueue.bind(1, self.processPacket)
         try:
+            # Enable packet forwarding
+            subprocess.run(["sudo", "sysctl", "net.ipv4.ip_forward=1"], check=True)
+            # Add iptables rule to forward packets to NFQUEUE
+            subprocess.run(["sudo", "iptables", "-A", "FORWARD", "-j", "NFQUEUE", "--queue-num", "1"], check=True)
+            # Bind NetfilterQueue
+            self.nfqueue = NetfilterQueue()
+            self.nfqueue.bind(1, self.process_packet)
             self.nfqueue.run()
         except KeyboardInterrupt:
-            print("Firewall Inturupted")
+            print("Firewall Interrupted")
+        except subprocess.CalledProcessError as e:
+            print("Error occurred:", e)
+        finally:
+            # Cleanup: Disable packet forwarding and remove iptables rule
+            subprocess.run(["sudo", "sysctl", "net.ipv4.ip_forward=0"])
+            subprocess.run(["sudo", "iptables", "-D", "FORWARD", "-j", "NFQUEUE", "--queue-num", "1"])
 
-    def get_packet_infomation(packet):
-        """
-        Infomation is stored in the order of mandatory fields followed by optional
+    def process_packet(self, packet):
+        packet_data = self.get_packet_infomation(packet)
+
+        if self.is_blocked_by_rules(packet_data) is False:
+            packet.accept()
         
-        Source Mac Adddress
-        Destination Mac Address
-        Type 
+        if self.is_blocked_by_machine_learning is False:
+            packet.accept()
 
-        IP Version,
-        Source IP,
-        Destination IP, 
-        IP Protocol, 
-        IP header Lenght,
-        IP total length
-        IP Time To Live,
-
-        Source port, 
-        Destination Port
-        """
+    def is_blocked_by_rules(self, packet_data):
+        return False
+    
+    def is_blocked_by_machine_learning(self, packet_data):
+        return False
+    
+    def get_packet_infomation(self, packet):
         packet_info = []
         #Get Layer 2 Infomation
         if packet.haslayer("Ether"):
@@ -86,5 +95,18 @@ class PacketManager():
                 packet_info.append(icmp_layer.chksum)
                 packet_info.append(icmp_layer.id)
                 packet_info.append(icmp_layer.seq)
+                
+        return packet_info
+
+    def test_mock_packet(self, protocol, s_ip, d_ip, s_port, d_port):
+        if protocol == "TCP":
+            mock_packet = scapy.IP(src=s_ip, dst=d_ip) / scapy.TCP(sport=s_port, dport=d_port)
+        elif protocol == "UDP":
+            mock_packet = scapy.IP(src=s_ip, dst=d_ip) / scapy.UDP(sport=s_port, dport=d_port)
+        elif protocol == "ICMP":
+            mock_packet = scapy.IP(src=s_ip, dst=d_ip) / scapy.ICMP(sport=s_port, dport=d_port)
+        
+        self.nfqueue.queue.put(str(mock_packet))
+
     
         

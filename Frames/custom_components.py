@@ -225,7 +225,10 @@ class Rule_Creation_Window(ctk.CTkToplevel):
                 except ValueError:
                     return False
             case "Protocol":
-                if target in ["TCP", "UDP", "ICMP", 1, 6, 17]:
+                supported_protocols = ["TCP", "UDP", "ICMP", "SCTP", "DCCP", "GRE", "RSVP", "L2TP", "IGMP", "MPLS", "QUIC", "RTP", "SRTP", "LISP", "WireGuard"]
+                protocol_numbers = {"TCP": 6, "UDP": 17, "ICMP": 1, "SCTP": 132, "DCCP": 33, "GRE": 47, "RSVP": 46, "L2TP": 115, "IGMP": 2, "MPLS": 137, "QUIC": 17, "RTP": 103, "SRTP": 254, "LISP": 35, "WireGuard": 20}
+
+                if target in supported_protocols or target in protocol_numbers.values:
                     return True
                 else:
                     return False

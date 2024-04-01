@@ -11,14 +11,15 @@ class Filter_Frame(Custom_Frame):
         self.main_container.grid_columnconfigure(0, weight=1)
         self.main_container.grid_rowconfigure(0, weight=1)
 
-        self.filter_container_2 = Filter_Container(self.main_container, App, filter_name="Port", filter_description="whitelist and blacklist different ports, When adding the rule add via the port number instead of the name.", pady=App.uniform_padding_y)
-        self.filter_container_3 = Filter_Container(self.main_container, App, filter_name="Protocol", filter_description="whitelist and blacklist different Protocols such as, ICMP, UDP or TCP", pady=App.uniform_padding_y)
-        self.filter_container_5 = Filter_Container(self.main_container, App, filter_name="Compound Rules", filter_description="Define compound rules based on combinations of ports, IP Addresses and Protocols", pady=App.uniform_padding_y)
-        self.filter_container_1 = Filter_Container(self.main_container, App, filter_name="Address", filter_description="whitelist and blacklist different IP addresses, enter the IPv4 or IPv6 address to be whitlisted or blacklisted.", pady=App.uniform_padding_y)
+        self.port_filter_container = Filter_Container(self.main_container, App, filter_name="Port", filter_description="whitelist and blacklist different ports, When adding the rule add via the port number instead of the name.", pady=App.uniform_padding_y)
+        self.protocol_filter_container = Filter_Container(self.main_container, App, filter_name="Protocol", filter_description="whitelist and blacklist different Protocols such as, ICMP, UDP or TCP", pady=App.uniform_padding_y)
+        self.compound_filter_container = Filter_Container(self.main_container, App, filter_name="Compound Rules", filter_description="Define compound rules based on combinations of ports, IP Addresses and Protocols", pady=App.uniform_padding_y)
+        self.application_filter_container = Filter_Container(self.main_container, App, filter_name="Application", filter_description="FIlter out Applications, These can be similar to the port filters althouogh it can attempt to make guesses for various other applications such as youtube.", pady=App.uniform_padding_y)
+        self.address_filter_container = Filter_Container(self.main_container, App, filter_name="Address", filter_description="whitelist and blacklist different IP addresses, enter the IPv4 or IPv6 address to be whitlisted or blacklisted.", pady=App.uniform_padding_y)
         
-        self.subcontainers = [self.filter_container_1, self.filter_container_2, self.filter_container_3, self.filter_container_5]
+        self.subcontainers = [self.address_filter_container, self.application_filter_container, self.port_filter_container, self.protocol_filter_container, self.compound_filter_container]
 
-        self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Filters", subcontainers=self.subcontainers, loadedcontainer=self.filter_container_1)
+        self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Filters", subcontainers=self.subcontainers, loadedcontainer=self.address_filter_container)
 
     def populate_containers(self, App):
        pass

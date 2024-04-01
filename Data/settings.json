@@ -7,6 +7,6 @@
     "fullscreen": "1",
     "bypass login": "False",
     "enable filtering": "True",
-    "enable machine learning": "False",
-    "machine learning priority": "high"
+    "enable machine learning": "True",
+    "machine learning priority": "low"
 }

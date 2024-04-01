@@ -171,6 +171,7 @@ class Rule_Creation_Window(ctk.CTkToplevel):
         super().__init__(master)
         self.type = type
         self.is_whitlisted_string = None
+        self.direction_string = None
 
         self.label = ctk.CTkLabel(self, text="Create Rule")
         self.label.grid(row = 0, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, columnspan = 3, sticky="ew")
@@ -185,16 +186,23 @@ class Rule_Creation_Window(ctk.CTkToplevel):
         self.is_whitlisted = ctk.CTkSwitch(self, text="Whitelist", variable=self.is_whitlisted_value, onvalue="Whitelist", offvalue="Blacklist")
         self.is_whitlisted.grid(row =1, column = 2, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
-        self.enter_rule = ctk.CTkButton(self, text = "Enter Rule", command=lambda: self.add_rule(master, App, self.type, self.Entry.get(), self.is_whitlisted.get()))
-        self.enter_rule.grid(row=2, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, columnspan =3, sticky="ew")
+        self.label_3 = ctk.CTkLabel(self, text="Outgoing")
+        self.label_3.grid(row = 2, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
-    def add_rule(self, master, App, type, target, iswhitelisted):
+        self.direction_value =ctk.StringVar(self.direction_string)
+        self.direction = ctk.CTkSwitch(self, text="Incoming", variable=self.direction_value, onvalue="Incoming", offvalue="Outgoing")
+        self.direction.grid(row =2, column = 2, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.enter_rule = ctk.CTkButton(self, text = "Enter Rule", command=lambda: self.add_rule(master, App, self.type, self.Entry.get(), self.is_whitlisted.get(), self.direction.get()))
+        self.enter_rule.grid(row=2, column=3, padx=App.uniform_padding_x, pady=App.uniform_padding_y, columnspan =3, sticky="ew")
+
+    def add_rule(self, master, App, type, target, iswhitelisted, direction):
         is_valid = self.check_rule(type, target)
         if is_valid is True:
-            if (CTkMessagebox(title="Add Rule?", message= "Are you sure you want to "+iswhitelisted+" The "+type+" "+target+" ", option_1="No", option_2="yes")).get() == "yes":
-                Added = App.data_manager.add_rule(type, target, iswhitelisted, App.cur, App.conn)
+            if (CTkMessagebox(title="Add Rule?", message= "Are you sure you want to "+iswhitelisted+" The "+type+" "+target+" "+direction, option_1="No", option_2="yes")).get() == "yes":
+                Added = App.data_manager.add_rule(type, target, iswhitelisted, direction, App.cur, App.conn)
                 if Added == "Added":
-                    Rule(master.master.filter_table, App, type, target, iswhitelisted)
+                    Rule(master.master.filter_table, App, type, target, iswhitelisted, direction)
                 self.destroy()
         
     def check_rule(self, type, target):
@@ -223,28 +231,32 @@ class Rule_Creation_Window(ctk.CTkToplevel):
                     return False
 
 class Rule(Container):
-    def __init__(self, master, App, type, target, iswhitelisted, padx = None, pady = None):
+    def __init__(self, master, App, type, target, iswhitelisted, direction, padx = None, pady = None):
         super().__init__(master, App, isCentered=False, color=App.frame_color, placeself = False)
 
         self.grid_columnconfigure(0, weight=1, uniform="uniform")
         self.grid_columnconfigure(1, weight=1, uniform="uniform")
         self.grid_columnconfigure(2, weight=1, uniform="uniform")
+        self.grid_columnconfigure(3, weight=1, uniform="uniform")
 
-        self.instantiate_components(App, type, target, iswhitelisted, padx, pady)
+        self.instantiate_components(App, type, target, iswhitelisted, direction, padx, pady)
         self.pack(fill = "x", pady = App.uniform_padding_y)
     
-    def instantiate_components(self, App, type, target, iswhitelisted, padx, pady):
+    def instantiate_components(self, App, type, target, iswhitelisted, direction, padx, pady):
         self.title = ctk.CTkLabel(self, text=target)
         self.title.grid(row=0, column = 0, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.whitelisted = ctk.CTkLabel(self, text=iswhitelisted)
         self.whitelisted.grid(row=0, column = 1, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
 
-        self.delete_rule_button = ctk.CTkButton(self, text="Remove Rule", command=lambda: self.remove_rule(App, type, target, iswhitelisted))
+        self.direction = ctk.CTkLabel(self, text=direction)
+        self.direction.grid(row=0, column = 2, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.delete_rule_button = ctk.CTkButton(self, text="Remove Rule", command=lambda: self.remove_rule(App, type, target, iswhitelisted, direction))
         self.delete_rule_button.grid(row = 0, column = 3, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
 
-    def remove_rule(self, App, type, target, iswhitelisted):
-        App.data_manager.remove_rule(type, target, iswhitelisted, App.cur, App.conn)
+    def remove_rule(self, App, type, target, iswhitelisted, direction):
+        App.data_manager.remove_rule(type, target, iswhitelisted, direction, App.cur, App.conn)
         self.destroy()
 
 
@@ -260,7 +272,7 @@ class Filter_Table(Container):
     def load_rules(self, App, type):
         rules = App.data_manager.fetch_rules(App.cur, type)
         for rule in rules:
-            rule = Rule(self, App, rule[1], rule[0], rule[2])
+            rule = Rule(self, App, rule[1], rule[0], rule[2], rule[3])
             
         
 

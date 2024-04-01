@@ -22,7 +22,8 @@ class Data_Manager():
                     name VARCHAR(255) NOT NULL,
                     type VARCHAR(16) NOT NULL,
                     whitelisttype BOOL NOT NULL,
-                    PRIMARY KEY (name, type)
+                    direction BOOL NOT NULL,
+                    PRIMARY KEY (name, type, direction)
         )
         """)
         connection.commit()
@@ -73,23 +74,23 @@ class Data_Manager():
         file.truncate()
         file.close
 
-    def remove_rule(type, target, iswhitelisted, cur, connection):
-        print("Removing Rule" + type + " " + target + " " + iswhitelisted)
+    def remove_rule(type, target, iswhitelisted, direction, cur, connection):
+        print("Removing Rule" + type + " " + target + " " + iswhitelisted + " " + direction)
         cur.execute("""
-            DELETE FROM whitelists WHERE name=? AND type=? AND whitelisttype=?           
-            """, (target, type, iswhitelisted))
+            DELETE FROM whitelists WHERE name=? AND type=? AND whitelisttype=?  AND direction=?          
+            """, (target, type, iswhitelisted, direction))
         connection.commit()
-        print("Rule " + type + " " + target + " " + iswhitelisted+" removed")
+        print("Rule removed")
         
 
-    def add_rule(type, target, iswhitelisted, cur, connection):
-        print("Adding Rule" + type + " " + target + " " + iswhitelisted)
+    def add_rule(type, target, iswhitelisted, direction, cur, connection):
+        print("Adding Rule" + type + " " + target + " " + iswhitelisted + " " + direction)
         try:
             cur.execute("""
-                INSERT INTO whitelists (name, type, whitelisttype) VALUES (?, ?, ?)           
-                """, (target, type, iswhitelisted))
+                INSERT INTO whitelists (name, type, whitelisttype, direction) VALUES (?, ?, ?, ?)           
+                """, (target, type, iswhitelisted, direction))
             connection.commit()
-            print("Rule " + type + " " + target + " " + iswhitelisted+" Added")
+            print("Rule Added")
             return("Added")
         except Exception:
             sql.IntegrityError()

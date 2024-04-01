@@ -1,5 +1,4 @@
-from Frames.custom_components import Container, Scrolable_Container, Custom_Frame, Sidebar_Button, Filter_Container, Sidebar
-import customtkinter as ctk
+from Frames.custom_components import Container, Custom_Frame, Filter_Container, Sidebar
 
 class Filter_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):

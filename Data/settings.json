@@ -3,10 +3,10 @@
     "theme": "green",
     "appearance mode": "Dark",
     "application name": "Packet Filter",
-    "geometry": "634x368",
-    "fullscreen": "0",
+    "geometry": "1470x920",
+    "fullscreen": "1",
     "bypass login": "False",
     "enable filtering": "True",
     "enable machine learning": "False",
-    "machine learning priority": "Low"
+    "machine learning priority": "high"
 }

@@ -13,14 +13,17 @@ class Application(ctk.CTk):
         self.default_user, self.default_pass = "user", "pass"
         #define what happend on appplication close
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
-        #Read Settings
-        self.settings = Data_Manager.read_settings()
-        #Set Settings
-        self.set_settings(self.settings)
+        
         #Check if first time running
         if self.is_first_time_running() is True:
             self.initiate_database(self.default_user, self.default_pass)
+            self.set_default_settings()
             self.create_marker_file()
+
+        #Read Settings
+        self.settings = self.data_manager.read_settings()
+        #Set Settings
+        self.set_settings(self.settings)
 
         #Initialise GUI components
         self.frame_list = self.initiate_frames()
@@ -31,6 +34,16 @@ class Application(ctk.CTk):
         else:
             self.raise_frame("Login_Frame")
     
+    def set_default_settings(self):
+        self.data_manager.update_setting("widget scaling", 1.0)
+        self.data_manager.update_setting("theme", "green")
+        self.data_manager.update_setting("appearance mode", "Dark")
+        self.data_manager.update_setting("fullscreen", "1")
+        self.data_manager.update_setting("bypass login", "False")
+        self.data_manager.update_setting("enable filtering", "True")
+        self.data_manager.update_setting("enable machine learning", "True")
+        self.data_manager.update_setting("machine learning priority", "low")
+
     def set_settings(self, settings):
         self.geometry(settings["geometry"])
         self.attributes("-fullscreen", settings["fullscreen"])

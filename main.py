@@ -45,6 +45,7 @@ class Application(ctk.CTk):
         self.data_manager.update_setting("machine learning priority", "low")
 
     def set_settings(self, settings):
+        #self.minsize("659x332") Broken
         self.geometry(settings["geometry"])
         self.attributes("-fullscreen", settings["fullscreen"])
         self.title(settings["application name"])

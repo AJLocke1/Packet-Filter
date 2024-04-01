@@ -232,7 +232,13 @@ class Rule_Creation_Window(ctk.CTkToplevel):
                     return True
                 else:
                     return False
-
+            case "Application":
+                try:
+                    target = str(target)
+                    return True
+                except ValueError:
+                    return False
+                
 class Rule(Container):
     def __init__(self, master, App, type, target, iswhitelisted, direction, padx = None, pady = None):
         super().__init__(master, App, isCentered=False, color=App.frame_color, placeself = False)

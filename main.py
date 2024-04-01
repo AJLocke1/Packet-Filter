@@ -39,6 +39,7 @@ class Application(ctk.CTk):
         self.widget_scaling_value = settings["widget scaling"]
         self.enable_ML_string = settings["enable machine learning"]
         self.enable_filter_string = settings["enable filtering"]
+        self.machine_learning_priority = settings["machine learning priority"]
         try:
             ctk.set_widget_scaling(self.widget_scaling_value)
         except Exception as e:

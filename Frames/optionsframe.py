@@ -33,7 +33,7 @@ class Options_Frame(Custom_Frame):
 
         #the options for the filter subcontainer
         self.enable_machine_learning_container = Options_Container(self.filter_option_container, App, row=0, column=0, title="Enable Machine Learning", description="Toggle whether a machine learning alogrithm will be used alongside user created rules for filtering")
-        self.set_machine_learning_priority_container = Options_Container(self.filter_option_container, App, row = 1, column = 0, title="Set Machine Learning Priority", description="Set whether the machine learning algorithm will take priority over the user created rules")
+        self.set_machine_learning_priority_container = Options_Container(self.filter_option_container, App, row = 1, column = 0, title="Set Machine Learning Priority", description="Set whether the machine learning algorithm will take priority over the user created rules. High means the machine learnings classification will overide the rules classification. Low means both the rules and machine learnings classifiaction will have to accept the packet.")
         self.disable_filter_container = Options_Container(self.filter_option_container, App,  row = 2, column=0, title="Enable Filtering", description="Enable all packet filtering functionality. On by default. Dont't turn off unless necessary")
 
         #Create the sidebar
@@ -48,6 +48,7 @@ class Options_Frame(Custom_Frame):
         self.populate_allow_bypass_login_container(App, self.allow_bypass_login_container)
 
         self.populate_enable_machine_learning_container(App, self.enable_machine_learning_container)
+        self.populate_set_machine_learning_priority_container(App, self.set_machine_learning_priority_container)
         self.populate_disable_filter_container(App, self.disable_filter_container)
 
     def populate_change_theme_option_container(self, App, container):
@@ -139,8 +140,14 @@ class Options_Frame(Custom_Frame):
         App.data_manager.update_setting("enable machine learning", value)
 
     def populate_set_machine_learning_priority_container(self, App, container):
-        pass
+        self.machine_learning_priority_dropdown_value = ctk.StringVar(value = App.machine_learning_priority)
+        self.machine_learning_priority_dropdown = ctk.CTkOptionMenu(container, values=["low", "high"], command=lambda value: self.change_machine_learning_priority(App), variable=self.machine_learning_priority_dropdown_value)
+        self.machine_learning_priority_dropdown.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
         
+    def change_machine_learning_priority(self, App):
+        value = self.machine_learning_priority_dropdown_value.get()
+        App.data_manager.update_setting("machine learning priority", value)
+
 
     def populate_disable_filter_container(self, App, container):
         self.disable_filter_label = ctk.CTkLabel(container, text="Disable")

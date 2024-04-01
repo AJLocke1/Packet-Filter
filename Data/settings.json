@@ -8,5 +8,5 @@
     "bypass login": "False",
     "enable filtering": "True",
     "enable machine learning": "False",
-    "machine learning priorit": "Low"
+    "machine learning priority": "Low"
 }

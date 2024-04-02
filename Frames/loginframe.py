@@ -9,7 +9,7 @@ class Login_Frame(Custom_Frame):
         self.container = Container(self, App, isCentered=True)
 
     def populate_containers(self, App):
-        self.label = ctk.CTkLabel(self.container, text="Login System")
+        self.label = ctk.CTkLabel(self.container, text="Login")
         self.label.grid(pady=12, padx=10, row=0, column=0)
 
         self.userEntry = ctk.CTkEntry(self.container, placeholder_text="Username")

@@ -314,7 +314,7 @@ class Options_Container(Container):
         self.seperator.grid(row=1, column=0, columnspan = 100, sticky ="w")
 
         self.description = ctk.CTkLabel(self, text=description, anchor = "w", justify = "left")
-        self.description.grid(row=3, column = 0, sticky="w", columnspan = master.grid_size()[0], padx=[5,5], pady = [5,5])
+        self.description.grid(row=3, column = 0, sticky="we", columnspan = master.grid_size()[0], padx=[5,5], pady = [5,5])
         self.description.bind('<Configure>', lambda event: self.update_wraplength(master))
 
     def update_wraplength(self, master):

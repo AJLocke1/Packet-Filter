@@ -12,6 +12,7 @@ class Options_Frame(Custom_Frame):
 
     def initialise_containers(self, App):
         self.main_container = Scrolable_Container(self, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=1, column=1)
+        self.grid_columnconfigure(0, weight = 1)
 
         #the subcontainers of the main container
         self.user_option_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="User")

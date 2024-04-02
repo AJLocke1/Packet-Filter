@@ -153,7 +153,7 @@ class Filter_Head(Container):
         self.add_rule_button.grid(row=0, column = 1, sticky="e", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.label2 = ctk.CTkLabel(self, text=filter_description)
-        self.label2.grid(row=1, column = 0, sticky="w", columnspan = 2, padx=[5,5], pady = [5,5])
+        self.label2.grid(row=1, column = 0, sticky="we", columnspan = 2, padx=[5,5], pady = [5,5])
         self.label2.bind('<Configure>', lambda event: self.update_wraplength())
 
     def add_rule(self, App, filter_name):
@@ -314,7 +314,7 @@ class Options_Container(Container):
         self.seperator.grid(row=1, column=0, columnspan = 100, sticky ="w")
 
         self.description = ctk.CTkLabel(self, text=description, anchor = "w", justify = "left")
-        self.description.grid(row=3, column = 0, sticky="w", columnspan = 100, padx=[5,5], pady = [5,5])
+        self.description.grid(row=3, column = 0, sticky="w", columnspan = master.grid_size()[0], padx=[5,5], pady = [5,5])
         self.description.bind('<Configure>', lambda event: self.update_wraplength(master))
 
     def update_wraplength(self, master):

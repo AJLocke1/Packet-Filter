@@ -303,18 +303,18 @@ class Options_Container(Container):
         self.description = description
         self.row_offset = 3
         master.grid_columnconfigure(0, weight=1)
-        self.instantiate_components(master, App, self.title, self.description)
+        self.grid_columnconfigure(1, weight = 1)
     
     def instantiate_components(self, master, App, title, description):
         self.title = ctk.CTkLabel(self, text=title, font=("", 20))
-        self.title.grid(row=0, column = 0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w", columnspan=100)
+        self.title.grid(row=0, column = 0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w", columnspan=self.grid_size()[0])
 
         self.seperator_image = ctk.CTkImage(light_image=Image.open("Data/Images/seperator.png"),dark_image=Image.open("Data/Images/seperatorLight.png"), size=(250,10))
         self.seperator = ctk.CTkLabel(self, text="", image=self.seperator_image)
-        self.seperator.grid(row=1, column=0, columnspan = 100, sticky ="w")
+        self.seperator.grid(row=1, column=0, columnspan = self.grid_size()[0], sticky ="w")
 
         self.description = ctk.CTkLabel(self, text=description, anchor = "w", justify = "left")
-        self.description.grid(row=3, column = 0, sticky="we", columnspan = master.grid_size()[0], padx=[5,5], pady = [5,5])
+        self.description.grid(row=2, column = 0, sticky="we", columnspan = self.grid_size()[0], padx=[5,5], pady = [5,5])
         self.description.bind('<Configure>', lambda event: self.update_wraplength(master))
 
     def update_wraplength(self, master):

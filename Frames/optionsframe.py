@@ -55,7 +55,9 @@ class Options_Frame(Custom_Frame):
     def populate_change_theme_option_container(self, App, container):
         self.theme_dropdown_value = ctk.StringVar(value = App.current_theme_name)
         self.theme_dropdown = ctk.CTkOptionMenu(container, values=[f.split(".", 1)[0] for f in listdir("Data/Themes/") if isfile(join("Data/Themes/", f))], command=lambda value: self.change_theme(App), variable=self.theme_dropdown_value)
-        self.theme_dropdown.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.theme_dropdown.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
+
+        container.instantiate_components(container.master, App, container.title, container.description)
 
     def change_theme(self, App):
         value = self.theme_dropdown_value.get()
@@ -64,11 +66,13 @@ class Options_Frame(Custom_Frame):
 
     def populate_change_appearance_option_container(self, App, container):
         self.dark_label = ctk.CTkLabel(container, text="Dark Mode")
-        self.dark_label.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+        self.dark_label.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
         self.appearance_mode_switch_value = ctk.StringVar(value = App.appearance_mode_string)
         self.appearance_mode_switch = ctk.CTkSwitch(container, text="Light Mode", command= lambda: self.toggle_appearance_mode(App), variable=self.appearance_mode_switch_value, onvalue="Light", offvalue="Dark")
-        self.appearance_mode_switch.grid(row=container.row_offset+1, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+        self.appearance_mode_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        container.instantiate_components(container.master, App, container.title, container.description)
 
     def toggle_appearance_mode(self, App):
         value = self.appearance_mode_switch_value.get()
@@ -78,7 +82,9 @@ class Options_Frame(Custom_Frame):
     def populate_change_widget_scaling_container(self, App, container):
         self.widget_scale_dropdown_value = ctk.StringVar(value = App.widget_scaling_value)
         self.widget_scale_dropdown = ctk.CTkOptionMenu(container, values=["25","50","65","75","85","100","115","125","150"], command=lambda value: self.change_scale(App), variable=self.widget_scale_dropdown_value)
-        self.widget_scale_dropdown.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+        self.widget_scale_dropdown.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        container.instantiate_components(container.master, App, container.title, container.description)
     
     def change_scale(self, App):
         value = int((self.widget_scale_dropdown_value.get()))/100
@@ -87,20 +93,22 @@ class Options_Frame(Custom_Frame):
 
     def populate_change_user_container(self, App, container):
         self.userEntry = ctk.CTkEntry(container, placeholder_text="Username")
-        self.userEntry.grid(pady=12, padx=10, row=container.row_offset+1, column=0)
+        self.userEntry.grid(pady=12, padx=10, row=container.row_offset, column=0, sticky = "w")
 
         self.passEntry = ctk.CTkEntry(container, placeholder_text="Password", show="*")
-        self.passEntry.grid(pady=12, padx=10, row=container.row_offset+2, column=0) 
+        self.passEntry.grid(pady=12, padx=10, row=container.row_offset+1, column=0, sticky ="w") 
 
         self.passConfirmationEntry = ctk.CTkEntry(container, placeholder_text="Re enter Password", show="*")
-        self.passConfirmationEntry.grid(pady=12, padx=10, row=container.row_offset+3, column=0) 
+        self.passConfirmationEntry.grid(pady=12, padx=10, row=container.row_offset+2, column=0, sticky = "w") 
 
         self.change_user_info_label = ctk.CTkLabel(container, text="")
-        self.change_user_info_label.grid(pady=6, padx=10, row=container.row_offset+4, column=0)
+        self.change_user_info_label.grid(pady=6, padx=10, row=container.row_offset+3, column=0, sticky = "w")
         self.change_user_info_label.grid_remove()
 
         self.loginButton = ctk.CTkButton(container, text="Change", command=lambda : self.change_user_details(App, self.userEntry.get(), self.passEntry.get(), self.passConfirmationEntry.get()))
-        self.loginButton.grid(pady=12, padx=10, row=container.row_offset+5, column=0)
+        self.loginButton.grid(pady=12, padx=10, row=container.row_offset+5, column=0, sticky = "w")
+
+        container.instantiate_components(container.master, App, container.title, container.description)
 
     def change_user_details(self, App, username, password, passsword_confirmation):
         if password == passsword_confirmation:
@@ -118,11 +126,13 @@ class Options_Frame(Custom_Frame):
 
     def populate_allow_bypass_login_container(self, App, container):
         self.deny_bypass_label = ctk.CTkLabel(container, text="Deny")
-        self.deny_bypass_label.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+        self.deny_bypass_label.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
         self.bypass_login_switch_value = ctk.StringVar(value = App.bypass_login_string)
         self.bypass_login_switch = ctk.CTkSwitch(container, text="Allow", command= lambda: self.toggle_bypass_login(App), variable=self.bypass_login_switch_value, onvalue="True", offvalue="False")
-        self.bypass_login_switch.grid(row=container.row_offset+1, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+        self.bypass_login_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        container.instantiate_components(container.master, App, container.title, container.description)
 
     def toggle_bypass_login(self, App):
         value = self.bypass_login_switch_value.get()
@@ -130,11 +140,13 @@ class Options_Frame(Custom_Frame):
 
     def populate_enable_machine_learning_container(self, App, container):
         self.disable_ML_label = ctk.CTkLabel(container, text="Disable")
-        self.disable_ML_label.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+        self.disable_ML_label.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
         self.enable_ML_switch_value = ctk.StringVar(value = App.enable_ML_string)
         self.enable_ML_switch = ctk.CTkSwitch(container, text="Enable", command= lambda: self.toggle_ML(App), variable=self.enable_ML_switch_value, onvalue="True", offvalue="False")
-        self.enable_ML_switch.grid(row=container.row_offset+1, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+        self.enable_ML_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        container.instantiate_components(container.master, App, container.title, container.description)
 
     def toggle_ML(self, App):
         value = self.enable_ML_switch_value.get()
@@ -143,7 +155,9 @@ class Options_Frame(Custom_Frame):
     def populate_set_machine_learning_priority_container(self, App, container):
         self.machine_learning_priority_dropdown_value = ctk.StringVar(value = App.machine_learning_priority)
         self.machine_learning_priority_dropdown = ctk.CTkOptionMenu(container, values=["low", "high"], command=lambda value: self.change_machine_learning_priority(App), variable=self.machine_learning_priority_dropdown_value)
-        self.machine_learning_priority_dropdown.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+        self.machine_learning_priority_dropdown.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        container.instantiate_components(container.master, App, container.title, container.description)
         
     def change_machine_learning_priority(self, App):
         value = self.machine_learning_priority_dropdown_value.get()
@@ -152,11 +166,13 @@ class Options_Frame(Custom_Frame):
 
     def populate_disable_filter_container(self, App, container):
         self.disable_filter_label = ctk.CTkLabel(container, text="Disable")
-        self.disable_filter_label.grid(row=container.row_offset+1, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+        self.disable_filter_label.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
         self.enable_filter_switch_value = ctk.StringVar(value = App.enable_filter_string)
         self.enable_filter_switch = ctk.CTkSwitch(container, text="Enable", command= lambda: self.toggle_filter(App), variable=self.enable_filter_switch_value, onvalue="True", offvalue="False")
-        self.enable_filter_switch.grid(row=container.row_offset+1, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+        self.enable_filter_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        container.instantiate_components(container.master, App, container.title, container.description)
 
     def toggle_filter(self, App):
         value = self.enable_filter_switch_value.get()

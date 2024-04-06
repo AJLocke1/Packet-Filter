@@ -3,12 +3,15 @@ import subprocess
 import scapy
 from netfilterqueue import NetfilterQueue
 
+
 class Packet_Manager():
     def __init__(self, App):
         self.blacklisted_ip_addresses = []
         self.blacklisted_port_numbers = []
         self.blacklisted_protocols = []
         self.blacklisted_Applications = []
+
+        self.load_whitelists()
 
     def initiatePacketCapture(self):
         try:
@@ -117,8 +120,12 @@ class Packet_Manager():
         
         self.nfqueue.queue.put(str(mock_packet))
 
-    def load_whitelists(self):
-        App.da
+    def load_whitelists(self, App):
+        self.blacklisted_ip_addresses = App.data_manager.fetch_whitelists("Address")
+        self.blacklisted_port_numbers = App.data_manager.fetch_whitelists("Port")
+        self.blacklisted_protocols = App.data_manager.fetch_whitelists("Protocol")
+        self.blacklisted_Applications = App.data_manager.fetch_whitelists("Application")
+        
 
     
         

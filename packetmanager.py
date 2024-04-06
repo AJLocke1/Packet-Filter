@@ -3,15 +3,16 @@ import subprocess
 import scapy
 from netfilterqueue import NetfilterQueue
 
-
 class Packet_Manager():
     def __init__(self, App):
         self.blacklisted_ip_addresses = []
         self.blacklisted_port_numbers = []
         self.blacklisted_protocols = []
-        self.blacklisted_Applications = []
+        self.blacklisted_applications = []
 
-        self.load_whitelists()
+        self.load_whitelists(App)
+
+        print(self.blacklisted_applications)
 
     def initiatePacketCapture(self):
         try:
@@ -42,7 +43,16 @@ class Packet_Manager():
             packet.accept()
 
     def is_blocked_by_whitelists(self, packet_data):
+        if packet_data["ip_scr"] in self.blacklisted_ip_addresses:
+            return True
+        if packet_data["tcp_sport"] or packet_data["udp_sport"] in self.blacklisted_ports:
+            return True
+        if packet_data["l4_protocol"] in self.blacklisted_protocols:
+            return True
+        if packet_data["l7_protocol"] in self.blacklisted_applications:
+            return True
         return False
+
     
     def is_blocked_by_rules(self, packet_data):
         return False
@@ -51,63 +61,67 @@ class Packet_Manager():
         return False
     
     def get_packet_infomation(self, packet):
-        packet_info = []
-        #Get Layer 2 Infomation
+        packet_info = {}
+        # Get Layer 2 Information
         if packet.haslayer("Ether"):
             ethernet_layer = packet["Ether"]
-            packet_info.append(ethernet_layer.src)
-            packet_info.append(ethernet_layer.dst)
-            packet_info.append(ethernet_layer.type)
+            packet_info['eth_src'] = ethernet_layer.src
+            packet_info['eth_dst'] = ethernet_layer.dst
+            packet_info['eth_type'] = ethernet_layer.type
 
-            if ["Dot1Q"] in ethernet_layer:
+            if "Dot1Q" in ethernet_layer:
                 vlan_info = ethernet_layer["Dot1Q"]
-                packet_info.append(vlan_info.vlan)
-                packet_info.append(vlan_info.prio)
-                packet_info.append(vlan_info.dei)
+                packet_info['vlan'] = vlan_info.vlan
+                packet_info['vlan_prio'] = vlan_info.prio
+                packet_info['vlan_dei'] = vlan_info.dei
 
-        #Get Layer 3 Infomation
+        # Get Layer 3 Information
         if packet.haslayer('IP'):
             ip_layer = packet['IP']
-            packet_info.append(ip_layer.version)
-            packet_info.append(ip_layer.src)
-            packet_info.append(ip_layer.dst)
-            packet_info.append(ip_layer.proto)
-            packet_info.append(ip_layer.ihl)
-            packet_info.append(ip_layer.len)
-            packet_info.append(ip_layer.ttl)
-            packet_info.append(ip_layer.tos)  # Differentiated Services Code Point (DSCP)
-            packet_info.append(ip_layer.id)
-            packet_info.append(ip_layer.flags)
-            packet_info.append(ip_layer.frag)
+            packet_info['ip_version'] = ip_layer.version
+            packet_info['ip_src'] = ip_layer.src
+            packet_info['ip_dst'] = ip_layer.dst
+            packet_info['ip_proto'] = ip_layer.proto
+            packet_info['ip_ihl'] = ip_layer.ihl
+            packet_info['ip_len'] = ip_layer.len
+            packet_info['ip_ttl'] = ip_layer.ttl
+            packet_info['ip_tos'] = ip_layer.tos  # Differentiated Services Code Point (DSCP)
+            packet_info['ip_id'] = ip_layer.id
+            packet_info['ip_flags'] = ip_layer.flags
+            packet_info['ip_frag'] = ip_layer.frag
 
-            #Get layer 4 infomation
+            packet_info['l4_protocol'] = tcp_layer
+
+            # Get Layer 4 Information
             if ip_layer.proto == 6:  # TCP protocol
                 tcp_layer = packet['TCP']
-                packet_info.append(tcp_layer.sport)
-                packet_info.append(tcp_layer.dport)
-                packet_info.append(tcp_layer.seq)
-                packet_info.append(tcp_layer.ack)
-                packet_info.append(tcp_layer.dataofs)
-                packet_info.append(tcp_layer.flags)
-                packet_info.append(tcp_layer.window)
-                packet_info.append(tcp_layer.chksum)
-                packet_info.append(tcp_layer.urgptr)
+                packet_info['tcp_sport'] = tcp_layer.sport
+                packet_info['tcp_dport'] = tcp_layer.dport
+                packet_info['tcp_seq'] = tcp_layer.seq
+                packet_info['tcp_ack'] = tcp_layer.ack
+                packet_info['tcp_dataofs'] = tcp_layer.dataofs
+                packet_info['tcp_flags'] = tcp_layer.flags
+                packet_info['tcp_window'] = tcp_layer.window
+                packet_info['tcp_chksum'] = tcp_layer.chksum
+                packet_info['tcp_urgptr'] = tcp_layer.urgptr
 
             elif ip_layer.proto == 17:  # UDP protocol
                 udp_layer = packet['UDP']
-                packet_info.append(udp_layer.sport)
-                packet_info.append(udp_layer.dport)
-                packet_info.append(udp_layer.len)
-                packet_info.append(udp_layer.chksum)
+                packet_info['udp_sport'] = udp_layer.sport
+                packet_info['udp_dport'] = udp_layer.dport
+                packet_info['udp_len'] = udp_layer.len
+                packet_info['udp_chksum'] = udp_layer.chksum
 
             elif ip_layer.proto == 1:  # ICMP protocol
                 icmp_layer = packet['ICMP']
-                packet_info.append(icmp_layer.type)
-                packet_info.append(icmp_layer.code)
-                packet_info.append(icmp_layer.chksum)
-                packet_info.append(icmp_layer.id)
-                packet_info.append(icmp_layer.seq)
-                
+                packet_info['icmp_type'] = icmp_layer.type
+                packet_info['icmp_code'] = icmp_layer.code
+                packet_info['icmp_chksum'] = icmp_layer.chksum
+                packet_info['icmp_id'] = icmp_layer.id
+                packet_info['icmp_seq'] = icmp_layer.seq
+
+        packet_info['l7_protocol'] = packet.payload.guess_payload_class()
+        
         return packet_info
 
     def test_mock_packet(self, protocol, s_ip, d_ip, s_port, d_port):
@@ -124,8 +138,7 @@ class Packet_Manager():
         self.blacklisted_ip_addresses = App.data_manager.fetch_whitelists("Address")
         self.blacklisted_port_numbers = App.data_manager.fetch_whitelists("Port")
         self.blacklisted_protocols = App.data_manager.fetch_whitelists("Protocol")
-        self.blacklisted_Applications = App.data_manager.fetch_whitelists("Application")
+        self.blacklisted_applications = App.data_manager.fetch_whitelists("Application")
         
-
     
         

@@ -74,28 +74,28 @@ class Data_Manager():
         file.truncate()
         file.close
 
-    def remove_rule(type, target, iswhitelisted, direction, cur, connection):
-        print("Removing Rule" + type + " " + target + " " + iswhitelisted + " " + direction)
+    def remove_whitelist(type, target, iswhitelisted, direction, cur, connection):
+        print("Removing Whitelist" + type + " " + target + " " + iswhitelisted + " " + direction)
         cur.execute("""
             DELETE FROM whitelists WHERE name=? AND type=? AND whitelisttype=?  AND direction=?          
             """, (target, type, iswhitelisted, direction))
         connection.commit()
-        print("Rule removed")
+        print("Whitelist removed")
         
 
-    def add_rule(type, target, iswhitelisted, direction, cur, connection):
-        print("Adding Rule" + type + " " + target + " " + iswhitelisted + " " + direction)
+    def add_whitelist(type, target, iswhitelisted, direction, cur, connection):
+        print("Adding Whitelist" + type + " " + target + " " + iswhitelisted + " " + direction)
         try:
             cur.execute("""
                 INSERT INTO whitelists (name, type, whitelisttype, direction) VALUES (?, ?, ?, ?)           
                 """, (target, type, iswhitelisted, direction))
             connection.commit()
-            print("Rule Added")
+            print("Whitelist Added")
             return("Added")
         except Exception:
             sql.IntegrityError()
-            return("Unique Rule is Required")
+            return("Unique Whitelist is Required")
         
-    def fetch_rules(cur, type):
+    def fetch_whitelists(cur, type):
         cur.execute("SELECT * FROM whitelists WHERE type IS ?", (type,))
         return cur.fetchall()

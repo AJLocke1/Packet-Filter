@@ -1,7 +1,7 @@
 import os
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
-from Frames import filterframe, loginframe, signupframe, optionsframe, logframe
+from Frames import whitelistframe, loginframe, signupframe, optionsframe, infoframe, ruleframe
 from datamanager import Data_Manager
 
 class Application(ctk.CTk):
@@ -30,7 +30,7 @@ class Application(ctk.CTk):
         self.stack_frames(self.frame_list)
         self.populate_navbars(self.frame_list)
         if self.settings["bypass login"] == "True":
-            self.raise_frame("Filter_Frame")
+            self.raise_frame("Whitelist_Frame")
         else:
             self.raise_frame("Login_Frame")
     
@@ -92,10 +92,11 @@ class Application(ctk.CTk):
     def initiate_frames(self):
         self.login_frame = loginframe.Login_Frame(self, has_navbar=False)
         self.signup_frame = signupframe.Signup_Frame(self, has_navbar=False)
-        self.filter_frame = filterframe.Filter_Frame(self,has_navbar=True, navbar_name = "Filters")
-        self.log_frame = logframe.Log_Frame(self, has_navbar=True, navbar_name="Statistics")
+        self.whitelist_frame = whitelistframe.Whitelist_Frame(self,has_navbar=True, navbar_name = "Whitelists")
+        self.rule_frame = ruleframe.Rule_Frame(self, has_navbar=True, navbar_name="Rules")
+        self.info_frame = infoframe.Info_Frame(self, has_navbar=True, navbar_name="Information")
         self.options_frame = optionsframe.Options_Frame(self, has_navbar=True, navbar_name = "Options")
-        return[self.login_frame, self.signup_frame, self.filter_frame, self.log_frame, self.options_frame]
+        return[self.login_frame, self.signup_frame, self.whitelist_frame, self.rule_frame, self.options_frame, self.info_frame]
     
     def populate_navbars(self, frame_list):
         for frame in frame_list:
@@ -107,6 +108,7 @@ class Application(ctk.CTk):
             frame.place(relx=0.5, rely=0.5, anchor="center" ,relwidth = 1, relheight = 1)
 
     def raise_frame(self, frame_string):
+        print(frame_string)
         for frame in self.frame_list:
             if frame.__class__.__name__ == frame_string:
                 frame.tkraise()

@@ -31,7 +31,7 @@ class Login_Frame(Custom_Frame):
             storedpass = fetched[0][0]
             if App.data_manager.encryptPassword(password) == storedpass:
                 #change frame
-                App.raise_frame("Filter_Frame")
+                App.raise_frame("Whitelist_Frame")
                 self.errorLabel.configure(text="")
                 self.errorLabel.grid_remove()
             else:

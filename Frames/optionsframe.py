@@ -22,11 +22,12 @@ class Options_Frame(Custom_Frame):
         self.UI_option_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="UI")
         self.UI_option_container.grid_columnconfigure(0, weight = 1)
 
+        self.subcontainers = [self.UI_option_container, self.user_option_container, self.filter_option_container]
+
         #The options for the UI subcontainer
         self.change_theme_option_container = Options_Container(self.UI_option_container, App, row = 0, column = 0, title="Change Theme", description="Change the look of the application.")
         self.change_appearance_option_container = Options_Container(self.UI_option_container, App, row = 1, column = 0, title="Change Appearance Mode", description="Select light or dark mode.")
         self.change_wiget_scaling_container = Options_Container(self.UI_option_container, App, row = 2, column = 0, title="Change UI component scale", description="Increase or decreasee the size of all UI components. Note large values may not work well with small windows")
-        self.subcontainers = [self.UI_option_container, self.user_option_container, self.filter_option_container]
 
         #The options for the user subcontainer
         self.change_user_container = Options_Container(self.user_option_container, App, row = 0, column = 0, title="Change User Credentials", description="Change the user credentials to acccess the application, ensure to make note of the username and password chosen as there is no way to restore the infomation if forgoten")

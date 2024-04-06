@@ -3,12 +3,15 @@ import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from Frames import whitelistframe, loginframe, signupframe, optionsframe, infoframe, ruleframe
 from datamanager import Data_Manager
+#from packetmanager import Packet_Manager
 
 class Application(ctk.CTk):
     def __init__(self):
         super().__init__()
         #load extra functionality
         self.data_manager = Data_Manager
+        #self.packet_manager = Packet_Manager(self)
+
         self.conn, self.cur = self.data_manager.connectToDatabase()
         self.default_user, self.default_pass = "user", "pass"
         #define what happend on appplication close

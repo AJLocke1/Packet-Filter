@@ -3,7 +3,13 @@ import subprocess
 import scapy
 from netfilterqueue import NetfilterQueue
 
-class PacketManager():
+class Packet_Manager():
+    def __init__(self, App):
+        self.blacklisted_ip_addresses = []
+        self.blacklisted_port_numbers = []
+        self.blacklisted_protocols = []
+        self.blacklisted_Applications = []
+
     def initiatePacketCapture(self):
         try:
             # Enable packet forwarding
@@ -25,13 +31,16 @@ class PacketManager():
 
     def process_packet(self, packet):
         packet_data = self.get_packet_infomation(packet)
-
-        if self.is_blocked_by_rules(packet_data) is False:
+        if self.is_blocked_by_whitelists(packet_data) is False:
             packet.accept()
-        
         if self.is_blocked_by_machine_learning is False:
             packet.accept()
+        if self.is_blocked_by_rules is False:
+            packet.accept()
 
+    def is_blocked_by_whitelists(self, packet_data):
+        return False
+    
     def is_blocked_by_rules(self, packet_data):
         return False
     
@@ -107,6 +116,9 @@ class PacketManager():
             mock_packet = scapy.IP(src=s_ip, dst=d_ip) / scapy.ICMP(sport=s_port, dport=d_port)
         
         self.nfqueue.queue.put(str(mock_packet))
+
+    def load_whitelists(self):
+        App.da
 
     
         

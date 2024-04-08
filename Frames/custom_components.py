@@ -144,7 +144,7 @@ class Whitelist_Head(Container):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
-        self.rule_creation_window = None
+        self.whitelist_creation_window = None
 
         self.label = ctk.CTkLabel(self, text=name)
         self.label.grid(row=0, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
@@ -193,14 +193,14 @@ class Whitelist_Creation_Window(ctk.CTkToplevel):
         self.direction = ctk.CTkSwitch(self, text="Incoming", variable=self.direction_value, onvalue="Incoming", offvalue="Outgoing")
         self.direction.grid(row =2, column = 2, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
-        self.enter_whitelist = ctk.CTkButton(self, text = "Enter Whitelist", command=lambda: self.add_rule(master, App, self.type, self.Entry.get(), self.is_whitlisted.get(), self.direction.get()))
+        self.enter_whitelist = ctk.CTkButton(self, text = "Enter Whitelist", command=lambda: self.add_whitelist(master, App, self.type, self.Entry.get(), self.is_whitlisted.get(), self.direction.get()))
         self.enter_whitelist.grid(row=2, column=3, padx=App.uniform_padding_x, pady=App.uniform_padding_y, columnspan =3, sticky="ew")
 
-    def add_rule(self, master, App, type, target, iswhitelisted, direction):
+    def add_whitelist(self, master, App, type, target, iswhitelisted, direction):
         is_valid = self.check_whitelist(type, target)
         if is_valid is True:
             if (CTkMessagebox(title="Add Whitelist?", message= "Are you sure you want to "+iswhitelisted+" The "+type+" "+target+" "+direction, option_1="No", option_2="yes")).get() == "yes":
-                Added = App.data_manager.add_rule(type, target, iswhitelisted, direction, App.cur, App.conn)
+                Added = App.data_manager.add_whitelist(type, target, iswhitelisted, direction, App.cur, App.conn)
                 if Added == "Added":
                     Whitelist(master.master.whitelist_table, App, type, target, iswhitelisted, direction)
                 self.destroy()
@@ -264,7 +264,7 @@ class Whitelist(Container):
         self.delete_whitelist_button = ctk.CTkButton(self, text="Remove Rule", command=lambda: self.remove_whitelist(App, type, target, iswhitelisted, direction))
         self.delete_whitelist_button.grid(row = 0, column = 3, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
 
-    def remove_rule(self, App, type, target, iswhitelisted, direction):
+    def remove_whitelist(self, App, type, target, iswhitelisted, direction):
         App.data_manager.remove_whitelist(type, target, iswhitelisted, direction, App.cur, App.conn)
         self.destroy()
 

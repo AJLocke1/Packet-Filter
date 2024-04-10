@@ -330,7 +330,7 @@ class Info_Pannel(Container):
         self.grid_columnconfigure(1, weight = 1)
         self.instantiate_components(master, App, title, body)
 
-    def instantiate_componenets(self, master, App, title, body):
+    def instantiate_components(self, master, App, title, body):
         self.title = ctk.CTkLabel(self, text=title, font=("", 20))
         self.title.grid(row=0, column = 0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w", columnspan=self.grid_size()[0])
 

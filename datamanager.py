@@ -1,6 +1,7 @@
 import sqlite3 as sql
 import hashlib as hl
 import json
+from datetime import datetime
 
 class Data_Manager():
     def connectToDatabase():
@@ -99,3 +100,8 @@ class Data_Manager():
     def fetch_whitelists(cur, type):
         cur.execute("SELECT * FROM whitelists WHERE type IS ?", (type,))
         return cur.fetchall()
+    
+    def append_to_or_create_log(rule_string):
+        log_path = datetime.today().strftime("%Y-%m-%d")
+        with open(log_path, "a+") as log_file:
+            log_file.write(datetime.today().strftime("%H:%M:%S") + rule_string)

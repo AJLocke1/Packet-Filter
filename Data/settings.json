@@ -8,5 +8,7 @@
     "bypass login": "False",
     "enable filtering": "True",
     "enable machine learning": "True",
-    "machine learning priority": "low"
+    "machine learning priority": "low",
+    "enable logs": "True",
+    "log auto delete interval": "Never"
 }

@@ -21,6 +21,7 @@ class Application(ctk.CTk):
         if self.is_first_time_running() is True:
             self.initiate_database(self.default_user, self.default_pass)
             self.set_default_settings()
+            self.create_logs_folder()
             self.create_marker_file()
 
         #Read Settings
@@ -46,6 +47,8 @@ class Application(ctk.CTk):
         self.data_manager.update_setting("enable filtering", "True")
         self.data_manager.update_setting("enable machine learning", "True")
         self.data_manager.update_setting("machine learning priority", "low")
+        self.data_manager.update_setting("enable logs", "True")
+        self.data_manager.update_setting("log auto delete interval", "2 Weeks")
 
     def set_settings(self, settings):
         #self.minsize("659x332") Broken
@@ -57,6 +60,8 @@ class Application(ctk.CTk):
         self.enable_ML_string = settings["enable machine learning"]
         self.enable_filter_string = settings["enable filtering"]
         self.machine_learning_priority = settings["machine learning priority"]
+        self.enable_logs_string = settings["enable logs"]
+        self.log_auto_delete_interval = settings["log auto delete interval"]
         try:
             ctk.set_widget_scaling(self.widget_scaling_value)
         except Exception as e:
@@ -111,7 +116,6 @@ class Application(ctk.CTk):
             frame.place(relx=0.5, rely=0.5, anchor="center" ,relwidth = 1, relheight = 1)
 
     def raise_frame(self, frame_string):
-        print(frame_string)
         for frame in self.frame_list:
             if frame.__class__.__name__ == frame_string:
                 frame.tkraise()
@@ -123,6 +127,9 @@ class Application(ctk.CTk):
             return False  # Application has been run before
         else:
             return True
+        
+    def create_logs_folder(self):
+        os.makedirs("Logs")
     
     def create_marker_file(self):
         marker_path = "Data/marker_file.txt"

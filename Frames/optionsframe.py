@@ -19,10 +19,12 @@ class Options_Frame(Custom_Frame):
         self.user_option_container.grid_columnconfigure(0, weight = 1)
         self.filter_option_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="Filter")
         self.filter_option_container.grid_columnconfigure(0, weight = 1)
+        self.log_option_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="Logs")
+        self.log_option_container.grid_columnconfigure(0, weight = 1)
         self.UI_option_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="UI")
         self.UI_option_container.grid_columnconfigure(0, weight = 1)
-
-        self.subcontainers = [self.UI_option_container, self.user_option_container, self.filter_option_container]
+        
+        self.subcontainers = [self.UI_option_container, self.user_option_container, self.filter_option_container, self.log_option_container]
 
         #The options for the UI subcontainer
         self.change_theme_option_container = Options_Container(self.UI_option_container, App, row = 0, column = 0, title="Change Theme", description="Change the look of the application.")
@@ -38,6 +40,10 @@ class Options_Frame(Custom_Frame):
         self.set_machine_learning_priority_container = Options_Container(self.filter_option_container, App, row = 1, column = 0, title="Set Machine Learning Priority", description="Set whether the machine learning algorithm will take priority over the user created rules. High means the machine learnings classification will overide the rules classification. Low means both the rules and machine learnings classifiaction will have to accept the packet.")
         self.disable_filter_container = Options_Container(self.filter_option_container, App,  row = 2, column=0, title="Enable Filtering", description="Enable all packet filtering functionality. On by default. Dont't turn off unless necessary")
 
+        #the options for the log subcontainer
+        self.enable_logs_container = Options_Container(self.log_option_container, App, row=0, column =0, title="Enable Logs", description="Enable whether the application will keep track of any packets it filters alongside the rules that filtered them")
+        self.set_log_auto_delete_container = Options_Container(self.log_option_container, App, row=1, column=0, title="Logs Auto Delete", description="set the time needed before a log file deletes itself")
+
         #Create the sidebar
         self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Options", subcontainers=self.subcontainers, loadedcontainer=self.UI_option_container)
 
@@ -52,6 +58,9 @@ class Options_Frame(Custom_Frame):
         self.populate_enable_machine_learning_container(App, self.enable_machine_learning_container)
         self.populate_set_machine_learning_priority_container(App, self.set_machine_learning_priority_container)
         self.populate_disable_filter_container(App, self.disable_filter_container)
+
+        self.populate_enable_logs_container(App, self.enable_logs_container)
+        self.populate_set_log_auto_delete_container(App, self.set_log_auto_delete_container)
 
     def populate_change_theme_option_container(self, App, container):
         self.theme_dropdown_value = ctk.StringVar(value = App.current_theme_name)
@@ -178,3 +187,28 @@ class Options_Frame(Custom_Frame):
     def toggle_filter(self, App):
         value = self.enable_filter_switch_value.get()
         App.data_manager.update_setting("enable filtering", value)
+
+    def populate_enable_logs_container(self, App, container):
+        self.disable_logs_label = ctk.CTkLabel(container, text="Disable")
+        self.disable_logs_label.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        self.enable_logs_switch_value = ctk.StringVar(value = App.enable_logs_string)
+        self.enable_logs_switch = ctk.CTkSwitch(container, text="Enable", command= lambda: self.toggle_logs(App), variable=self.enable_logs_switch_value, onvalue="True", offvalue="False")
+        self.enable_logs_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        container.instantiate_components(container.master, App, container.title, container.description)
+
+    def toggle_logs(self, App):
+        value = self.enable_logs_switch_value.get()
+        App.data_manager.update_setting("enable logs", value)
+    
+    def populate_set_log_auto_delete_container(self, App, container):
+        self.log_auto_delete_dropdown_value = ctk.StringVar(value = App.log_auto_delete_interval)
+        self.log_auto_delete_dropdown = ctk.CTkOptionMenu(container, values=["1 Day", "5 Days", "1 Week", "2 Weeks", "1 Month", "3 Months", "6 Months", "1 Year", "Never"], command=lambda value: self.change_log_auto_delete_time(App), variable=self.log_auto_delete_dropdown_value)
+        self.log_auto_delete_dropdown.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        container.instantiate_components(container.master, App, container.title, container.description)
+        
+    def change_log_auto_delete_time(self, App):
+        value = self.log_auto_delete_dropdown_value.get()
+        App.data_manager.update_setting("log auto delete interval", value)

@@ -30,8 +30,6 @@ class Info_Frame(Custom_Frame):
         self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Information", subcontainers=self.subcontainers, loadedcontainer=self.information_container)
 
     def populate_containers(self, App):
-        self.info_label = ctk.CTkLabel(self.information_container, text="Information")
-        self.info_label.grid(row=0, column=0)
 
         self.log_title = ctk.CTkLabel(self.log_container, text="Select A Log", font=("", 20))
         self.log_title.grid(row=0, column = 0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w", columnspan=self.grid_size()[0])

@@ -10,5 +10,5 @@
     "enable machine learning": "True",
     "machine learning priority": "low",
     "enable logs": "True",
-    "log auto delete interval": "Never"
+    "log auto delete interval": "1 Month"
 }

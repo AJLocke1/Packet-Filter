@@ -3,6 +3,7 @@ import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from Frames import whitelistframe, loginframe, signupframe, optionsframe, infoframe, ruleframe
 from datamanager import Data_Manager
+import time
 #from packetmanager import Packet_Manager
 
 class Application(ctk.CTk):
@@ -28,6 +29,7 @@ class Application(ctk.CTk):
         self.settings = self.data_manager.read_settings()
         #Set Settings
         self.set_settings(self.settings)
+        self.refresh_logs(self.settings["log auto delete interval"])
 
         #Initialise GUI components
         self.frame_list = self.initiate_frames()
@@ -140,6 +142,21 @@ class Application(ctk.CTk):
         self.data_manager.createDatabase(self.conn, self.cur)
         self.data_manager.insertUser(self.conn, self.cur, default_user, default_pass)
 
+    def refresh_logs(self, deletion_interval):
+        log_directory = os.fsencode("Logs")
+        current_time = time.time()
+
+        for file in os.listdir(log_directory):
+            filepath = "Logs/"+os.fsdecode(file)
+            time_created = os.path.getctime(filepath)
+            time_difference = current_time - time_created
+
+            string_time_created = time.ctime(time_created)
+            string_time_difference = time.ctime(time_difference)
+            print(string_time_created, string_time_difference)
+
+        self.after(3600000, self.refresh_logs)
+
     def on_closing(self):
        if (CTkMessagebox(title="Quit", message="Do you want to quit?, packet filtering will be disabled", option_1="No", option_2="yes")).get() == "yes":
            self.data_manager.update_setting("geometry", str(self.winfo_width())+"x"+str(self.winfo_height()))
@@ -149,3 +166,4 @@ class Application(ctk.CTk):
 if __name__ == "__main__" :
     app = Application()
     app.mainloop()
+    

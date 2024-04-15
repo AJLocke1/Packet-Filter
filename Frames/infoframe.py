@@ -1,6 +1,7 @@
-from Frames.custom_components import Container, Custom_Frame, Scrolable_Container, Sidebar, Info_Pannel
+from Frames.custom_components import Container, Custom_Frame, Scrolable_Container, Sidebar, Info_Pannel, Log
 import customtkinter as ctk
 from PIL import Image
+import os
 
 class Info_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):
@@ -43,3 +44,8 @@ class Info_Frame(Custom_Frame):
 
         self.log_seperator_2 = ctk.CTkLabel(self.log_container, text="", image=self.seperator_image)
         self.log_seperator_2.grid(row=4, column=0, sticky="w")
+
+        log_directory = os.fsencode("Logs")
+        for file in os.listdir(log_directory):
+                log_name = os.fsdecode(file)
+                self.log = Log(self.log_table, App, log_name, self.log_display)

@@ -345,6 +345,47 @@ class Info_Pannel(Container):
     def update_wraplength(self, master):
         self.body.update_idletasks()
         self.body.configure(wraplength=master.master.winfo_width() - 100)
+
+class Log(Container):
+    def __init__(self, master, App, log_name, log_display, padx = None, pady = None):
+        super().__init__(master, App, isCentered=False, color=App.frame_color, placeself = False)
+
+        self.grid_columnconfigure(0, weight=1, uniform="uniform")
+        self.grid_columnconfigure(1, weight=1, uniform="uniform")
+        self.grid_columnconfigure(2, weight=1, uniform="uniform")
+
+        self.instantiate_components(App, log_name, log_display, padx, pady)
+        self.pack(fill = "x", pady = App.uniform_padding_y)
+    
+    def instantiate_components(self, App, log_name, log_display, padx, pady):
+        self.title = ctk.CTkLabel(self, text=log_name)
+        self.title.grid(row=0, column = 0, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.display_log_button = ctk.CTkButton(self, text="Display Log", command=lambda: self.display_log(App, log_name, log_display))
+        self.display_log_button.grid(row = 0, column = 1, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.delete_log_button = ctk.CTkButton(self, text="Remove Log", command=lambda: self.remove_log(App, log_name))
+        self.delete_log_button.grid(row = 0, column = 2, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+
+    def remove_log(self, App, log_name):
+        App.data_manager.remove_log(log_name)
+        self.destroy()
+
+    def display_log(self, App, log_name, log_display):
+        for widget in log_display.winfo_children():
+            widget.destroy()
+            
+        data = self.get_log_data(log_name)
+
+        for entry in data:
+            self.entry = ctk.CTkLabel(log_display, text=entry)
+            self.entry.pack(fill = "x", pady = App.uniform_padding_y)
+
+    def get_log_data(self, log_name):
+        log_path = "Logs/"+log_name
+        with open(log_path, "r") as log_file:
+            return log_file.readlines()
+
         
 
 

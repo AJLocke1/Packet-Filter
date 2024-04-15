@@ -146,16 +146,34 @@ class Application(ctk.CTk):
         log_directory = os.fsencode("Logs")
         current_time = time.time()
 
-        for file in os.listdir(log_directory):
-            filepath = "Logs/"+os.fsdecode(file)
-            time_created = os.path.getctime(filepath)
-            time_difference = current_time - time_created
-
-            string_time_created = time.ctime(time_created)
-            string_time_difference = time.ctime(time_difference)
-            print(string_time_created, string_time_difference)
-
+        if deletion_interval != "Never":
+            deletion_interval_seconds = self.time_to_seconds(deletion_interval)
+            for file in os.listdir(log_directory):
+                filepath = "Logs/"+os.fsdecode(file)
+                time_created = os.path.getctime(filepath)
+                time_difference = current_time - time_created
+                if time_difference - deletion_interval_seconds > 0:
+                    os.remove(filepath)
         self.after(3600000, self.refresh_logs)
+    
+    def time_to_seconds(self, deletion_interval):
+        match deletion_interval:
+            case "1 Day":
+                return 86400
+            case "5 Days":
+                return 432000
+            case "1 Week":
+                return 604800
+            case "2 Weeks":
+                return 1.2096e+6
+            case "1 Month":
+                return 2.6298e+6
+            case "3 Months":
+                return 7.889399e+6
+            case "6 months":
+                return 1.57788e+7
+            case "1 Year":
+                return 3.15576e+7
 
     def on_closing(self):
        if (CTkMessagebox(title="Quit", message="Do you want to quit?, packet filtering will be disabled", option_1="No", option_2="yes")).get() == "yes":

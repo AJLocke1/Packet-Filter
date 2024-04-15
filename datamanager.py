@@ -1,6 +1,7 @@
 import sqlite3 as sql
 import hashlib as hl
 import json
+import os
 from datetime import datetime
 
 class Data_Manager():
@@ -105,3 +106,7 @@ class Data_Manager():
         log_path = datetime.today().strftime("%Y-%m-%d")
         with open(log_path, "a+") as log_file:
             log_file.write(datetime.today().strftime("%H:%M:%S") + rule_string)
+
+    def remove_log(log_name):
+        filepath = "Logs/"+os.fsdecode(log_name)
+        os.remove(filepath)

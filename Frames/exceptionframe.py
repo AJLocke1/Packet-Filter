@@ -1,7 +1,7 @@
 from Frames.custom_components import Container, Custom_Frame, Scrolable_Container
 import customtkinter as ctk
 
-class Rule_Frame(Custom_Frame):
+class Exception_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):
         super().__init__(App, has_navbar=has_navbar, navbar_name=navbar_name)
 
@@ -17,7 +17,7 @@ class Rule_Frame(Custom_Frame):
 
 
     def populate_containers(self, App):
-        self.label = ctk.CTkLabel(self.top_container, text="Rules")
+        self.label = ctk.CTkLabel(self.top_container, text="Exceptions")
         self.label.grid(row=0, column=0)
 
         self.label = ctk.CTkLabel(self.body_container, text="Content")

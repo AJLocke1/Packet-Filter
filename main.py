@@ -1,7 +1,7 @@
 import os
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
-from Frames import whitelistframe, loginframe, signupframe, optionsframe, infoframe, ruleframe
+from Frames import exceptionframe, whitelistframe, loginframe, signupframe, optionsframe, infoframe
 from datamanager import Data_Manager
 import time
 #from packetmanager import Packet_Manager
@@ -50,7 +50,9 @@ class Application(ctk.CTk):
         self.data_manager.update_setting("enable machine learning", "True")
         self.data_manager.update_setting("machine learning priority", "low")
         self.data_manager.update_setting("enable logs", "True")
-        self.data_manager.update_setting("log auto delete interval", "2 Weeks")
+        self.data_manager.update_setting("log auto delete interval", "Never")
+        self.data_manager.update_setting("enable killswitch", "False")
+        self.data_manager.update_setting("whitelist strictness", "Unstrict")
 
     def set_settings(self, settings):
         #self.minsize("659x332") Broken
@@ -64,6 +66,8 @@ class Application(ctk.CTk):
         self.machine_learning_priority = settings["machine learning priority"]
         self.enable_logs_string = settings["enable logs"]
         self.log_auto_delete_interval = settings["log auto delete interval"]
+        self.enable_killswitch_string = settings["enable killswitch"]
+        self.whitelist_strictness_string = settings["whitelist strictness"]
         try:
             ctk.set_widget_scaling(self.widget_scaling_value)
         except Exception as e:
@@ -103,7 +107,7 @@ class Application(ctk.CTk):
         self.login_frame = loginframe.Login_Frame(self, has_navbar=False)
         self.signup_frame = signupframe.Signup_Frame(self, has_navbar=False)
         self.whitelist_frame = whitelistframe.Whitelist_Frame(self,has_navbar=True, navbar_name = "Whitelists")
-        self.rule_frame = ruleframe.Rule_Frame(self, has_navbar=True, navbar_name="Rules")
+        self.rule_frame = exceptionframe.Exception_Frame(self, has_navbar=True, navbar_name="Exceptions")
         self.info_frame = infoframe.Info_Frame(self, has_navbar=True, navbar_name="Information")
         self.options_frame = optionsframe.Options_Frame(self, has_navbar=True, navbar_name = "Options")
         return[self.login_frame, self.signup_frame, self.whitelist_frame, self.rule_frame, self.options_frame, self.info_frame]

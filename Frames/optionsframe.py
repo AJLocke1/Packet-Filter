@@ -39,6 +39,8 @@ class Options_Frame(Custom_Frame):
         self.enable_machine_learning_container = Options_Container(self.filter_option_container, App, row=0, column=0, title="Enable Machine Learning", description="Toggle whether a machine learning alogrithm will be used alongside user created rules for filtering")
         self.set_machine_learning_priority_container = Options_Container(self.filter_option_container, App, row = 1, column = 0, title="Set Machine Learning Priority", description="Set whether the machine learning algorithm will take priority over the user created rules. High means the machine learnings classification will overide the rules classification. Low means both the rules and machine learnings classifiaction will have to accept the packet.")
         self.disable_filter_container = Options_Container(self.filter_option_container, App,  row = 2, column=0, title="Enable Filtering", description="Enable all packet filtering functionality. On by default. Dont't turn off unless necessary")
+        self.killswitch_container = Options_Container(self.filter_option_container, App, row =3, column = 0, title="Killswitch", description="Disable all packet flow in and out of the network.")
+        self.whitelist_strictness_container = Options_Container(self.filter_option_container, App, row=4, column= 0, title="Whitlist Strictness", description="Decide how strict the whitelists are. if turned on for traffic to be allowed through it must be whitelisted. Defualt behaviour allows for packets with types that have not been specified under any whitelist to still be allowed through.")
 
         #the options for the log subcontainer
         self.enable_logs_container = Options_Container(self.log_option_container, App, row=0, column =0, title="Enable Logs", description="Enable whether the application will keep track of any packets it filters alongside the rules that filtered them")
@@ -58,6 +60,8 @@ class Options_Frame(Custom_Frame):
         self.populate_enable_machine_learning_container(App, self.enable_machine_learning_container)
         self.populate_set_machine_learning_priority_container(App, self.set_machine_learning_priority_container)
         self.populate_disable_filter_container(App, self.disable_filter_container)
+        self.populate_killswitch_container(App, self.killswitch_container)
+        self.populate_whitelist_strictness_container(App, self.whitelist_strictness_container)
 
         self.populate_enable_logs_container(App, self.enable_logs_container)
         self.populate_set_log_auto_delete_container(App, self.set_log_auto_delete_container)
@@ -187,6 +191,34 @@ class Options_Frame(Custom_Frame):
     def toggle_filter(self, App):
         value = self.enable_filter_switch_value.get()
         App.data_manager.update_setting("enable filtering", value)
+
+    def populate_killswitch_container(self, App, container):
+        self.disable_killswitch_label = ctk.CTkLabel(container, text="Disable")
+        self.disable_killswitch_label.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        self.enable_killswitch_switch_value = ctk.StringVar(value = App.enable_killswitch_string)
+        self.enable_killswitch_switch = ctk.CTkSwitch(container, text = "Enable", command= lambda:self.toggle_killswitch(App), variable=self.enable_killswitch_switch_value, onvalue="True", offvalue="False")
+        self.enable_killswitch_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        container.instantiate_components(container.master, App, container.title, container.description)
+
+    def toggle_killswitch(self, App):
+        value = self.enable_killswitch_switch_value.get()
+        App.data_manager.update_setting("enable killswitch", value)
+
+    def populate_whitelist_strictness_container(self, App, container):
+        self.unstrict_strictness_label = ctk.CTkLabel(container, text="Normal")
+        self.unstrict_strictness_label.grid(row=container.row_offset, column=0  ,padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        self.strictness_switch_value = ctk.StringVar(value = App.whitelist_strictness_string)
+        self.strictness_switch = ctk.CTkSwitch(container, text = "Strict", command=lambda:self.toggle_strictness(App), variable=self.strictness_switch_value, onvalue="Strict", offvalue="Unstrict")
+        self.strictness_switch.grid(row = container.row_offset, column=1,  padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
+
+        container.instantiate_components(container.master, App, container.title, container.description)
+
+    def toggle_strictness(self, App):
+        value = self.strictness_switch_value.get()
+        App.data_manager.update_setting("whitelist strictness", value)
 
     def populate_enable_logs_container(self, App, container):
         self.disable_logs_label = ctk.CTkLabel(container, text="Disable")

@@ -3,12 +3,14 @@
     "theme": "green",
     "appearance mode": "Dark",
     "application name": "Packet Filter",
-    "geometry": "1470x920",
-    "fullscreen": "1",
+    "geometry": "1470x784",
+    "fullscreen": "0",
     "bypass login": "False",
     "enable filtering": "True",
     "enable machine learning": "True",
     "machine learning priority": "low",
     "enable logs": "True",
-    "log auto delete interval": "2 Weeks"
+    "log auto delete interval": "Never",
+    "enable killswitch": "False",
+    "whitelist strictness": "Unstrict"
 }

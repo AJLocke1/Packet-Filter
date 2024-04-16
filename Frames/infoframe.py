@@ -15,7 +15,9 @@ class Info_Frame(Custom_Frame):
         self.main_container.grid_columnconfigure(0, weight = 1)
 
         self.log_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="Logs")
-        self.log_container.grid_columnconfigure(0, weight = 2)
+        self.log_container.grid_columnconfigure(0, weight = 1)
+        self.log_container.grid_rowconfigure(5, weight=1)
+
         self.information_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="Information")
         self.information_container.grid_columnconfigure(0, weight = 1)
         
@@ -25,7 +27,7 @@ class Info_Frame(Custom_Frame):
         self.filter_info_pannel = Info_Pannel(self.information_container, App, column = 0, row = 1, title="FIltering Information", body = "Text")
 
         #Subcontainers for the log container
-        self.log_table = Scrolable_Container(self.log_container, App, isCentered=False, color=App.frame_color, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=2, column=0)
+        self.log_table = Scrolable_Container(self.log_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=2, column=0)
         self.log_display = Scrolable_Container(self.log_container, App, isCentered=False, color=App.frame_color, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=5, column=0)
 
         self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Information", subcontainers=self.subcontainers, loadedcontainer=self.information_container)

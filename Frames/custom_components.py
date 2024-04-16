@@ -207,7 +207,7 @@ class Whitelist_Creation_Window(ctk.CTkToplevel):
         
     def check_whitelist(self, type, target):
         match type:
-            case "Address":
+            case "IP Address":
                 IPv4_regex = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
                 IPv6_regex = "((([0-9a-fA-F]){1,4})\:){7}([0-9a-fA-F]){1,4}"
                 IPv4_regex = re.compile(IPv4_regex)
@@ -237,6 +237,13 @@ class Whitelist_Creation_Window(ctk.CTkToplevel):
                     target = str(target)
                     return True
                 except ValueError:
+                    return False
+            case "MAC Address":
+                MAC_Address_regex = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
+                MAC_Address_regex = re.compile(MAC_Address_regex)
+                if re.search(MAC_Address_regex, target):
+                    return True
+                else:
                     return False
                 
 class Whitelist(Container):
@@ -350,16 +357,14 @@ class Log(Container):
     def __init__(self, master, App, log_name, log_display, padx = None, pady = None):
         super().__init__(master, App, isCentered=False, color=App.frame_color, placeself = False)
 
-        self.grid_columnconfigure(0, weight=1, uniform="uniform")
-        self.grid_columnconfigure(1, weight=1, uniform="uniform")
-        self.grid_columnconfigure(2, weight=1, uniform="uniform")
+        self.grid_columnconfigure(0, weight=1)
 
         self.instantiate_components(App, log_name, log_display, padx, pady)
         self.pack(fill = "x", pady = App.uniform_padding_y)
     
     def instantiate_components(self, App, log_name, log_display, padx, pady):
         self.title = ctk.CTkLabel(self, text=log_name)
-        self.title.grid(row=0, column = 0, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.title.grid(row=0, column = 0, padx = App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
 
         self.display_log_button = ctk.CTkButton(self, text="Display Log", command=lambda: self.display_log(App, log_name, log_display))
         self.display_log_button.grid(row = 0, column = 1, padx = App.uniform_padding_x, pady=App.uniform_padding_y)

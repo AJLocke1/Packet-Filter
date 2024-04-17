@@ -2,6 +2,7 @@ from Frames.custom_components import Container, Custom_Frame, Scrolable_Containe
 import customtkinter as ctk
 from PIL import Image
 import os
+import re
 
 class Info_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):
@@ -25,7 +26,22 @@ class Info_Frame(Custom_Frame):
         self.subcontainers = [self.information_container, self.log_container]
 
         #Subcontainers for the information container
-        self.filter_info_pannel = Info_Pannel(self.information_container, App, column = 0, row = 1, title="Filtering Information", body = "Text")
+        self.filter_info_pannel_contents = """The packet filter operates using four main components to construct a ruleset:
+
+1. Whitelists:
+Whitelists define the default behavior for filtering packets based on their general characteristics. For instance, you can configure whitelists to block all packets arriving on port 22.
+
+2. Exceptions:
+Exceptions allow for specific conditions to overwrite the default behavior set by whitelists. For example, you can create exceptions to allow packets on port 22 only if they also match the MAC address of the user's laptop.
+
+3. Whitelist Strictness Values:
+These values determine the default behavior when a value is not specified in one of the whitelists. For instance, if a packet on port 80 is filtered but not specified to be whitelisted or blacklisted, the behavior depends on the whitelist strictness setting. If set to strict, it will be blocked; if set to unstrict, it will be allowed through.
+
+4. Machine Learning Algorithms:
+Machine learning algorithms complement user-defined rules and provide additional protection against oversights. You can configure these algorithms to operate at different priorities, ranging from low to high, or disable them entirely.
+        """
+
+        self.filter_info_pannel = Info_Pannel(self.information_container, App, column = 0, row = 1, title="How the Filter Works", body = self.filter_info_pannel_contents)
 
         #Subcontainers for the log container
         self.log_table = Scrolable_Container(self.log_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=2, column=0)

@@ -46,7 +46,7 @@ class Custom_Container():
                 self.grid(column=self.column, row=self.row, sticky=sticky, padx = padx, pady = pady)
 
             if self.max_width:
-                self.configure(width=self.max_width)
+                self.configure(width=max_width)
         else:
             pass
 
@@ -310,7 +310,6 @@ class Options_Container(Container):
         self.description = description
         self.row_offset = 3
         master.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight = 1)
     
     def instantiate_components(self, master, App, title, description):
         self.title = ctk.CTkLabel(self, text=title, font=("", 20))
@@ -323,6 +322,8 @@ class Options_Container(Container):
         self.description = ctk.CTkLabel(self, text=description, anchor = "w", justify = "left")
         self.description.grid(row=2, column = 0, sticky="we", columnspan = self.grid_size()[0], padx=[5,5], pady = [5,5])
         self.description.bind('<Configure>', lambda event: self.update_wraplength(master))
+
+        self.grid_columnconfigure(self.grid_size()[0]-1, weight = 1)
 
     def update_wraplength(self, master):
         self.description.update_idletasks()
@@ -383,8 +384,8 @@ class Log(Container):
         data = self.get_log_data(log_name)
 
         for entry in data:
-            self.entry = ctk.CTkLabel(log_display, text=entry)
-            self.entry.pack(fill = "x", pady = App.uniform_padding_y)
+            self.entry = ctk.CTkLabel(log_display, text=entry, anchor="w")
+            self.entry.pack(fill = "x", pady = App.uniform_padding_y, padx = App.uniform_padding_x)
 
     def get_log_data(self, log_name):
         log_path = "Logs/"+log_name

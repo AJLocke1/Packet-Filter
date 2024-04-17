@@ -1,9 +1,9 @@
 {
-    "widget scaling": 1.0,
-    "theme": "green",
+    "widget scaling": 1.15,
+    "theme": "dark-blue",
     "appearance mode": "Dark",
     "application name": "Packet Filter",
-    "geometry": "1470x710",
+    "geometry": "964x523",
     "fullscreen": "0",
     "bypass login": "False",
     "enable filtering": "True",
@@ -12,5 +12,9 @@
     "enable logs": "True",
     "log auto delete interval": "Never",
     "enable killswitch": "False",
-    "whitelist strictness": "Unstrict"
+    "IP whitelist strictness": "Unstrict",
+    "MAC whitelist strictness": "Unstrict",
+    "port whitelist strictness": "Unstrict",
+    "protocol whitelist strictness": "Unstrict",
+    "application whitelist strictness": "Unstrict"
 }

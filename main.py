@@ -1,11 +1,10 @@
 import os
 import customtkinter as ctk
+import tkinter as tk
 from CTkMessagebox import CTkMessagebox
 from Frames import exceptionframe, whitelistframe, loginframe, signupframe, optionsframe, infoframe
 from datamanager import Data_Manager
 import time
-from PIL import Image
-import tkinter as tk
 #from packetmanager import Packet_Manager
 
 class Application(ctk.CTk):
@@ -17,6 +16,7 @@ class Application(ctk.CTk):
 
         self.conn, self.cur = self.data_manager.connectToDatabase()
         self.default_user, self.default_pass = "user", "pass"
+        self.wm_iconphoto(True, tk.PhotoImage(file="Data/Images/firewalliconLight.png"))
         #define what happend on appplication close
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
         
@@ -54,7 +54,11 @@ class Application(ctk.CTk):
         self.data_manager.update_setting("enable logs", "True")
         self.data_manager.update_setting("log auto delete interval", "Never")
         self.data_manager.update_setting("enable killswitch", "False")
-        self.data_manager.update_setting("whitelist strictness", "Unstrict")
+        self.data_manager.update_setting("IP whitelist strictness", "Unstrict")
+        self.data_manager.update_setting("MAC whitelist strictness", "Unstrict")
+        self.data_manager.update_setting("port whitelist strictness", "Unstrict")
+        self.data_manager.update_setting("protocol whitelist strictness", "Unstrict")
+        self.data_manager.update_setting("application whitelist strictness", "Unstrict")
 
     def set_settings(self, settings):
         #self.minsize("659x332") Broken
@@ -69,7 +73,12 @@ class Application(ctk.CTk):
         self.enable_logs_string = settings["enable logs"]
         self.log_auto_delete_interval = settings["log auto delete interval"]
         self.enable_killswitch_string = settings["enable killswitch"]
-        self.whitelist_strictness_string = settings["whitelist strictness"]
+        self.IP_whitelist_strictness_string = settings["IP whitelist strictness"]
+        self.MAC_whitelist_strictness_string = settings["MAC whitelist strictness"]
+        self.port_whitelist_strictness_string = settings["port whitelist strictness"]
+        self.protocol_whitelist_strictness_string = settings["protocol whitelist strictness"]
+        self.application_whitelist_strictness_string = settings["application whitelist strictness"]
+
         try:
             ctk.set_widget_scaling(self.widget_scaling_value)
         except Exception as e:

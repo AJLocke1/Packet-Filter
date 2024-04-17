@@ -4,6 +4,8 @@ from CTkMessagebox import CTkMessagebox
 from Frames import exceptionframe, whitelistframe, loginframe, signupframe, optionsframe, infoframe
 from datamanager import Data_Manager
 import time
+from PIL import Image
+import tkinter as tk
 #from packetmanager import Packet_Manager
 
 class Application(ctk.CTk):

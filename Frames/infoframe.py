@@ -11,24 +11,25 @@ class Info_Frame(Custom_Frame):
         self.grid_columnconfigure(1, weight = 10)
 
     def initialise_containers(self, App):
-        self.main_container = Scrolable_Container(self, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=1, column=1)
+        self.main_container = Container(self, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=1, column=1)
         self.main_container.grid_columnconfigure(0, weight = 1)
+        self.main_container.grid_rowconfigure(0, weight=1)
 
-        self.log_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="Logs")
+        self.log_container = Scrolable_Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", row=0, column=0, name="Logs")
         self.log_container.grid_columnconfigure(0, weight = 1)
+        self.log_container.grid_rowconfigure(4, weight=1)
 
-        self.information_container = Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0, name="Information")
+        self.information_container = Scrolable_Container(self.main_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", row=0, column=0, name="Information")
         self.information_container.grid_columnconfigure(0, weight = 1)
         
         self.subcontainers = [self.information_container, self.log_container]
 
         #Subcontainers for the information container
-        self.filter_info_pannel = Info_Pannel(self.information_container, App, column = 0, row = 1, title="FIltering Information", body = "Text")
+        self.filter_info_pannel = Info_Pannel(self.information_container, App, column = 0, row = 1, title="Filtering Information", body = "Text")
 
         #Subcontainers for the log container
         self.log_table = Scrolable_Container(self.log_container, App, isCentered=False, color=App.frame_color_2, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=2, column=0)
-        self.log_display = Scrolable_Container(self.log_container, App, isCentered=False, color=App.frame_color, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=5, column=0)
-        self.log_display.bind('<Configure>', lambda event: self.update_height(App))
+        self.log_display = Container(self.log_container, App, isCentered=False, color=App.frame_color, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=5, column=0)
 
         self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Information", subcontainers=self.subcontainers, loadedcontainer=self.information_container)
 
@@ -52,13 +53,3 @@ class Info_Frame(Custom_Frame):
                 log_name = os.fsdecode(file)
                 self.log = Log(self.log_table, App, log_name, self.log_display)
     
-    def update_height(self, App):
-        other_widget_height = self.log_title.winfo_height() + self.log_seperator.winfo_height() + self.log_table.winfo_height() + self.log_title_2.winfo_height() + self.log_seperator_2.winfo_height() + (App.uniform_padding_y[0]*6)
-        self.log_display.update_idletasks()
-        self.log_display.configure(height=self.winfo_height() - (other_widget_height+220))
-
-        self.log_display.canvas.config(scrollregion=self.log_display.canvas.bbox("all"))
-
-        # Reconfigure the vertical scrollbar (if present)
-        if self.log_display.vscrollbar is not None:
-            self.log_display.vscrollbar.config(command=self.log_display.canvas.yview)

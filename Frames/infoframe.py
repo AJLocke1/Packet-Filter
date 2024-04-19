@@ -2,7 +2,6 @@ from Frames.custom_components import Container, Custom_Frame, Scrolable_Containe
 import customtkinter as ctk
 from PIL import Image
 import os
-import re
 
 class Info_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):

@@ -1,9 +1,17 @@
 from Frames.custom_components import Container, Custom_Frame, Scrolable_Container
 import customtkinter as ctk
+from PIL import Image
 
 class Exception_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):
+
+        self.title = "Create Exception"
+
+        self.exception_creation_window = None
+        self.image = ctk.CTkImage(light_image=Image.open("Data/Images/PlusSymbol.png"),dark_image=Image.open("Data/Images/PlusSymbolLight.png"))
+
         super().__init__(App, has_navbar=has_navbar, navbar_name=navbar_name)
+
 
     def initialise_containers(self, App):
         self.main_container = Container(self, App, isCentered=False, sticky="nsew", color=App.frame_color_2, padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=1, column=0)
@@ -17,8 +25,55 @@ class Exception_Frame(Custom_Frame):
 
 
     def populate_containers(self, App):
-        self.label = ctk.CTkLabel(self.top_container, text="Exceptions")
-        self.label.grid(row=0, column=0)
+        self.label = ctk.CTkLabel(self.top_container, text="Create Exceptions")
+        self.label.grid(row=0, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        self.label = ctk.CTkLabel(self.body_container, text="Content")
-        self.label.grid(row=0, column=0)
+        self.add_exception_button = ctk.CTkButton(self.top_container, text="", width=30, image=self.image, command = lambda: self.add_exception(App))
+        self.add_exception_button.grid(row=0, column = 1, sticky="e", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.label2 = ctk.CTkLabel(self.top_container, text="Create Exceptions. These have priority over whitelists.")
+        self.label2.grid(row=1, column = 0, sticky="we", columnspan = 2, padx=[5,5], pady = [5,5])
+        self.label2.bind('<Configure>', lambda event: self.update_wraplength(self))
+
+    def update_wraplength(self, master):
+        self.label2.update_idletasks()
+        self.label2.configure(wraplength=master.master.winfo_width() - 100)
+
+    def add_exception(self, App):
+        if self.exception_creation_window is None or not self.exception_creation_window.winfo_exists():
+            self.exception_creation_window = Exception_Creation_Window(self, App)  # create window if its None or destroyed
+        else:
+            self.exception_creation_window.focus() 
+
+class Exception_Creation_Window(ctk.CTkToplevel):
+    def __init__(self, master, App):
+        super().__init__(master)
+        self.target_condition = None
+        self.target_type = "Select Type"
+        self.allow_type = None
+        self.allow_condition = None
+        self.exception_direction = None 
+
+        self.label = ctk.CTkLabel(self, text="Create exception for")
+        self.label.grid(row = 0, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.target_type_value = ctk.StringVar(value = self.target_type)
+        self.target_type_dropdown = ctk.CTkOptionMenu(self, values = ["Port", "Protocol", "Application", "IP Address", "MAC Address"], variable = self.target_type_value)
+        self.target_type_dropdown.grid(row = 0, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.target_condition_entry = ctk.CTkEntry(self, placeholder_text="Enter condition")
+        self.target_condition_entry.grid(row = 0, column = 2, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.label_2 = ctk.CTkLabel(self, text = "when")
+        self.label_2.grid(row = 0, column = 3, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.allow_type_value = ctk.StringVar(value = self.allow_type)
+        self.allow_type_dropdown = ctk.CTkOptionMenu(self, values = ["Port", "Protocol", "Application", "IP Address", "MAC Address"], variable = self.allow_type_value)
+        self.allow_type_dropdown.grid(row = 0, column = 4, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.label_3 = ctk.CTkLabel(self, text = "is")
+        self.label_3.grid(row = 0, column = 5, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.allow_condition_entry = ctk.CTkEntry(self, placeholder_text="Enter condition")
+        self.allow_condition_entry.grid(row = 0, column = 6, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+

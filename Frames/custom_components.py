@@ -169,11 +169,12 @@ class Whitelist_Head(Container):
 class Whitelist_Creation_Window(ctk.CTkToplevel):
     def __init__(self, master, App, type):
         super().__init__(master)
+        self.title = "Create Whitelist"
         self.type = type
         self.is_whitlisted_string = None
         self.direction_string = None
 
-        self.label = ctk.CTkLabel(self, text="Create Rule")
+        self.label = ctk.CTkLabel(self, text="Create Whitelist")
         self.label.grid(row = 0, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, columnspan = 3, sticky="ew")
 
         self.Entry = ctk.CTkEntry(self, placeholder_text=type)
@@ -268,7 +269,7 @@ class Whitelist(Container):
         self.direction = ctk.CTkLabel(self, text=direction)
         self.direction.grid(row=0, column = 2, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
 
-        self.delete_whitelist_button = ctk.CTkButton(self, text="Remove Rule", command=lambda: self.remove_whitelist(App, type, target, iswhitelisted, direction))
+        self.delete_whitelist_button = ctk.CTkButton(self, text="Remove Whitelist", command=lambda: self.remove_whitelist(App, type, target, iswhitelisted, direction))
         self.delete_whitelist_button.grid(row = 0, column = 3, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
 
     def remove_whitelist(self, App, type, target, iswhitelisted, direction):
@@ -391,6 +392,8 @@ class Log(Container):
         log_path = "Logs/"+log_name
         with open(log_path, "r") as log_file:
             return log_file.readlines()
+        
+
 
         
 

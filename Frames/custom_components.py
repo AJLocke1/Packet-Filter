@@ -169,7 +169,8 @@ class Whitelist_Head(Container):
 class Whitelist_Creation_Window(ctk.CTkToplevel):
     def __init__(self, master, App, type):
         super().__init__(master)
-        self.title = "Create Whitelist"
+        self.title("Create Whitelist")
+
         self.type = type
         self.is_whitlisted_string = None
         self.direction_string = None
@@ -392,6 +393,62 @@ class Log(Container):
         log_path = "Logs/"+log_name
         with open(log_path, "r") as log_file:
             return log_file.readlines()
+        
+class Exception_Creation_Window(ctk.CTkToplevel):
+    def __init__(self, master, App):
+        super().__init__(master)
+        self.title("Create Exception")
+
+        self.target_condition = None
+        self.target_type = "Select Type"
+        self.allow_type = "Select Type"
+        self.allow_condition = None
+        self.exception_direction = "Direction"
+
+        self.label = ctk.CTkLabel(self, text="Direction")
+        self.label.grid(row = 0, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.direction_value = ctk.StringVar(value = self.exception_direction)
+        self.direction_dropdown = ctk.CTkOptionMenu(self, values = ["Incoming","Outgoing"], variable = self.direction_value)
+        self.direction_dropdown.grid(row = 0, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.label_2= ctk.CTkLabel(self, text="Target Type")
+        self.label_2.grid(row = 1, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.target_type_value = ctk.StringVar(value = self.target_type)
+        self.target_type_dropdown = ctk.CTkOptionMenu(self, values = ["Port", "Protocol", "Application", "IP Address", "MAC Address"], variable = self.target_type_value)
+        self.target_type_dropdown.grid(row = 1, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.label_3 = ctk.CTkLabel(self, text="Target Condition")
+        self.label_3.grid(row = 2, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.target_condition_entry = ctk.CTkEntry(self, placeholder_text="Enter condition")
+        self.target_condition_entry.grid(row = 2, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.label_4 = ctk.CTkLabel(self, text = "Allow Type")
+        self.label_4.grid(row = 3, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.allow_type_value = ctk.StringVar(value = self.allow_type)
+        self.allow_type_dropdown = ctk.CTkOptionMenu(self, values = ["Port", "Protocol", "Application", "IP Address", "MAC Address"], variable = self.allow_type_value)
+        self.allow_type_dropdown.grid(row = 3, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.label_5 = ctk.CTkLabel(self, text = "Allow Condition")
+        self.label_5.grid(row = 4, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.allow_condition_entry = ctk.CTkEntry(self, placeholder_text="Enter condition")
+        self.allow_condition_entry.grid(row = 4, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.enter_button = ctk.CTkButton(self, text="Add Exception", command=self.add_exception())
+        self.enter_button.grid(row=6, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, columnspan=2)
+
+        for row in range(0, self.grid_size()[1]):
+            print(row)
+            self.grid_rowconfigure(row, uniform="uniform")
+
+    def add_exception(self):
+        pass
+
+
         
 
 

@@ -1,11 +1,9 @@
-from Frames.custom_components import Container, Custom_Frame, Scrolable_Container
+from Frames.custom_components import Container, Custom_Frame, Scrolable_Container, Exception_Creation_Window
 import customtkinter as ctk
 from PIL import Image
 
 class Exception_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):
-
-        self.title = "Create Exception"
 
         self.exception_creation_window = None
         self.image = ctk.CTkImage(light_image=Image.open("Data/Images/PlusSymbol.png"),dark_image=Image.open("Data/Images/PlusSymbolLight.png"))
@@ -44,36 +42,3 @@ class Exception_Frame(Custom_Frame):
             self.exception_creation_window = Exception_Creation_Window(self, App)  # create window if its None or destroyed
         else:
             self.exception_creation_window.focus() 
-
-class Exception_Creation_Window(ctk.CTkToplevel):
-    def __init__(self, master, App):
-        super().__init__(master)
-        self.target_condition = None
-        self.target_type = "Select Type"
-        self.allow_type = None
-        self.allow_condition = None
-        self.exception_direction = None 
-
-        self.label = ctk.CTkLabel(self, text="Create exception for")
-        self.label.grid(row = 0, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
-
-        self.target_type_value = ctk.StringVar(value = self.target_type)
-        self.target_type_dropdown = ctk.CTkOptionMenu(self, values = ["Port", "Protocol", "Application", "IP Address", "MAC Address"], variable = self.target_type_value)
-        self.target_type_dropdown.grid(row = 0, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
-
-        self.target_condition_entry = ctk.CTkEntry(self, placeholder_text="Enter condition")
-        self.target_condition_entry.grid(row = 0, column = 2, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
-
-        self.label_2 = ctk.CTkLabel(self, text = "when")
-        self.label_2.grid(row = 0, column = 3, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
-
-        self.allow_type_value = ctk.StringVar(value = self.allow_type)
-        self.allow_type_dropdown = ctk.CTkOptionMenu(self, values = ["Port", "Protocol", "Application", "IP Address", "MAC Address"], variable = self.allow_type_value)
-        self.allow_type_dropdown.grid(row = 0, column = 4, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
-
-        self.label_3 = ctk.CTkLabel(self, text = "is")
-        self.label_3.grid(row = 0, column = 5, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
-
-        self.allow_condition_entry = ctk.CTkEntry(self, placeholder_text="Enter condition")
-        self.allow_condition_entry.grid(row = 0, column = 6, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
-

@@ -55,7 +55,7 @@ Machine learning algorithms complement user-defined rules and provide additional
         #Currently using a windows command for testing
         self.ip_display = Info_Pannel(self.network_container, App, title="IP Address", body=self.get_ip(), row=0, column = 0)
         self.subnet_display = Info_Pannel(self.network_container, App, title="Subnet Mask", body=self.get_subnet(), row=1, column = 0)
-        self.subnet_addresses_display = Info_Pannel(self.network_container, App, title="Subnet Addresses", body=self.get_subnet_addresses(self.ip_display.body.cget("text"), self.subnet_display.body.cget("text")), row=2, column = 0)
+        self.subnet_addresses_display = Info_Pannel(self.network_container, App, title="Subnet Addresses", body=self.get_first_and_last_subnet_addresses(self.ip_display.body.cget("text"), self.subnet_display.body.cget("text")), row=2, column = 0)
         self.scan_display = Container(self.network_container, App, isCentered=False, row=3, column=0, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
 
@@ -83,6 +83,11 @@ Machine learning algorithms complement user-defined rules and provide additional
 
         self.scan_display_title = ctk.CTkLabel(self.scan_display, text="Scan the IP Addresses To Locate Networkm Components", font=("", 20))
         self.scan_display_title.grid(row=0, column=0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w", columnspan=self.grid_size()[0])
+
+        self.scan_button = ctk.CTkButton(self.scan_display, text="Scan", command=lambda: self.scan_ip_range(self.get_subnet_hosts(self.ip_display.body.cget("text"), self.subnet_display.body.cget("text"))))
+        self.scan_button.grid(row=0, column=1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.display = Scrolable_Container(self.scan_display, App, isCentered=False, row=1, column=0, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
     def get_ip(self): #MAC and Linux Versions here for testing only
         try:
@@ -138,10 +143,26 @@ Machine learning algorithms complement user-defined rules and provide additional
             else:
                 print(output)
                 return None
+    
+    def get_subnet_hosts(self, ip, subnet):
+        return ipaddress.IPv4Network(ip + '/' + subnet, strict=False)
             
-    def get_subnet_addresses(self, ip, subnet):
-        network = ipaddress.IPv4Network(ip + '/' + subnet, strict=False)
+    def get_first_and_last_subnet_addresses(self, ip, subnet):
+        network = self.get_subnet_hosts(ip, subnet)
         subnet_addresses = str(next(network.hosts())) + " To " + str(next(reversed(list(network.hosts()))))
         return subnet_addresses
         
+    def scan_ip_range(self, hosts):
+        results = {}
+        nm = nmap.PortScanner()
+        for host in hosts:
+            print(host)
+            host_str = str(host)
+            result = nm.scan(hosts=host_str, arguments='-sV')
+            if host_str in result['scan']:
+                results[host_str] = result['scan'][host_str]
+
+
+
+
 

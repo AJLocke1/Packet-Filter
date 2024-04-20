@@ -63,7 +63,7 @@ Machine learning algorithms complement user-defined rules and provide additional
         self.log_seperator_2 = ctk.CTkLabel(self.log_container, text="", image=self.seperator_image)
         self.log_seperator_2.grid(row=4, column=0, sticky="w")
 
-        log_directory = os.fsencode("Logs")
+        log_directory = os.fsencode("Data/Logs")
         for file in os.listdir(log_directory):
                 log_name = os.fsdecode(file)
                 self.log = Log(self.log_table, App, log_name, self.log_display)

@@ -28,6 +28,17 @@ class Data_Manager():
                     PRIMARY KEY (name, type, direction)
         )
         """)
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS exceptions (
+                    targetcondition VARCHAR(255) NOT NULL,
+                    targettype VARCHAR(16) NOT NULL,
+                    allowcondition VARCHAR(255) NOT NULL,
+                    allowtype VARCHAR(16) NOT NULL,
+                    whitelisttype BOOL NOT NULL,
+                    direction BOOL NOT NULL,
+                    PRIMARY KEY(targetcondition, targettype, allowcondition, allowtype, direction)
+        )
+        """)
         connection.commit()
 
     def insertUser(connection, cur, username, password):
@@ -94,12 +105,35 @@ class Data_Manager():
             connection.commit()
             print("Whitelist Added")
             return("Added")
-        except Exception:
-            sql.IntegrityError()
-            return("Unique Whitelist is Required")
+        except sql.IntegrityError() as Exception:
+            return("Unique Whitelist is Required", Exception)
         
     def fetch_whitelists(cur, type):
         cur.execute("SELECT * FROM whitelists WHERE type IS ?", (type,))
+        return cur.fetchall()
+    
+    def remove_exception(whitelist_type, direction, target_type, target_condition, allow_type, allow_condition, cur, connection):
+        print("Removing Exception")
+        cur.execute("""
+            DELETE FROM exceptions WHERE targetcondition=? AND targettype=? AND allowcondition=? AND allowtype=? AND direction=? AND whitelisttype=?
+            """, (target_condition, target_type, allow_condition, allow_type, direction, whitelist_type))
+        connection.commit()
+        print("Exception removed")
+    
+    def add_exception(whitelist_type, direction, target_type, target_condition, allow_type, allow_condition, cur, connection):
+        print("Adding Exception")
+        try:
+            cur.execute("""
+                INSERT INTO exceptions(targetcondition, targettype, allowcondition, allowtype, whitelisttype, direction) VALUES (?, ?, ?, ?, ?, ?)
+                        """, (target_condition, target_type, allow_condition, allow_type, whitelist_type, direction))
+            connection.commit()
+            print("Excpetion Added")
+            return("Added")
+        except sql.IntegrityError() as Exception:
+            return("Unique Exception is Required", Exception)
+        
+    def fetch_exceptions(cur):
+        cur.execute("SELECT * FROM exceptions")
         return cur.fetchall()
     
     def append_to_or_create_log(rule_string):
@@ -108,5 +142,5 @@ class Data_Manager():
             log_file.write(datetime.today().strftime("%H:%M:%S") + rule_string)
 
     def remove_log(log_name):
-        filepath = "Logs/"+os.fsdecode(log_name)
+        filepath = "Data/Logs/"+os.fsdecode(log_name)
         os.remove(filepath)

@@ -3,6 +3,48 @@ from CTkMessagebox import CTkMessagebox
 from PIL import Image
 import re
 
+#___________________________reused functions_______________________________________________________________________
+def check_format(type, target):
+        match type:
+            case "IP Address":
+                IPv4_regex = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
+                IPv6_regex = "((([0-9a-fA-F]){1,4})\:){7}([0-9a-fA-F]){1,4}"
+                IPv4_regex = re.compile(IPv4_regex)
+                IPv6_regex = re.compile(IPv6_regex)
+                if (re.search(IPv4_regex, target)):
+                    return True
+                elif (re.search(IPv6_regex, target)):
+                    return True
+                else:
+                    return False
+            case "Port":
+                try:
+                    target = int(target)
+                    return True
+                except ValueError:
+                    return False
+            case "Protocol":
+                supported_protocols = ["TCP", "UDP", "ICMP", "SCTP", "DCCP", "GRE", "RSVP", "L2TP", "IGMP", "MPLS", "QUIC", "RTP", "SRTP", "LISP", "WireGuard"]
+                protocol_numbers = {"TCP": 6, "UDP": 17, "ICMP": 1, "SCTP": 132, "DCCP": 33, "GRE": 47, "RSVP": 46, "L2TP": 115, "IGMP": 2, "MPLS": 137, "QUIC": 17, "RTP": 103, "SRTP": 254, "LISP": 35, "WireGuard": 20}
+
+                if target in supported_protocols or target in protocol_numbers.values:
+                    return True
+                else:
+                    return False
+            case "Application":
+                try:
+                    target = str(target)
+                    return True
+                except ValueError:
+                    return False
+            case "MAC Address":
+                MAC_Address_regex = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
+                MAC_Address_regex = re.compile(MAC_Address_regex)
+                if re.search(MAC_Address_regex, target):
+                    return True
+                else:
+                    return False
+
 #_____CUSTOM_FRAME_________________________________________________________________________________
 class Custom_Frame(ctk.CTkFrame):
     def __init__(self, App, has_navbar, navbar_name = None):
@@ -199,57 +241,14 @@ class Whitelist_Creation_Window(ctk.CTkToplevel):
         self.enter_whitelist.grid(row=2, column=3, padx=App.uniform_padding_x, pady=App.uniform_padding_y, columnspan =3, sticky="ew")
 
     def add_whitelist(self, master, App, type, target, iswhitelisted, direction):
-        is_valid = self.check_whitelist(type, target)
-        if is_valid is True:
+        if check_format(type, target) is True:
             if (CTkMessagebox(title="Add Whitelist?", message= "Are you sure you want to "+iswhitelisted+" The "+type+" "+target+" "+direction, option_1="No", option_2="yes")).get() == "yes":
                 Added = App.data_manager.add_whitelist(type, target, iswhitelisted, direction, App.cur, App.conn)
                 if Added == "Added":
                     Whitelist(master.master.whitelist_table, App, type, target, iswhitelisted, direction)
                 self.destroy()
-        
-    def check_whitelist(self, type, target):
-        match type:
-            case "IP Address":
-                IPv4_regex = "^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
-                IPv6_regex = "((([0-9a-fA-F]){1,4})\:){7}([0-9a-fA-F]){1,4}"
-                IPv4_regex = re.compile(IPv4_regex)
-                IPv6_regex = re.compile(IPv6_regex)
-                if (re.search(IPv4_regex, target)):
-                    return True
-                elif (re.search(IPv6_regex, target)):
-                    return True
-                else:
-                    return False
-            case "Port":
-                try:
-                    target = int(target)
-                    return True
-                except ValueError:
-                    return False
-            case "Protocol":
-                supported_protocols = ["TCP", "UDP", "ICMP", "SCTP", "DCCP", "GRE", "RSVP", "L2TP", "IGMP", "MPLS", "QUIC", "RTP", "SRTP", "LISP", "WireGuard"]
-                protocol_numbers = {"TCP": 6, "UDP": 17, "ICMP": 1, "SCTP": 132, "DCCP": 33, "GRE": 47, "RSVP": 46, "L2TP": 115, "IGMP": 2, "MPLS": 137, "QUIC": 17, "RTP": 103, "SRTP": 254, "LISP": 35, "WireGuard": 20}
-
-                if target in supported_protocols or target in protocol_numbers.values:
-                    return True
-                else:
-                    return False
-            case "Application":
-                try:
-                    target = str(target)
-                    return True
-                except ValueError:
-                    return False
-            case "MAC Address":
-                MAC_Address_regex = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
-                MAC_Address_regex = re.compile(MAC_Address_regex)
-                if re.search(MAC_Address_regex, target):
-                    return True
-                else:
-                    return False
-                
 class Whitelist(Container):
-    def __init__(self, master, App, type, target, iswhitelisted, direction, padx = None, pady = None):
+    def __init__(self, master, App, type, target, iswhitelisted, direction):
         super().__init__(master, App, isCentered=False, color=App.frame_color, placeself = False)
 
         self.grid_columnconfigure(0, weight=1, uniform="uniform")
@@ -257,10 +256,10 @@ class Whitelist(Container):
         self.grid_columnconfigure(2, weight=1, uniform="uniform")
         self.grid_columnconfigure(3, weight=1, uniform="uniform")
 
-        self.instantiate_components(App, type, target, iswhitelisted, direction, padx, pady)
+        self.instantiate_components(App, type, target, iswhitelisted, direction)
         self.pack(fill = "x", pady = App.uniform_padding_y)
     
-    def instantiate_components(self, App, type, target, iswhitelisted, direction, padx, pady):
+    def instantiate_components(self, App, type, target, iswhitelisted, direction):
         self.title = ctk.CTkLabel(self, text=target)
         self.title.grid(row=0, column = 0, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
 
@@ -404,49 +403,105 @@ class Exception_Creation_Window(ctk.CTkToplevel):
         self.allow_type = "Select Type"
         self.allow_condition = None
         self.exception_direction = "Direction"
+        self.whitelist_type = "Select Type"
 
-        self.label = ctk.CTkLabel(self, text="Direction")
+        self.label = ctk.CTkLabel(self, text = "Whitelist Type")
         self.label.grid(row = 0, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.whitelist_type_value = ctk.StringVar(value = self.whitelist_type)
+        self.whitelist_type_dropdown = ctk.CTkOptionMenu(self, values = ["Whitelist","Blacklist"], variable = self.whitelist_type_value)
+        self.whitelist_type_dropdown.grid(row = 0, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.label_1 = ctk.CTkLabel(self, text="Direction")
+        self.label_1.grid(row = 1, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.direction_value = ctk.StringVar(value = self.exception_direction)
         self.direction_dropdown = ctk.CTkOptionMenu(self, values = ["Incoming","Outgoing"], variable = self.direction_value)
-        self.direction_dropdown.grid(row = 0, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.direction_dropdown.grid(row = 1, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.label_2= ctk.CTkLabel(self, text="Target Type")
-        self.label_2.grid(row = 1, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.label_2.grid(row = 2, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.target_type_value = ctk.StringVar(value = self.target_type)
         self.target_type_dropdown = ctk.CTkOptionMenu(self, values = ["Port", "Protocol", "Application", "IP Address", "MAC Address"], variable = self.target_type_value)
-        self.target_type_dropdown.grid(row = 1, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.target_type_dropdown.grid(row = 2, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.label_3 = ctk.CTkLabel(self, text="Target Condition")
-        self.label_3.grid(row = 2, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.label_3.grid(row = 3, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.target_condition_entry = ctk.CTkEntry(self, placeholder_text="Enter condition")
-        self.target_condition_entry.grid(row = 2, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.target_condition_entry.grid(row = 3, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.label_4 = ctk.CTkLabel(self, text = "Allow Type")
-        self.label_4.grid(row = 3, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.label_4.grid(row = 4, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.allow_type_value = ctk.StringVar(value = self.allow_type)
         self.allow_type_dropdown = ctk.CTkOptionMenu(self, values = ["Port", "Protocol", "Application", "IP Address", "MAC Address"], variable = self.allow_type_value)
-        self.allow_type_dropdown.grid(row = 3, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.allow_type_dropdown.grid(row = 4, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.label_5 = ctk.CTkLabel(self, text = "Allow Condition")
-        self.label_5.grid(row = 4, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.label_5.grid(row = 5, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.allow_condition_entry = ctk.CTkEntry(self, placeholder_text="Enter condition")
-        self.allow_condition_entry.grid(row = 4, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.allow_condition_entry.grid(row = 5, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
-        self.enter_button = ctk.CTkButton(self, text="Add Exception", command=self.add_exception())
-        self.enter_button.grid(row=6, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, columnspan=2)
+        self.enter_button = ctk.CTkButton(self, text="Add Exception", command=lambda: self.add_exception(master, App, self.whitelist_type_value.get(), self.direction_value.get(), self.target_type_value.get(), self.target_condition_entry.get(), self.allow_type_value.get(), self.allow_condition_entry.get()))
+        self.enter_button.grid(row=7, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, columnspan=2)
 
         for row in range(0, self.grid_size()[1]):
-            print(row)
             self.grid_rowconfigure(row, uniform="uniform")
 
-    def add_exception(self):
-        pass
+    def add_exception(self, master, App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition):
+        if check_format(target_type, target_condition) is True and check_format(allow_type, allow_condition) is True:
+            if (CTkMessagebox(title="Add Exception?", message= "Are you sure you want to add this exception?", option_1="No", option_2="yes")).get() == "yes":
+                Added = App.data_manager.add_exception(whitelist_type, direction, target_type, target_condition, allow_type, allow_condition, App.cur, App.conn)
+                if Added == "Added":
+                    Exception(master.body_container, App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition)
+                self.destroy()
+
+class Exception(Container):
+    def __init__(self, master, App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition):
+        super().__init__(master, App, isCentered=False, color=App.frame_color, placeself = False)
+
+        self.grid_columnconfigure(0, weight=1, uniform="uniform")
+        self.grid_columnconfigure(1, weight=1, uniform="uniform")
+        self.grid_columnconfigure(2, weight=1, uniform="uniform")
+        self.grid_columnconfigure(3, weight=1, uniform="uniform")
+        self.grid_columnconfigure(4, weight=1, uniform="uniform")
+        self.grid_columnconfigure(5, weight=1, uniform="uniform")
+        self.grid_columnconfigure(6, weight=1, uniform="uniform")
+
+        self.instantiate_components(App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition)
+        self.pack(fill = "x", pady = App.uniform_padding_y)
+
+    def instantiate_components(self, App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition):
+        self.target_type_label = ctk.CTkLabel(self, text=target_type)
+        self.target_type_label.grid(row=0, column = 0, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.target_condition_label = ctk.CTkLabel(self, text=target_condition)
+        self.target_condition_label.grid(row=0, column = 1, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.direction_label = ctk.CTkLabel(self, text=direction)
+        self.direction_label.grid(row=0, column = 2, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+        
+        self.whitelist_type_label = ctk.CTkLabel(self, text=whitelist_type)
+        self.whitelist_type_label.grid(row=0, column = 3, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.allow_type_label = ctk.CTkLabel(self, text=allow_type)
+        self.allow_type_label.grid(row=0, column = 4, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.allow_condition_label = ctk.CTkLabel(self, text=allow_condition)
+        self.allow_condition_label.grid(row=0, column = 5, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.remove_exception_button = ctk.CTkButton(self, text = "Remove Exception", command= lambda: self.remove_exception(App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition))
+        self.remove_exception_button.grid(row=0, column = 6, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+
+    def remove_exception(self, App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition):
+        App.data_manager.remove_exception(whitelist_type, direction, target_type, target_condition, allow_type, allow_condition, App.cur, App.conn)
+        self.destroy()
+
+        
+
 
 
         

@@ -146,7 +146,7 @@ class Application(ctk.CTk):
             return True
         
     def create_logs_folder(self):
-        os.makedirs("Logs")
+        os.makedirs("Data/Logs")
     
     def create_marker_file(self):
         marker_path = "Data/marker_file.txt"
@@ -158,13 +158,13 @@ class Application(ctk.CTk):
         self.data_manager.insertUser(self.conn, self.cur, default_user, default_pass)
 
     def refresh_logs(self, deletion_interval):
-        log_directory = os.fsencode("Logs")
+        log_directory = os.fsencode("Data/Logs")
         current_time = time.time()
 
         if deletion_interval != "Never":
             deletion_interval_seconds = self.time_to_seconds(deletion_interval)
             for file in os.listdir(log_directory):
-                filepath = "Logs/"+os.fsdecode(file)
+                filepath = "Data/Logs/"+os.fsdecode(file)
                 time_created = os.path.getctime(filepath)
                 time_difference = current_time - time_created
                 if time_difference - deletion_interval_seconds > 0:

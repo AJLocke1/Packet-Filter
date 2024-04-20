@@ -1,14 +1,13 @@
-from Frames.custom_components import Container, Custom_Frame, Scrolable_Container, Exception_Creation_Window
+from Frames.custom_components import Container, Custom_Frame, Scrolable_Container, Exception_Creation_Window, Exception
 import customtkinter as ctk
 from PIL import Image
 
 class Exception_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):
-
         self.exception_creation_window = None
         self.image = ctk.CTkImage(light_image=Image.open("Data/Images/PlusSymbol.png"),dark_image=Image.open("Data/Images/PlusSymbolLight.png"))
-
         super().__init__(App, has_navbar=has_navbar, navbar_name=navbar_name)
+        self.load_exceptions(App)
 
 
     def initialise_containers(self, App):
@@ -18,7 +17,7 @@ class Exception_Frame(Custom_Frame):
 
         self.top_container = Container(self.main_container, App, isCentered=False, sticky="nsew", color=App.frame_color, padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=0, column=0)
         self.top_container.grid_columnconfigure(0, weight = 1)
-        self.body_container = Scrolable_Container(self.main_container, App, isCentered=False, sticky="nsew", color=App.frame_color, padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=1, column=0)
+        self.body_container = Scrolable_Container(self.main_container, App, isCentered=False, sticky="nsew", color=App.frame_color_2, padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=1, column=0)
         self.body_container.grid_columnconfigure(0, weight = 1)
 
 
@@ -42,3 +41,8 @@ class Exception_Frame(Custom_Frame):
             self.exception_creation_window = Exception_Creation_Window(self, App)  # create window if its None or destroyed
         else:
             self.exception_creation_window.focus() 
+
+    def load_exceptions(self, App):
+        exceptions = App.data_manager.fetch_exceptions(App.cur)
+        for exception in exceptions:
+            exception = Exception(self.body_container, App, exception[4], exception[5], exception[1], exception[0], exception[3], exception[2])

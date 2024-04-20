@@ -46,7 +46,7 @@ class Application(ctk.CTk):
         self.data_manager.update_setting("widget scaling", 1.0)
         self.data_manager.update_setting("theme", "green")
         self.data_manager.update_setting("appearance mode", "Dark")
-        self.data_manager.update_setting("fullscreen", "1")
+        self.data_manager.update_setting("fullscreen", "0")
         self.data_manager.update_setting("bypass login", "False")
         self.data_manager.update_setting("enable filtering", "True")
         self.data_manager.update_setting("enable machine learning", "True")

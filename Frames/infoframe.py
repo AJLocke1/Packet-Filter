@@ -56,6 +56,7 @@ Machine learning algorithms complement user-defined rules and provide additional
         self.ip_display = Info_Pannel(self.network_container, App, title="IP Address", body=self.get_ip(), row=0, column = 0)
         self.subnet_display = Info_Pannel(self.network_container, App, title="Subnet Mask", body=self.get_subnet(), row=1, column = 0)
         self.subnet_addresses_display = Info_Pannel(self.network_container, App, title="Subnet Addresses", body=self.get_subnet_addresses(self.ip_display.body.cget("text"), self.subnet_display.body.cget("text")), row=2, column = 0)
+        self.scan_display = Container(self.network_container, App, isCentered=False, row=3, column=0, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
 
         self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Information", subcontainers=self.subcontainers, loadedcontainer=self.information_container)
@@ -79,6 +80,9 @@ Machine learning algorithms complement user-defined rules and provide additional
         for file in os.listdir(log_directory):
                 log_name = os.fsdecode(file)
                 self.log = Log(self.log_table, App, log_name, self.log_display)
+
+        self.scan_display_title = ctk.CTkLabel(self.scan_display, text="Scan the IP Addresses To Locate Networkm Components", font=("", 20))
+        self.scan_display_title.grid(row=0, column=0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w", columnspan=self.grid_size()[0])
 
     def get_ip(self): #MAC and Linux Versions here for testing only
         try:
@@ -135,17 +139,9 @@ Machine learning algorithms complement user-defined rules and provide additional
                 print(output)
                 return None
             
-    def get_subnet_addresses(self, ip_address_str, subnet_mask_str):
-        # Convert IP address and subnet mask to IPv4Address objects
-        ip_address = ipaddress.IPv4Address(ip_address_str)
-        subnet_mask = ipaddress.IPv4Address(subnet_mask_str)
-
-        # Create a network object with the given IP and subnet mask
-        network = ipaddress.IPv4Network(ip_address_str + '/' + subnet_mask_str, strict=False)
-
-        # Generate list of IP addresses on the subnet
-        subnet_addresses = [str(ip) for ip in network.hosts()]
-
+    def get_subnet_addresses(self, ip, subnet):
+        network = ipaddress.IPv4Network(ip + '/' + subnet, strict=False)
+        subnet_addresses = str(next(network.hosts())) + " To " + str(next(reversed(list(network.hosts()))))
         return subnet_addresses
         
 

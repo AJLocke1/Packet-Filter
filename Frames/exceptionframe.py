@@ -28,7 +28,7 @@ class Exception_Frame(Custom_Frame):
         self.add_exception_button = ctk.CTkButton(self.top_container, text="", width=30, image=self.image, command = lambda: self.add_exception(App))
         self.add_exception_button.grid(row=0, column = 1, sticky="e", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
-        self.label2 = ctk.CTkLabel(self.top_container, text="Create Exceptions. These have priority over whitelists.")
+        self.label2 = ctk.CTkLabel(self.top_container, text="Create Exceptions. Specify a target type and condition and then specify details on when traffic matching the target should be accepted or denied.")
         self.label2.grid(row=1, column = 0, sticky="we", columnspan = 2, padx=[5,5], pady = [5,5])
         self.label2.bind('<Configure>', lambda event: self.update_wraplength(self))
 

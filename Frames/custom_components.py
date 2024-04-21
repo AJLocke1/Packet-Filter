@@ -475,17 +475,17 @@ class Exception(Container):
         self.pack(fill = "x", pady = App.uniform_padding_y)
 
     def instantiate_components(self, App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition):
-        self.target_type_label = ctk.CTkLabel(self, text=target_type)
-        self.target_type_label.grid(row=0, column = 0, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
-
-        self.target_condition_label = ctk.CTkLabel(self, text=target_condition)
-        self.target_condition_label.grid(row=0, column = 1, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.whitelist_type_label = ctk.CTkLabel(self, text=whitelist_type)
+        self.whitelist_type_label.grid(row=0, column = 0, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.direction_label = ctk.CTkLabel(self, text=direction)
-        self.direction_label.grid(row=0, column = 2, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
-        
-        self.whitelist_type_label = ctk.CTkLabel(self, text=whitelist_type)
-        self.whitelist_type_label.grid(row=0, column = 3, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.direction_label.grid(row=0, column = 1, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.target_type_label = ctk.CTkLabel(self, text=target_type)
+        self.target_type_label.grid(row=0, column = 2, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+
+        self.target_condition_label = ctk.CTkLabel(self, text=target_condition)
+        self.target_condition_label.grid(row=0, column = 3, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.allow_type_label = ctk.CTkLabel(self, text=allow_type)
         self.allow_type_label.grid(row=0, column = 4, padx = App.uniform_padding_x, pady=App.uniform_padding_y)

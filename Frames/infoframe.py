@@ -6,6 +6,7 @@ import nmap
 import subprocess
 import re
 import ipaddress
+import threading
 class Info_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):
         super().__init__(App, has_navbar=has_navbar, navbar_name=navbar_name)
@@ -81,10 +82,12 @@ Machine learning algorithms complement user-defined rules and provide additional
                 log_name = os.fsdecode(file)
                 self.log = Log(self.log_table, App, log_name, self.log_display)
 
-        self.scan_display_title = ctk.CTkLabel(self.scan_display, text="Scan the IP Addresses To Locate Networkm Components", font=("", 20))
-        self.scan_display_title.grid(row=0, column=0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w", columnspan=self.grid_size()[0])
+        self.scan_display_head = Container(self.scan_display, App, isCentered=False, row=0, column = 0, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
-        self.scan_button = ctk.CTkButton(self.scan_display, text="Scan", command=lambda: self.scan_ip_range(self.get_subnet_hosts(self.ip_display.body.cget("text"), self.subnet_display.body.cget("text"))))
+        self.scan_display_title = ctk.CTkLabel(self.scan_display_head, text="Scan the Subnet to Locate Network Components", font=("", 20))
+        self.scan_display_title.grid(row=0, column=0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w")
+
+        self.scan_button = ctk.CTkButton(self.scan_display_head, text="Scan", command=lambda: self.scan_ip_range(self.get_subnet_hosts(self.ip_display.body.cget("text"), self.subnet_display.body.cget("text"))))
         self.scan_button.grid(row=0, column=1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.display = Scrolable_Container(self.scan_display, App, isCentered=False, row=1, column=0, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
@@ -102,7 +105,7 @@ Machine learning algorithms complement user-defined rules and provide additional
                 return ip_address
             else:
                 return None
-        except Exception as e:
+        except Exception:
             ip_regex = r'inet (\d+\.\d+\.\d+\.\d+)'
             result = subprocess.run(['ifconfig', 'en0'], capture_output=True, text=True)
             output = result.stdout
@@ -128,7 +131,7 @@ Machine learning algorithms complement user-defined rules and provide additional
                 return subnet_mask
             else:
                 return None
-        except Exception as e:
+        except Exception:
             subnet_regex = r'inet \d+\.\d+\.\d+\.\d+ netmask (\S+)'
             result = subprocess.run(['ifconfig', 'en0'], capture_output=True, text=True)
             output = result.stdout
@@ -154,13 +157,31 @@ Machine learning algorithms complement user-defined rules and provide additional
         
     def scan_ip_range(self, hosts):
         results = {}
-        nm = nmap.PortScanner()
+        scanner_threads = []
         for host in hosts:
-            print(host)
-            host_str = str(host)
-            result = nm.scan(hosts=host_str, arguments='-sV')
-            if host_str in result['scan']:
-                results[host_str] = result['scan'][host_str]
+            scanner_thread = ScannerThread(host)
+            scanner_thread.start()
+            scanner_threads.append(scanner_thread)
+        
+        for scanner_thread in scanner_threads:
+            scanner_thread.join()
+
+        results = {thread.host: thread.result for thread in scanner_threads if thread.result is not None}
+        print(results)
+class ScannerThread(threading.Thread):
+    def __init__(self, host):
+        super().__init__()
+        self.host = host
+        self.result = None
+
+    def run(self):
+        nm = nmap.PortScanner()
+        host_str = str(self.host)
+        result = nm.scan(hosts=host_str, arguments='-sV')
+        try:
+            self.result = result['scan'][host_str]
+        except KeyError:
+            pass
 
 
 

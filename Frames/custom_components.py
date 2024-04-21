@@ -389,7 +389,7 @@ class Log(Container):
             self.entry.pack(fill = "x", pady = App.uniform_padding_y, padx = App.uniform_padding_x)
 
     def get_log_data(self, log_name):
-        log_path = "Logs/"+log_name
+        log_path = "Data/Logs/"+log_name
         with open(log_path, "r") as log_file:
             return log_file.readlines()
         

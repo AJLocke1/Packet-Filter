@@ -7,6 +7,9 @@ from datamanager import Data_Manager
 import time
 #from packetmanager import Packet_Manager
 
+"""
+program needs to be run with root privlige, on linux hardware.
+"""
 class Application(ctk.CTk):
     def __init__(self):
         super().__init__()

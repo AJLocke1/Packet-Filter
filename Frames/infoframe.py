@@ -1,4 +1,4 @@
-from Frames.custom_components import Container, Custom_Frame, Scrolable_Container, Sidebar, Info_Pannel, Log
+from Frames.custom_components import Container, Custom_Frame, Scrolable_Container, Sidebar, Info_Pannel, Log, Result
 import customtkinter as ctk
 from PIL import Image
 import os
@@ -199,8 +199,9 @@ Applications are the highest level of information on the network com,munication 
 
     def display_scan_results(self, results, App):
         for result in results:
-            self.result_label = ctk.CTkLabel(self.display, text = result, anchor="w")
-            self.result_label.pack(padx = App.uniform_padding_x, pady= App.uniform_padding_y, anchor="w")
+
+            self.display.result = Result(self.display, result[0] ,result[1] ,result[2])
+            self.display.result.pack(padx = App.uniform_padding_x, pady= App.uniform_padding_y, anchor="w")
         self.scan_status_label.grid_remove()
 
 class ScannerMaster(threading.Thread):
@@ -220,7 +221,7 @@ class ScannerMaster(threading.Thread):
         for scanner_thread in self.scanner_threads:
             scanner_thread.join()
 
-        self.results = {thread.host: thread.result for thread in self.scanner_threads if thread.result is not None}
+        self.results = [thread.result for thread in self.scanner_threads if thread.result is not None]
         print(self.results)
         self.app.info_frame.display_scan_results(self.results, self.app)
 class ScannerThread(threading.Thread):
@@ -232,13 +233,23 @@ class ScannerThread(threading.Thread):
     def run(self):
         nm = nmap.PortScanner()
         host_str = str(self.host)
-        result = nm.scan(hosts=host_str, arguments='-sV -PR')
+
+        timer = threading.Timer(240, self.timeout())
+        timer.start()
+                            
         try:
-            self.result = result['scan'][host_str]
-            self.result = {ip_address: {'ip_address': ip_address} for ip_address in result.keys()}
-            print(result)
+            scan_result = nm.scan(hosts=host_str, arguments='-sV -O')
+            vendor = scan_result['scan'][host_str]['addresses'].get('vendor', 'Unknown Vendor')
+            device_name = scan_result['scan'][host_str].get('hostname', 'Unknown Name')
+            self.result = [host_str, vendor, device_name]
+            print(self.result)
         except KeyError:
             pass
+        finally:
+            timer.cancel()
+
+    def timeout(self):
+        pass
 
 
 

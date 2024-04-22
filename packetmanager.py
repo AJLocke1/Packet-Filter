@@ -9,6 +9,7 @@ class Packet_Manager():
         self.blacklisted_port_numbers = []
         self.blacklisted_protocols = []
         self.blacklisted_applications = []
+        self.blacklisted_mac_addresses = []
 
         self.load_whitelists(App)
 
@@ -51,6 +52,8 @@ class Packet_Manager():
             return True
         if packet_data["l7_protocol"] in self.blacklisted_applications:
             return True
+        if packet_data["eth_src"] in self.blacklisted_mac_addresses:
+            return True
         return False
 
     
@@ -90,7 +93,7 @@ class Packet_Manager():
             packet_info['ip_flags'] = ip_layer.flags
             packet_info['ip_frag'] = ip_layer.frag
 
-            packet_info['l4_protocol'] = tcp_layer
+            packet_info['l4_protocol'] = ip_layer.proto
 
             # Get Layer 4 Information
             if ip_layer.proto == 6:  # TCP protocol
@@ -139,6 +142,7 @@ class Packet_Manager():
         self.blacklisted_port_numbers = App.data_manager.fetch_whitelists("Port")
         self.blacklisted_protocols = App.data_manager.fetch_whitelists("Protocol")
         self.blacklisted_applications = App.data_manager.fetch_whitelists("Application")
+        self.blacklisted_mac_addresses = App.data_manager.fetch_whitlists("MAC Address")
         
     
         

@@ -8,6 +8,7 @@ import re
 import ipaddress
 import threading
 
+
 class Info_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):
         super().__init__(App, has_navbar=has_navbar, navbar_name=navbar_name)
@@ -110,12 +111,16 @@ Applications are the highest level of information on the network com,munication 
         self.scan_button = ctk.CTkButton(self.scan_display_head, text="Scan", command=lambda: self.scan_ip_range(self.get_subnet_hosts(self.ip_display.body.cget("text"), self.subnet_display.body.cget("text")), App))
         self.scan_button.grid(row=0, column=1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
-        self.scan_display_description = ctk.CTkLabel(self.scan_display_head, text="When the scan button is clicked all ip addresses within the shown subnet are scanned to check for online network devices. On larger subnets this may take some time. Approx 40s for every 255 addresses.", anchor="w")
+        self.scan_display_description = ctk.CTkLabel(self.scan_display_head, text="When the scan button is clicked all ip addresses within the shown subnet are scanned to check for online network devices. On larger subnets this may take some time.", anchor="w")
         self.scan_display_description.grid(row =1, column=0, columnspan=2, sticky="we")
         self.scan_display_description.bind('<Configure>', lambda event: self.update_wraplength(self.scan_display_head))
 
-        self.display = Container(self.scan_display, App, isCentered=False, row=1, column=0, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.scan_status_label = ctk.CTkLabel(self.scan_display_head, text="Scanning", text_color="green")
+        self.scan_status_label.grid(row=2, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.scan_status_label.grid_remove()
 
+        self.display = Container(self.scan_display, App, isCentered=False, row=1, column=0, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        
     def update_wraplength(self, master):
         self.scan_display_description.update_idletasks()
         self.scan_display_description.configure(wraplength=master.master.winfo_width() - 100)
@@ -184,34 +189,54 @@ Applications are the highest level of information on the network com,munication 
         return subnet_addresses
      
     def scan_ip_range(self, hosts, App):
-        results = {}
-        scanner_threads = []
-        for host in hosts:
-            scanner_thread = ScannerThread(self.display, host)
-            scanner_thread.start()
-            scanner_threads.append(scanner_thread)
-        
-        for scanner_thread in scanner_threads:
-            scanner_thread.join()
+        self.scan_status_label.grid()
 
-        results = {thread.host: thread.result for thread in scanner_threads if thread.result is not None}
+        for widget in self.display.winfo_children():
+            widget.destroy()
+
+        scanner_master = ScannerMaster(hosts, App)
+        scanner_master.start()
+
+    def display_scan_results(self, results, App):
         for result in results:
             self.result_label = ctk.CTkLabel(self.display, text = result, anchor="w")
             self.result_label.pack(padx = App.uniform_padding_x, pady= App.uniform_padding_y, anchor="w")
+        self.scan_status_label.grid_remove()
+
+class ScannerMaster(threading.Thread):
+    def __init__(self, hosts, App) :
+        super().__init__()
+        self.results = {}
+        self.scanner_threads = []
+        self.hosts = hosts
+        self.app = App
+
+    def run(self):
+        for host in self.hosts:
+            scanner_thread = ScannerThread(host)
+            scanner_thread.start()
+            self.scanner_threads.append(scanner_thread)
+
+        for scanner_thread in self.scanner_threads:
+            scanner_thread.join()
+
+        self.results = {thread.host: thread.result for thread in self.scanner_threads if thread.result is not None}
+        print(self.results)
+        self.app.info_frame.display_scan_results(self.results, self.app)
 class ScannerThread(threading.Thread):
-    def __init__(self, display, host):
+    def __init__(self, host):
         super().__init__()
         self.host = host
         self.result = None
-        self.display = display
 
     def run(self):
         nm = nmap.PortScanner()
         host_str = str(self.host)
-        result = nm.scan(hosts=host_str, arguments='-sV')
+        result = nm.scan(hosts=host_str, arguments='-sV -PR')
         try:
             self.result = result['scan'][host_str]
             self.result = {ip_address: {'ip_address': ip_address} for ip_address in result.keys()}
+            print(result)
         except KeyError:
             pass
 

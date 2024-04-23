@@ -126,8 +126,8 @@ class Settings_Frame(Custom_Frame):
 
     def change_user_details(self, App, username, password, passsword_confirmation):
         if password == passsword_confirmation:
-            App.data_manager.removeUsers(App.conn, App.cur)
-            App.data_manager.insertUser(App.conn, App.cur, username, password)
+            App.data_manager.remove_user(App.conn, App.cur)
+            App.data_manager.insert_user(App.conn, App.cur, username, password)
             self.change_user_info_label.grid()
             self.change_user_info_label.configure(text = "User Details Updated", text_color="green")
             self.userEntry.delete(0, len(username))

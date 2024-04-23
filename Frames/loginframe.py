@@ -27,9 +27,9 @@ class Login_Frame(Custom_Frame):
 
     def login(self, App, username, password):
         try:
-            fetched = Data_Manager.findPassword(App.conn, App.cur, username)
+            fetched = Data_Manager.find_password(App.conn, App.cur, username)
             storedpass = fetched[0][0]
-            if App.data_manager.encryptPassword(password) == storedpass:
+            if App.data_manager.encrypt_password(password) == storedpass:
                 #change frame
                 App.raise_frame("Whitelist_Frame")
                 self.errorLabel.configure(text="")

@@ -4,11 +4,11 @@ import tkinter as tk
 from CTkMessagebox import CTkMessagebox
 from Frames import exceptionframe, settingsframe, utilitiesframe, whitelistframe, loginframe, signupframe, helpframe
 from datamanager import Data_Manager
-import time
 #from packetmanager import Packet_Manager
+import time
 
 """
-program needs to be run with root privlige, on linux hardware. for full functionality
+program needs to be run with root privlige, on linux hardware while connected to the internet for full functionality.
 """
 class Application(ctk.CTk):
     def __init__(self):
@@ -17,7 +17,7 @@ class Application(ctk.CTk):
         self.data_manager = Data_Manager
         #self.packet_manager = Packet_Manager(self)
 
-        self.conn, self.cur = self.data_manager.connectToDatabase()
+        self.conn, self.cur = self.data_manager.connect_to_database()
         self.default_user, self.default_pass = "user", "pass"
         self.wm_iconphoto(True, tk.PhotoImage(file="Data/Images/firewalliconLight.png"))
         #define what happend on appplication close
@@ -115,7 +115,7 @@ class Application(ctk.CTk):
         self.frame_list = self.initiate_frames()
         self.stack_frames(self.frame_list)
         self.populate_navbars(self.frame_list)
-        self.raise_frame("Options_Frame")
+        self.raise_frame("Settings_Frame")
 
     def initiate_frames(self):
         self.login_frame = loginframe.Login_Frame(self, has_navbar=False)
@@ -158,8 +158,8 @@ class Application(ctk.CTk):
             marker_file.write("This file marks that the application has been run.")
 
     def initiate_database(self, default_user, default_pass):
-        self.data_manager.createDatabase(self.conn, self.cur)
-        self.data_manager.insertUser(self.conn, self.cur, default_user, default_pass)
+        self.data_manager.create_database(self.conn, self.cur)
+        self.data_manager.insert_user(self.conn, self.cur, default_user, default_pass)
 
     def refresh_logs(self, deletion_interval):
         log_directory = os.fsencode("Data/Logs")

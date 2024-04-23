@@ -5,12 +5,12 @@ import os
 from datetime import datetime
 
 class Data_Manager():
-    def connectToDatabase():
+    def connect_to_database():
         connection = sql.connect("Data/local_database.db")
         cur = connection.cursor()
         return(connection, cur)
     
-    def createDatabase(connection, cur):
+    def create_database(connection, cur):
         cur.execute("""
         CREATE TABLE IF NOT EXISTS userdata (
                     id INTEGER PRIMARY KEY,
@@ -41,7 +41,7 @@ class Data_Manager():
         """)
         connection.commit()
 
-    def insertUser(connection, cur, username, password):
+    def insert_user(connection, cur, username, password):
         encrypted_pass = Data_Manager.encryptPassword(password)
         try:
             cur.execute("""
@@ -52,16 +52,16 @@ class Data_Manager():
             sql.IntegrityError()
             return("Unique Username is Required", e)
         
-    def encryptPassword(password):
+    def encrypt_password(password):
         return hl.sha256(password.encode()).hexdigest()
     
-    def removeUsers(connection, cur):
+    def remove_user(connection, cur):
         cur.execute("""
             DELETE FROM userdata          
             """)
         connection.commit()
 
-    def findPassword(connection, cur, username):
+    def find_password(connection, cur, username):
         cur.execute("SELECT * FROM userdata")
         cur.execute("SELECT password FROM userdata WHERE username IS ?", (username,))
         return(cur.fetchall())

@@ -73,7 +73,7 @@ class Utilities_Frame(Custom_Frame):
 
         self.scan_display_description = ctk.CTkLabel(self.scan_display_head, text="When the scan button is clicked all ip addresses within the shown subnet are scanned to check for online network devices. On larger subnets this may take some time.", anchor="w")
         self.scan_display_description.grid(row =1, column=0, columnspan=2, sticky="we")
-        self.scan_display_description.bind('<Configure>', lambda event: self.update_wraplength(self.scan_display_head))
+        self.scan_display_description.bind("<Configure>", lambda event: self.update_wraplength(self.scan_display_head))
 
         self.scan_status_label = ctk.CTkLabel(self.scan_display_head, text="Scanning", text_color="green")
         self.scan_status_label.grid(row=2, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
@@ -87,8 +87,8 @@ class Utilities_Frame(Custom_Frame):
 
     def get_ip(self): #MAC and Linux Versions here for testing only
         try:
-            ip_regex = r'inet (\d+\.\d+\.\d+\.\d+)'
-            result = subprocess.run(['ip', 'addr', 'show'], capture_output=True, text=True)
+            ip_regex = r"inet (\d+\.\d+\.\d+\.\d+)"
+            result = subprocess.run(["ip", "addr", "show"], capture_output=True, text=True)
             output = result.stdout
 
             # Find the first match of IP address
@@ -99,8 +99,8 @@ class Utilities_Frame(Custom_Frame):
             else:
                 return None
         except Exception:
-            ip_regex = r'inet (\d+\.\d+\.\d+\.\d+)'
-            result = subprocess.run(['ifconfig', 'en0'], capture_output=True, text=True)
+            ip_regex = r"inet (\d+\.\d+\.\d+\.\d+)"
+            result = subprocess.run(["ifconfig", "en0"], capture_output=True, text=True)
             output = result.stdout
 
             # Find the first match of IP address
@@ -113,8 +113,8 @@ class Utilities_Frame(Custom_Frame):
 
     def get_subnet(self): #MAC and Linux Versions here for testing only
         try:
-            subnet_regex = r'netmask (\S+)'
-            result = subprocess.run(['ip', 'addr', 'show'], capture_output=True, text=True)
+            subnet_regex = r"netmask (\S+)"
+            result = subprocess.run(["ip", "addr", "show"], capture_output=True, text=True)
             output = result.stdout
 
             # Find the first match of subnet mask
@@ -125,7 +125,7 @@ class Utilities_Frame(Custom_Frame):
             else:
                 return None
         except Exception:
-            subnet_regex = r'inet \d+\.\d+\.\d+\.\d+ netmask (\S+)'
+            subnet_regex = r"inet \d+\.\d+\.\d+\.\d+ netmask (\S+)"
             result = subprocess.run(['ifconfig', 'en0'], capture_output=True, text=True)
             output = result.stdout
 
@@ -141,7 +141,7 @@ class Utilities_Frame(Custom_Frame):
                 return None
     
     def get_subnet_hosts(self, ip, subnet):
-        return ipaddress.IPv4Network(ip + '/' + subnet, strict=False)
+        return ipaddress.IPv4Network(ip + "/" + subnet, strict=False)
             
     def get_first_and_last_subnet_addresses(self, ip, subnet):
         network = self.get_subnet_hosts(ip, subnet)
@@ -198,7 +198,7 @@ class ScannerThread(threading.Thread):
         timer.start()
                             
         try:
-            scan_result = scanner.scan(hosts=host_str, arguments='-O')
+            scan_result = scanner.scan(hosts=host_str, arguments="-O")
             if "osmatch" in scan_result["scan"][host_str]: 
                 if len(scan_result["scan"][host_str]["osmatch"]) > 0:
                     os_match = scan_result["scan"][host_str]["osmatch"][0]
@@ -208,7 +208,7 @@ class ScannerThread(threading.Thread):
             name = os_match["name"] if os_match["name"] is not None else "Unkown Name"
             self.result = [host_str, name]
             print(self.result)
-        except Exception as e:
+        except Exception:
             pass
         finally:
             timer.cancel()

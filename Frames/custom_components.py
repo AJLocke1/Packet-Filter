@@ -196,7 +196,7 @@ class Whitelist_Head(Container):
 
         self.label2 = ctk.CTkLabel(self, text=description)
         self.label2.grid(row=1, column = 0, sticky="we", columnspan = 2, padx=[5,5], pady = [5,5])
-        self.label2.bind('<Configure>', lambda event: self.update_wraplength())
+        self.label2.bind("<Configure>", lambda event: self.update_wraplength())
 
     def add_whitelist(self, App, name):
         if self.whitelist_creation_window is None or not self.whitelist_creation_window.winfo_exists():
@@ -322,7 +322,7 @@ class Options_Container(Container):
 
         self.description = ctk.CTkLabel(self, text=description, anchor = "w", justify = "left")
         self.description.grid(row=2, column = 0, sticky="we", columnspan = self.grid_size()[0], padx=[5,5], pady = [5,5])
-        self.description.bind('<Configure>', lambda event: self.update_wraplength(master))
+        self.description.bind("<Configure>", lambda event: self.update_wraplength(master))
 
         self.grid_columnconfigure(self.grid_size()[0]-1, weight = 1)
 
@@ -349,7 +349,7 @@ class Info_Pannel(Container):
 
         self.body = ctk.CTkLabel(self, text=body, anchor = "w", justify = "left")
         self.body.grid(row=2, column = 0, sticky="we", columnspan = self.grid_size()[0], padx=[5,5], pady = [5,5])
-        self.body.bind('<Configure>', lambda event: self.update_wraplength(master))
+        self.body.bind("<Configure>", lambda event: self.update_wraplength(master))
 
     def update_wraplength(self, master):
         self.body.update_idletasks()

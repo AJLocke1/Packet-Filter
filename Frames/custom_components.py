@@ -501,24 +501,20 @@ class Exception(Container):
         self.destroy()
 
 class Result(Container):
-    def __init__(self, master, App, ip_address, vendor, name):
+    def __init__(self, master, App, ip_address, name):
         super().__init__(master, App, isCentered=False, color=App.frame_color, placeself = False)
         self.grid_columnconfigure(0, weight=1, uniform="uniform")
         self.grid_columnconfigure(1, weight=1, uniform="uniform")
-        self.grid_columnconfigure(2, weight=1, uniform="uniform")
 
-        self.instantiate_components(App, ip_address, vendor, name)
+        self.instantiate_components(App, ip_address, name)
         self.pack(fill = "x", pady = App.uniform_padding_y)
     
-    def instantiate_components(self, App, ip_address, vendor, name):
+    def instantiate_components(self, App, ip_address, name):
         self.ip_address_label = ctk.CTkLabel(self, text=ip_address)
         self.ip_address_label.grid(row=0, column = 0, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
 
-        self.vendor_label = ctk.CTkLabel(self, text=vendor)
-        self.vendor_label.grid(row=0, column = 1, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
-
         self.name_label = ctk.CTkLabel(self, text=name)
-        self.name_label.grid(row=0, column = 2, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.name_label.grid(row=0, column = 1, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
 
 
         

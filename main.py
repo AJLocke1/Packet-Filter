@@ -2,13 +2,13 @@ import os
 import customtkinter as ctk
 import tkinter as tk
 from CTkMessagebox import CTkMessagebox
-from Frames import exceptionframe, whitelistframe, loginframe, signupframe, optionsframe, infoframe
+from Frames import exceptionframe, settingsframe, utilitiesframe, whitelistframe, loginframe, signupframe, helpframe
 from datamanager import Data_Manager
 import time
 #from packetmanager import Packet_Manager
 
 """
-program needs to be run with root privlige, on linux hardware.
+program needs to be run with root privlige, on linux hardware. for full functionality
 """
 class Application(ctk.CTk):
     def __init__(self):
@@ -122,9 +122,10 @@ class Application(ctk.CTk):
         self.signup_frame = signupframe.Signup_Frame(self, has_navbar=False)
         self.whitelist_frame = whitelistframe.Whitelist_Frame(self,has_navbar=True, navbar_name = "Whitelists")
         self.rule_frame = exceptionframe.Exception_Frame(self, has_navbar=True, navbar_name="Exceptions")
-        self.info_frame = infoframe.Info_Frame(self, has_navbar=True, navbar_name="Information")
-        self.options_frame = optionsframe.Options_Frame(self, has_navbar=True, navbar_name = "Options")
-        return[self.login_frame, self.signup_frame, self.whitelist_frame, self.rule_frame, self.options_frame, self.info_frame]
+        self.utilities_frame = utilitiesframe.Utilities_Frame(self, has_navbar=True, navbar_name="Utilities")
+        self.settings_frame = settingsframe.Settings_Frame(self, has_navbar=True, navbar_name = "Settings")
+        self.help_frame = helpframe.Help_Frame(self, has_navbar=True, navbar_name="Help")
+        return[self.login_frame, self.signup_frame, self.whitelist_frame, self.rule_frame, self.settings_frame, self.utilities_frame, self.help_frame]
     
     def populate_navbars(self, frame_list):
         for frame in frame_list:

@@ -3,7 +3,7 @@ import customtkinter as ctk
 from os import listdir
 from os.path import isfile, join
 
-class Options_Frame(Custom_Frame):
+class Settings_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):
         super().__init__(App, has_navbar=has_navbar, navbar_name=navbar_name)
 

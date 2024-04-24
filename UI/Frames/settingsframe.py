@@ -76,7 +76,7 @@ class Settings_Frame(Custom_Frame):
     def change_theme(self, App):
         value = self.theme_dropdown_value.get()
         App.data_manager.update_setting("theme", value)
-        App.on_setting_change()
+        App.ui_manager.on_ui_setting_change()
 
     def populate_change_appearance_option_container(self, App, container):
         self.dark_label = ctk.CTkLabel(container, text="Dark Mode")
@@ -91,7 +91,7 @@ class Settings_Frame(Custom_Frame):
     def toggle_appearance_mode(self, App):
         value = self.appearance_mode_switch_value.get()
         App.data_manager.update_setting("appearance mode", value)
-        App.on_setting_change()
+        App.ui_manager.on_ui_setting_change()
 
     def populate_change_widget_scaling_container(self, App, container):
         self.widget_scale_dropdown_value = ctk.StringVar(value = App.settings["widget scaling"])
@@ -103,7 +103,7 @@ class Settings_Frame(Custom_Frame):
     def change_scale(self, App):
         value = int((self.widget_scale_dropdown_value.get()))/100
         App.data_manager.update_setting("widget scaling", value)
-        App.on_setting_change()
+        App.ui_manager.on_ui_setting_change()
 
     def populate_change_user_container(self, App, container):
         self.userEntry = ctk.CTkEntry(container, placeholder_text="Username")

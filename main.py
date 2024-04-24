@@ -16,8 +16,7 @@ program needs to be run with root privlige, on linux hardware while connected to
 class Application(ctk.CTk):
     def __init__(self):
         super().__init__()
-
-        #Set the default application settings
+        #Set the default application settings and any non changing settings.
         self.default_user, self.default_pass = "user", "pass"
         self.default_settings = {
                                     "widget scaling": 1,
@@ -40,6 +39,9 @@ class Application(ctk.CTk):
         self.wm_iconphoto(True, tk.PhotoImage(file="Data/Images/firewalliconLight.png"))
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.title("Packet Filter")
+        self.minsize(1000,400)
+        self.uniform_padding_x = (5,5)
+        self.uniform_padding_y = (5,5)
 
         #load managers
         self.data_manager = self.load_datamanager()
@@ -48,22 +50,16 @@ class Application(ctk.CTk):
         
         #Check if first time running
         if self.is_first_time_running() is True:
-            self.initiate_database(self.default_user, self.default_pass)
+            self.data_manager.initiate_database(self.default_user, self.default_pass)
             self.set_default_settings()
             self.create_marker_file()
 
-        #set settings
-        self.minsize(1000,400)
-        self.uniform_padding_x = (5,5)
-        self.uniform_padding_y = (5,5)
-
+        #set any cahngeable settings
         self.settings = self.data_manager.read_settings()
         self.set_settings(self.settings)
 
-        #Other Set-up
+        #Start Aplication Processes
         self.data_manager.refresh_logs(self, self.settings["log auto delete interval"])
-
-        #start UI
         self.ui_manager.start_ui()
 
     def load_datamanager(self):
@@ -108,19 +104,6 @@ class Application(ctk.CTk):
         self.theme_color = self.theme["CTkButton"]["fg_color"][index]
         self.frame_color_2 = self.theme["CTkFrame"]["top_fg_color"][index]
         self.frame_color = self.theme["CTkFrame"]["fg_color"][index]
-
-    def on_setting_change(self):
-        for frame in self.frame_list:
-            frame.destroy()
-
-        self.data_manager.update_setting("fullscreen", str(self.attributes("-fullscreen")))
-        self.settings = self.data_manager.read_settings()
-        self.set_settings(self.settings)
-
-        self.frame_list = self.ui_manager.initiate_frames()
-        self.ui_manager.stack_frames()
-        self.ui_manager.populate_navbars()
-        self.ui_manager.raise_frame("Settings_Frame")
     
     def is_first_time_running(self):
         marker_path = "Data/marker_file.txt"  # Define the path for the marker file
@@ -134,10 +117,6 @@ class Application(ctk.CTk):
         marker_path = "Data/marker_file.txt"
         with open(marker_path, "w") as marker_file:
             marker_file.write("This file marks that the application has been run.")
-
-    def initiate_database(self, default_user, default_pass):
-        self.data_manager.create_database(self.conn, self.cur)
-        self.data_manager.insert_user(self.conn, self.cur, default_user, default_pass)
 
     def on_closing(self):
        if (CTkMessagebox(title="Quit", message="Do you want to quit?, packet filtering will be disabled", option_1="No", option_2="yes")).get() == "yes":

@@ -12,6 +12,20 @@ class UI_Manager():
         else:
             self.raise_frame("Login_Frame")
 
+    def on_ui_setting_change(self):
+        for frame in self.app.frame_list:
+            frame.destroy()
+
+        self.app.settings = self.app.data_manager.read_settings()
+        self.app.set_settings(self.app.settings)
+
+        self.app.data_manager.update_setting("fullscreen", str(self.app.attributes("-fullscreen")))
+
+        self.app.frame_list = self.initiate_frames()
+        self.stack_frames()
+        self.populate_navbars()
+        self.raise_frame("Settings_Frame")
+
     def initiate_frames(self):
         App = self.app
         App.login_frame = loginframe.Login_Frame(App, has_navbar=False)

@@ -7,13 +7,17 @@ from datetime import datetime
 
 class Data_Manager():
     def __init__(self, App):
-        self.App = App
+        self.app = App
         self.connection, self.cursor = self.connect_to_database()
         
     def connect_to_database(self):
         connection = sql.connect("Data/local_database.db")
         cur = connection.cursor()
         return(connection, cur)
+
+    def initiate_database(self, default_user, default_pass):
+        self.create_database()
+        self.insert_user(default_user, default_pass)
     
     def create_database(self):
         self.cursor.execute("""

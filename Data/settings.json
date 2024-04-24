@@ -1,7 +1,7 @@
 {
-    "widget scaling": 0.75,
+    "widget scaling": 0.85,
     "theme": "green",
-    "appearance mode": "Dark",
+    "appearance mode": "Light",
     "application name": "Packet Filter",
     "geometry": "1000x400",
     "fullscreen": "0",

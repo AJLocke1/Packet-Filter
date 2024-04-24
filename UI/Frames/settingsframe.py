@@ -67,7 +67,7 @@ class Settings_Frame(Custom_Frame):
         self.populate_set_log_auto_delete_container(App, self.set_log_auto_delete_container)
 
     def populate_change_theme_option_container(self, App, container):
-        self.theme_dropdown_value = ctk.StringVar(value = App.current_theme_name)
+        self.theme_dropdown_value = ctk.StringVar(value = App.settings["theme"])
         self.theme_dropdown = ctk.CTkOptionMenu(container, values=[f.split(".", 1)[0] for f in listdir("Data/Themes/") if isfile(join("Data/Themes/", f))], command=lambda value: self.change_theme(App), variable=self.theme_dropdown_value)
         self.theme_dropdown.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
 
@@ -82,7 +82,7 @@ class Settings_Frame(Custom_Frame):
         self.dark_label = ctk.CTkLabel(container, text="Dark Mode")
         self.dark_label.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        self.appearance_mode_switch_value = ctk.StringVar(value = App.appearance_mode_string)
+        self.appearance_mode_switch_value = ctk.StringVar(value = App.settings["appearance mode"])
         self.appearance_mode_switch = ctk.CTkSwitch(container, text="Light Mode", command= lambda: self.toggle_appearance_mode(App), variable=self.appearance_mode_switch_value, onvalue="Light", offvalue="Dark")
         self.appearance_mode_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
@@ -94,7 +94,7 @@ class Settings_Frame(Custom_Frame):
         App.on_setting_change()
 
     def populate_change_widget_scaling_container(self, App, container):
-        self.widget_scale_dropdown_value = ctk.StringVar(value = App.widget_scaling_value)
+        self.widget_scale_dropdown_value = ctk.StringVar(value = App.settings["widget scaling"])
         self.widget_scale_dropdown = ctk.CTkOptionMenu(container, values=["25","50","65","75","85","100","115","125","150"], command=lambda value: self.change_scale(App), variable=self.widget_scale_dropdown_value)
         self.widget_scale_dropdown.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
@@ -126,8 +126,8 @@ class Settings_Frame(Custom_Frame):
 
     def change_user_details(self, App, username, password, passsword_confirmation):
         if password == passsword_confirmation:
-            App.data_manager.remove_user(App.conn, App.cur)
-            App.data_manager.insert_user(App.conn, App.cur, username, password)
+            App.data_manager.remove_user()
+            App.data_manager.insert_user(username, password)
             self.change_user_info_label.grid()
             self.change_user_info_label.configure(text = "User Details Updated", text_color="green")
             self.userEntry.delete(0, len(username))
@@ -142,7 +142,7 @@ class Settings_Frame(Custom_Frame):
         self.deny_bypass_label = ctk.CTkLabel(container, text="Deny")
         self.deny_bypass_label.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        self.bypass_login_switch_value = ctk.StringVar(value = App.bypass_login_string)
+        self.bypass_login_switch_value = ctk.StringVar(value = App.settings["bypass login"])
         self.bypass_login_switch = ctk.CTkSwitch(container, text="Allow", command= lambda: self.toggle_bypass_login(App), variable=self.bypass_login_switch_value, onvalue="True", offvalue="False")
         self.bypass_login_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
@@ -156,7 +156,7 @@ class Settings_Frame(Custom_Frame):
         self.disable_ML_label = ctk.CTkLabel(container, text="Disable")
         self.disable_ML_label.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        self.enable_ML_switch_value = ctk.StringVar(value = App.enable_ML_string)
+        self.enable_ML_switch_value = ctk.StringVar(value = App.settings["enable machine learning"])
         self.enable_ML_switch = ctk.CTkSwitch(container, text="Enable", command= lambda: self.toggle_ML(App), variable=self.enable_ML_switch_value, onvalue="True", offvalue="False")
         self.enable_ML_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
@@ -167,7 +167,7 @@ class Settings_Frame(Custom_Frame):
         App.data_manager.update_setting("enable machine learning", value)
 
     def populate_set_machine_learning_priority_container(self, App, container):
-        self.machine_learning_priority_dropdown_value = ctk.StringVar(value = App.machine_learning_priority)
+        self.machine_learning_priority_dropdown_value = ctk.StringVar(value = App.settings["machine learning priority"])
         self.machine_learning_priority_dropdown = ctk.CTkOptionMenu(container, values=["low", "high"], command=lambda value: self.change_machine_learning_priority(App), variable=self.machine_learning_priority_dropdown_value)
         self.machine_learning_priority_dropdown.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
@@ -182,7 +182,7 @@ class Settings_Frame(Custom_Frame):
         self.disable_filter_label = ctk.CTkLabel(container, text="Disable")
         self.disable_filter_label.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        self.enable_filter_switch_value = ctk.StringVar(value = App.enable_filter_string)
+        self.enable_filter_switch_value = ctk.StringVar(value = App.settings["enable filtering"])
         self.enable_filter_switch = ctk.CTkSwitch(container, text="Enable", command= lambda: self.toggle_filter(App), variable=self.enable_filter_switch_value, onvalue="True", offvalue="False")
         self.enable_filter_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
@@ -196,7 +196,7 @@ class Settings_Frame(Custom_Frame):
         self.disable_killswitch_label = ctk.CTkLabel(container, text="Disable")
         self.disable_killswitch_label.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        self.enable_killswitch_switch_value = ctk.StringVar(value = App.enable_killswitch_string)
+        self.enable_killswitch_switch_value = ctk.StringVar(value = App.settings["enable killswitch"])
         self.enable_killswitch_switch = ctk.CTkSwitch(container, text = "Enable", command= lambda:self.toggle_killswitch(App), variable=self.enable_killswitch_switch_value, onvalue="True", offvalue="False")
         self.enable_killswitch_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
@@ -213,7 +213,7 @@ class Settings_Frame(Custom_Frame):
         self.IP_unstrict_strictness_label = ctk.CTkLabel(container, text="Normal")
         self.IP_unstrict_strictness_label.grid(row=container.row_offset, column=1 ,padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        self.IP_strictness_switch_value = ctk.StringVar(value = App.IP_whitelist_strictness_string)
+        self.IP_strictness_switch_value = ctk.StringVar(value = App.settings["IP whitelist strictness"])
         self.IP_strictness_switch = ctk.CTkSwitch(container, text = "Strict", command=lambda:self.toggle_strictness(App, "IP"), variable=self.IP_strictness_switch_value, onvalue="Strict", offvalue="Unstrict")
         self.IP_strictness_switch.grid(row = container.row_offset, column=2,  padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
@@ -223,7 +223,7 @@ class Settings_Frame(Custom_Frame):
         self.MAC_unstrict_strictness_label = ctk.CTkLabel(container, text="Normal")
         self.MAC_unstrict_strictness_label.grid(row=container.row_offset+1, column=1 ,padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        self.MAC_strictness_switch_value = ctk.StringVar(value = App.MAC_whitelist_strictness_string)
+        self.MAC_strictness_switch_value = ctk.StringVar(value = App.settings["MAC whitelist strictness"])
         self.MAC_strictness_switch = ctk.CTkSwitch(container, text = "Strict", command=lambda:self.toggle_strictness(App, "MAC"), variable=self.MAC_strictness_switch_value, onvalue="Strict", offvalue="Unstrict")
         self.MAC_strictness_switch.grid(row = container.row_offset+1, column=2,  padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
@@ -233,7 +233,7 @@ class Settings_Frame(Custom_Frame):
         self.port_unstrict_strictness_label = ctk.CTkLabel(container, text="Normal")
         self.port_unstrict_strictness_label.grid(row=container.row_offset+2, column=1 ,padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        self.port_strictness_switch_value = ctk.StringVar(value = App.port_whitelist_strictness_string)
+        self.port_strictness_switch_value = ctk.StringVar(value = App.settings["port whitelist strictness"])
         self.port_strictness_switch = ctk.CTkSwitch(container, text = "Strict", command=lambda:self.toggle_strictness(App, "port"), variable=self.port_strictness_switch_value, onvalue="Strict", offvalue="Unstrict")
         self.port_strictness_switch.grid(row = container.row_offset+2, column=2,  padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
         
@@ -243,7 +243,7 @@ class Settings_Frame(Custom_Frame):
         self.protocol_unstrict_strictness_label = ctk.CTkLabel(container, text="Normal")
         self.protocol_unstrict_strictness_label.grid(row=container.row_offset+3, column=1 ,padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        self.protocol_strictness_switch_value = ctk.StringVar(value = App.protocol_whitelist_strictness_string)
+        self.protocol_strictness_switch_value = ctk.StringVar(value = App.settings["protocol whitelist strictness"])
         self.protocol_strictness_switch = ctk.CTkSwitch(container, text = "Strict", command=lambda:self.toggle_strictness(App, "protocol"), variable=self.protocol_strictness_switch_value, onvalue="Strict", offvalue="Unstrict")
         self.protocol_strictness_switch.grid(row = container.row_offset+3, column=2,  padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
@@ -253,7 +253,7 @@ class Settings_Frame(Custom_Frame):
         self.application_unstrict_strictness_label = ctk.CTkLabel(container, text="Normal")
         self.application_unstrict_strictness_label.grid(row=container.row_offset+4, column=1 ,padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        self.application_strictness_switch_value = ctk.StringVar(value = App.application_whitelist_strictness_string)
+        self.application_strictness_switch_value = ctk.StringVar(value = App.settings["application whitelist strictness"])
         self.application_strictness_switch = ctk.CTkSwitch(container, text = "Strict", command=lambda:self.toggle_strictness(App, "application"), variable=self.application_strictness_switch_value, onvalue="Strict", offvalue="Unstrict")
         self.application_strictness_switch.grid(row = container.row_offset+4, column=2,  padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
@@ -267,7 +267,7 @@ class Settings_Frame(Custom_Frame):
         self.disable_logs_label = ctk.CTkLabel(container, text="Disable")
         self.disable_logs_label.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        self.enable_logs_switch_value = ctk.StringVar(value = App.enable_logs_string)
+        self.enable_logs_switch_value = ctk.StringVar(value = App.settings["enable logs"])
         self.enable_logs_switch = ctk.CTkSwitch(container, text="Enable", command= lambda: self.toggle_logs(App), variable=self.enable_logs_switch_value, onvalue="True", offvalue="False")
         self.enable_logs_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
@@ -278,7 +278,7 @@ class Settings_Frame(Custom_Frame):
         App.data_manager.update_setting("enable logs", value)
     
     def populate_set_log_auto_delete_container(self, App, container):
-        self.log_auto_delete_dropdown_value = ctk.StringVar(value = App.log_auto_delete_interval)
+        self.log_auto_delete_dropdown_value = ctk.StringVar(value = App.settings["log auto delete interval"])
         self.log_auto_delete_dropdown = ctk.CTkOptionMenu(container, values=["1 Day", "5 Days", "1 Week", "2 Weeks", "1 Month", "3 Months", "6 Months", "1 Year", "Never"], command=lambda value: self.change_log_auto_delete_time(App), variable=self.log_auto_delete_dropdown_value)
         self.log_auto_delete_dropdown.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 

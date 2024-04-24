@@ -50,12 +50,17 @@ class Application(ctk.CTk):
         if self.is_first_time_running() is True:
             self.initiate_database(self.default_user, self.default_pass)
             self.set_default_settings()
-            self.create_logs_folder()
             self.create_marker_file()
 
         #set settings
+        self.minsize(1000,400)
+        self.uniform_padding_x = (5,5)
+        self.uniform_padding_y = (5,5)
+
         self.settings = self.data_manager.read_settings()
         self.set_settings(self.settings)
+
+        #Other Set-up
         self.data_manager.refresh_logs(self, self.settings["log auto delete interval"])
 
         #start UI
@@ -78,48 +83,28 @@ class Application(ctk.CTk):
             return UI_Manager(self)
         except Exception as e:
             print("Error Loading UI Manager", e)
- 
     
+    def set_settings(self, settings):
+        self.geometry(settings["geometry"])
+        self.attributes("-fullscreen", settings["fullscreen"])
+        try:
+            ctk.set_widget_scaling(float(settings["widget scaling"]))
+        except Exception:
+            pass #Some widgets error when being scaled
+        ctk.set_appearance_mode(settings["appearance mode"])
+        self.set_color_theme(settings["theme"], settings["appearance mode"])
+ 
     def set_default_settings(self):
         for setting in self.default_settings:
             self.data_manager.update_setting(setting, setting.value())
 
-    def set_settings(self, settings):
-        self.minsize(1000,400) 
-        self.geometry(settings["geometry"])
-        self.attributes("-fullscreen", settings["fullscreen"])
-        self.bypass_login_string = settings["bypass login"]
-        self.widget_scaling_value = settings["widget scaling"]
-        self.enable_ML_string = settings["enable machine learning"]
-        self.enable_filter_string = settings["enable filtering"]
-        self.machine_learning_priority = settings["machine learning priority"]
-        self.enable_logs_string = settings["enable logs"]
-        self.log_auto_delete_interval = settings["log auto delete interval"]
-        self.enable_killswitch_string = settings["enable killswitch"]
-        self.IP_whitelist_strictness_string = settings["IP whitelist strictness"]
-        self.MAC_whitelist_strictness_string = settings["MAC whitelist strictness"]
-        self.port_whitelist_strictness_string = settings["port whitelist strictness"]
-        self.protocol_whitelist_strictness_string = settings["protocol whitelist strictness"]
-        self.application_whitelist_strictness_string = settings["application whitelist strictness"]
-
-        try:
-            ctk.set_widget_scaling(self.widget_scaling_value)
-        except Exception as e:
-            print(e)
-        self.uniform_padding_x = (5,5)
-        self.uniform_padding_y = (5,5)
-        self.current_theme_name = settings["theme"]
-        self.appearance_mode_string = settings["appearance mode"]
-        ctk.set_appearance_mode(self.appearance_mode_string) 
-        self.set_color_theme(self.current_theme_name, self.appearance_mode_string)
-    
     def set_color_theme(self, theme, appearance_mode_string):
         if appearance_mode_string == "Dark":
             index=1
         else:
             index=0
         ctk.set_default_color_theme("Data/Themes/"+theme+".json")
-        self.theme = self.data_manager.open_theme(self.current_theme_name)
+        self.theme = self.data_manager.open_theme(theme)
         self.theme_color = self.theme["CTkButton"]["fg_color"][index]
         self.frame_color_2 = self.theme["CTkFrame"]["top_fg_color"][index]
         self.frame_color = self.theme["CTkFrame"]["fg_color"][index]
@@ -144,9 +129,6 @@ class Application(ctk.CTk):
             return False  # Application has been run before
         else:
             return True
-        
-    def create_logs_folder(self):
-        os.makedirs("Data/Logs")
     
     def create_marker_file(self):
         marker_path = "Data/marker_file.txt"

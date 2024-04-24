@@ -163,7 +163,7 @@ class Sidebar(Container):
         self.seperator = ctk.CTkLabel(self, text="", image=self.seperator_image)
         self.seperator.grid(row=1, column=0)
 
-        if App.appearance_mode_string == "Light":
+        if App.settings["appearance mode"] == "Light":
             self.text_color = "Black"
         else:
             self.text_color = "white"

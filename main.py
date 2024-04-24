@@ -19,17 +19,32 @@ class Application(ctk.CTk):
 
         #Set the default application settings
         self.default_user, self.default_pass = "user", "pass"
+        self.default_settings = {
+                                    "widget scaling": 1,
+                                    "theme": "green",
+                                    "appearance mode": "Dark",
+                                    "fullscreen": "0",
+                                    "bypass login": "False",
+                                    "enable filtering": "True",
+                                    "enable machine learning": "True",
+                                    "machine learning priority": "low",
+                                    "enable logs": "True",
+                                    "log auto delete interval": "Never",
+                                    "enable killswitch": "False",
+                                    "IP whitelist strictness": "Unstrict",
+                                    "MAC whitelist strictness": "Unstrict",
+                                    "port whitelist strictness": "Unstrict",
+                                    "protocol whitelist strictness": "Unstrict",
+                                    "application whitelist strictness": "Unstrict"
+                                }
         self.wm_iconphoto(True, tk.PhotoImage(file="Data/Images/firewalliconLight.png"))
-        #define what happend on appplication close
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.title("Packet Filter")
 
         #load managers
-        self.load_managers()
-
-        #set settings
-        self.settings = self.data_manager.read_settings()
-        self.set_settings(self.settings)
-        self.data_manager.refresh_logs(self, self.settings["log auto delete interval"])
+        self.data_manager = self.load_datamanager()
+        self.packet_manager = self.load_packetmanager()
+        self.ui_manager = self.load_uimanager()
         
         #Check if first time running
         if self.is_first_time_running() is True:
@@ -38,46 +53,41 @@ class Application(ctk.CTk):
             self.create_logs_folder()
             self.create_marker_file()
 
+        #set settings
+        self.settings = self.data_manager.read_settings()
+        self.set_settings(self.settings)
+        self.data_manager.refresh_logs(self, self.settings["log auto delete interval"])
+
         #start UI
         self.ui_manager.start_ui()
 
-    def load_managers(self):
+    def load_datamanager(self):
         try:
-            self.data_manager = Data_Manager(self)
+            return Data_Manager(self)
         except Exception as e:
             print("Error Loading Data Manager", e)
+
+    def load_packetmanager(self):
         try:
-            self.packet_manager = Packet_Manager(self)
+            return Packet_Manager(self)
         except Exception as e:
             print("Error Loading Packet Manager", e)
+
+    def load_uimanager(self):
         try:
-            self.ui_manager = UI_Manager(self)
+            return UI_Manager(self)
         except Exception as e:
-            print("Error Loading UI Manager", e) 
+            print("Error Loading UI Manager", e)
+ 
     
     def set_default_settings(self):
-        self.data_manager.update_setting("widget scaling", 1.0)
-        self.data_manager.update_setting("theme", "green")
-        self.data_manager.update_setting("appearance mode", "Dark")
-        self.data_manager.update_setting("fullscreen", "0")
-        self.data_manager.update_setting("bypass login", "False")
-        self.data_manager.update_setting("enable filtering", "True")
-        self.data_manager.update_setting("enable machine learning", "True")
-        self.data_manager.update_setting("machine learning priority", "low")
-        self.data_manager.update_setting("enable logs", "True")
-        self.data_manager.update_setting("log auto delete interval", "Never")
-        self.data_manager.update_setting("enable killswitch", "False")
-        self.data_manager.update_setting("IP whitelist strictness", "Unstrict")
-        self.data_manager.update_setting("MAC whitelist strictness", "Unstrict")
-        self.data_manager.update_setting("port whitelist strictness", "Unstrict")
-        self.data_manager.update_setting("protocol whitelist strictness", "Unstrict")
-        self.data_manager.update_setting("application whitelist strictness", "Unstrict")
+        for setting in self.default_settings:
+            self.data_manager.update_setting(setting, setting.value())
 
     def set_settings(self, settings):
         self.minsize(1000,400) 
         self.geometry(settings["geometry"])
         self.attributes("-fullscreen", settings["fullscreen"])
-        self.title(settings["application name"])
         self.bypass_login_string = settings["bypass login"]
         self.widget_scaling_value = settings["widget scaling"]
         self.enable_ML_string = settings["enable machine learning"]

@@ -1,4 +1,4 @@
-from Frames.custom_components import Container, Custom_Frame, Scrolable_Container, Exception_Creation_Window, Exception
+from UI.custom_components import Container, Custom_Frame, Scrolable_Container, Exception_Creation_Window, Exception
 import customtkinter as ctk
 from PIL import Image
 
@@ -43,6 +43,6 @@ class Exception_Frame(Custom_Frame):
             self.exception_creation_window.focus() 
 
     def load_exceptions(self, App):
-        exceptions = App.data_manager.fetch_exceptions(App.cur)
+        exceptions = App.data_manager.fetch_exceptions()
         for exception in exceptions:
             exception = Exception(self.body_container, App, exception[4], exception[5], exception[1], exception[0], exception[3], exception[2])

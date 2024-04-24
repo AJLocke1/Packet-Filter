@@ -1,4 +1,4 @@
-from Frames.custom_components import Container, Scrolable_Container, Custom_Frame
+from UI.custom_components import Container, Custom_Frame
 import customtkinter as ctk
 
 class Signup_Frame(Custom_Frame):

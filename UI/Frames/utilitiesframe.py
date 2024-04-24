@@ -1,4 +1,4 @@
-from Frames.custom_components import Container, Custom_Frame, Scrolable_Container, Sidebar, Info_Pannel, Log, Result
+from UI.custom_components import Container, Custom_Frame, Scrolable_Container, Sidebar, Info_Pannel, Log, Result
 import customtkinter as ctk
 from PIL import Image
 import os
@@ -68,22 +68,25 @@ class Utilities_Frame(Custom_Frame):
         self.scan_display_title = ctk.CTkLabel(self.scan_display_head, text="Scan the Subnet to Locate Network Components", font=("", 20))
         self.scan_display_title.grid(row=0, column=0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w")
 
-        self.scan_button = ctk.CTkButton(self.scan_display_head, text="Scan", command=lambda: self.scan_ip_range(self.get_subnet_hosts(self.ip_display.body.cget("text"), self.subnet_display.body.cget("text")), App))
-        self.scan_button.grid(row=0, column=1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.scan_seperator = ctk.CTkLabel(self.scan_display_head, text="", image=self.seperator_image)
+        self.scan_seperator.grid(row=1, column=0, sticky="w")
 
         self.scan_display_description = ctk.CTkLabel(self.scan_display_head, text="When the scan button is clicked all ip addresses within the shown subnet are scanned to check for online network devices. On larger subnets this may take some time.", anchor="w")
-        self.scan_display_description.grid(row =1, column=0, columnspan=2, sticky="we")
+        self.scan_display_description.grid(row =2, column=0, columnspan = 2, sticky="we")
         self.scan_display_description.bind("<Configure>", lambda event: self.update_wraplength(self.scan_display_head))
 
+        self.scan_button = ctk.CTkButton(self.scan_display_head, text="Scan", command=lambda: self.scan_ip_range(self.get_subnet_hosts(self.ip_display.body.cget("text"), self.subnet_display.body.cget("text")), App))
+        self.scan_button.grid(row=3, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
         self.scan_status_label = ctk.CTkLabel(self.scan_display_head, text="Scanning", text_color="green")
-        self.scan_status_label.grid(row=2, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.scan_status_label.grid(row=3, column=1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
         self.scan_status_label.grid_remove()
 
         self.display = Container(self.scan_display, App, isCentered=False, row=1, column=0, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
         
     def update_wraplength(self, master):
         self.scan_display_description.update_idletasks()
-        self.scan_display_description.configure(wraplength=master.master.winfo_width() - 100)
+        self.scan_display_description.configure(wraplength=master.master.winfo_width() - 150)
 
     def get_ip(self): #MAC and Linux Versions here for testing only
         try:

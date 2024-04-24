@@ -1,6 +1,5 @@
-from Frames.custom_components import Container, Custom_Frame
+from UI.custom_components import Container, Custom_Frame
 import customtkinter as ctk
-from datamanager import Data_Manager
 
 class Login_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):
@@ -27,7 +26,7 @@ class Login_Frame(Custom_Frame):
 
     def login(self, App, username, password):
         try:
-            fetched = Data_Manager.find_password(App.conn, App.cur, username)
+            fetched = App.data_manager.find_password(username)
             storedpass = fetched[0][0]
             if App.data_manager.encrypt_password(password) == storedpass:
                 #change frame

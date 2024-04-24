@@ -1,4 +1,4 @@
-from Frames.custom_components import Container, Custom_Frame, Whitelist_Container, Sidebar
+from UI.custom_components import Container, Custom_Frame, Whitelist_Container, Sidebar
 
 class Whitelist_Frame(Custom_Frame):
     def __init__(self, App, has_navbar, navbar_name = None):

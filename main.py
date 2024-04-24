@@ -1,11 +1,16 @@
 import os
+import time
 import customtkinter as ctk
 import tkinter as tk
 from CTkMessagebox import CTkMessagebox
-from Frames import exceptionframe, settingsframe, utilitiesframe, whitelistframe, loginframe, signupframe, helpframe
+from UI.Frames import exceptionframe, settingsframe, utilitiesframe, whitelistframe, loginframe, signupframe, helpframe
+
 from datamanager import Data_Manager
-#from packetmanager import Packet_Manager
-import time
+from uimanager import UI_Manager
+try:
+    from packetmanager import Packet_Manager
+except ModuleNotFoundError:
+    print("Must be run on Linux for filtering functionality")
 
 """
 program needs to be run with root privlige, on linux hardware while connected to the internet for full functionality.
@@ -13,11 +18,9 @@ program needs to be run with root privlige, on linux hardware while connected to
 class Application(ctk.CTk):
     def __init__(self):
         super().__init__()
-        #load extra functionality
-        self.data_manager = Data_Manager
-        #self.packet_manager = Packet_Manager(self)
+        #load managers
+        self.load_managers()
 
-        self.conn, self.cur = self.data_manager.connect_to_database()
         self.default_user, self.default_pass = "user", "pass"
         self.wm_iconphoto(True, tk.PhotoImage(file="Data/Images/firewalliconLight.png"))
         #define what happend on appplication close
@@ -44,6 +47,20 @@ class Application(ctk.CTk):
             self.raise_frame("Whitelist_Frame")
         else:
             self.raise_frame("Login_Frame")
+
+    def load_managers(self):
+        try:
+            self.data_manager = Data_Manager(self)
+        except Exception as e:
+            print("Error Loading Data Manager", e)
+        try:
+            self.packet_manager = Packet_Manager(self)
+        except Exception as e:
+            print("Error Loading Packet Manager", e)
+        try:
+            self.ui_manager = UI_Manager(self)
+        except Exception as e:
+            print("Error Loading UI Manager", e) 
     
     def set_default_settings(self):
         self.data_manager.update_setting("widget scaling", 1.0)
@@ -99,7 +116,7 @@ class Application(ctk.CTk):
         else:
             index=0
         ctk.set_default_color_theme("Data/Themes/"+theme+".json")
-        self.theme = Data_Manager.open_theme(self.current_theme_name)
+        self.theme = self.data_manager.open_theme(self.current_theme_name)
         self.theme_color = self.theme["CTkButton"]["fg_color"][index]
         self.frame_color_2 = self.theme["CTkFrame"]["top_fg_color"][index]
         self.frame_color = self.theme["CTkFrame"]["fg_color"][index]
@@ -109,7 +126,7 @@ class Application(ctk.CTk):
             frame.destroy()
 
         self.data_manager.update_setting("fullscreen", str(self.attributes("-fullscreen")))
-        self.settings = Data_Manager.read_settings()
+        self.settings = self.data_manager.read_settings()
         self.set_settings(self.settings)
 
         self.frame_list = self.initiate_frames()

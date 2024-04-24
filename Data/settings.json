@@ -1,9 +1,9 @@
 {
-    "widget scaling": 1.0,
+    "widget scaling": 0.75,
     "theme": "dark-blue",
-    "appearance mode": "Dark",
+    "appearance mode": "Light",
     "application name": "Packet Filter",
-    "geometry": "1361x589",
+    "geometry": "963x589",
     "fullscreen": "0",
     "bypass login": "False",
     "enable filtering": "True",

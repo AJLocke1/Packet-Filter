@@ -1,4 +1,4 @@
-from Frames.custom_components import Container, Scrolable_Container, Custom_Frame, Sidebar, Options_Container
+from UI.custom_components import Container, Scrolable_Container, Custom_Frame, Sidebar, Options_Container
 import customtkinter as ctk
 from os import listdir
 from os.path import isfile, join

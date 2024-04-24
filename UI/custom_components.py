@@ -243,7 +243,7 @@ class Whitelist_Creation_Window(ctk.CTkToplevel):
     def add_whitelist(self, master, App, type, target, iswhitelisted, direction):
         if check_format(type, target) is True:
             if (CTkMessagebox(title="Add Whitelist?", message= "Are you sure you want to "+iswhitelisted+" The "+type+" "+target+" "+direction, option_1="No", option_2="yes")).get() == "yes":
-                Added = App.data_manager.add_whitelist(type, target, iswhitelisted, direction, App.cur, App.conn)
+                Added = App.data_manager.add_whitelist(type, target, iswhitelisted, direction)
                 if Added == "Added":
                     Whitelist(master.master.whitelist_table, App, type, target, iswhitelisted, direction)
                 self.destroy()
@@ -273,7 +273,7 @@ class Whitelist(Container):
         self.delete_whitelist_button.grid(row = 0, column = 3, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
 
     def remove_whitelist(self, App, type, target, iswhitelisted, direction):
-        App.data_manager.remove_whitelist(type, target, iswhitelisted, direction, App.cur, App.conn)
+        App.data_manager.remove_whitelist(type, target, iswhitelisted, direction)
         self.destroy()
 
 
@@ -287,7 +287,7 @@ class Whitelist_Table(Container):
         self.load_whitelists(App, master.name)
     
     def load_whitelists(self, App, type):
-        whitelists = App.data_manager.fetch_whitelists(App.cur, type)
+        whitelists = App.data_manager.fetch_whitelists(type)
         for whitelist in whitelists:
             whitelist = Whitelist(self, App, whitelist[1], whitelist[0], whitelist[2], whitelist[3])
             
@@ -454,7 +454,7 @@ class Exception_Creation_Window(ctk.CTkToplevel):
     def add_exception(self, master, App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition):
         if check_format(target_type, target_condition) is True and check_format(allow_type, allow_condition) is True:
             if (CTkMessagebox(title="Add Exception?", message= "Are you sure you want to add this exception?", option_1="No", option_2="yes")).get() == "yes":
-                Added = App.data_manager.add_exception(whitelist_type, direction, target_type, target_condition, allow_type, allow_condition, App.cur, App.conn)
+                Added = App.data_manager.add_exception(whitelist_type, direction, target_type, target_condition, allow_type, allow_condition)
                 if Added == "Added":
                     Exception(master.body_container, App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition)
                 self.destroy()
@@ -497,7 +497,7 @@ class Exception(Container):
         self.remove_exception_button.grid(row=0, column = 6, padx = App.uniform_padding_x, pady=App.uniform_padding_y)
 
     def remove_exception(self, App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition):
-        App.data_manager.remove_exception(whitelist_type, direction, target_type, target_condition, allow_type, allow_condition, App.cur, App.conn)
+        App.data_manager.remove_exception(whitelist_type, direction, target_type, target_condition, allow_type, allow_condition)
         self.destroy()
 
 class Result(Container):

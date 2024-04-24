@@ -2,6 +2,7 @@ import sqlite3 as sql
 import hashlib as hl
 import json
 import os
+import time
 from datetime import datetime
 
 class Data_Manager():
@@ -148,3 +149,36 @@ class Data_Manager():
     def remove_log(self, log_name):
         filepath = "Data/Logs/"+os.fsdecode(log_name)
         os.remove(filepath)
+
+    def refresh_logs(self, App, deletion_interval):
+        log_directory = os.fsencode("Data/Logs")
+        current_time = time.time()
+
+        if deletion_interval != "Never":
+            deletion_interval_seconds = self.time_to_seconds(deletion_interval)
+            for file in os.listdir(log_directory):
+                filepath = "Data/Logs/"+os.fsdecode(file)
+                time_created = os.path.getctime(filepath)
+                time_difference = current_time - time_created
+                if time_difference - deletion_interval_seconds > 0:
+                    os.remove(filepath)
+        App.after(3600000, self.refresh_logs)
+    
+    def time_to_seconds(self, deletion_interval):
+        match deletion_interval:
+            case "1 Day":
+                return 86400
+            case "5 Days":
+                return 432000
+            case "1 Week":
+                return 604800
+            case "2 Weeks":
+                return 1.2096e+6
+            case "1 Month":
+                return 2.6298e+6
+            case "3 Months":
+                return 7.889399e+6
+            case "6 months":
+                return 1.57788e+7
+            case "1 Year":
+                return 3.15576e+7

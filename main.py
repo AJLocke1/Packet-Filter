@@ -1,9 +1,7 @@
 import os
-import time
 import customtkinter as ctk
 import tkinter as tk
 from CTkMessagebox import CTkMessagebox
-from UI.Frames import exceptionframe, settingsframe, utilitiesframe, whitelistframe, loginframe, signupframe, helpframe
 
 from datamanager import Data_Manager
 from uimanager import UI_Manager
@@ -18,10 +16,14 @@ program needs to be run with root privlige, on linux hardware while connected to
 class Application(ctk.CTk):
     def __init__(self):
         super().__init__()
+
         #load managers
         self.load_managers()
 
+        
+        #Set the default application settings
         self.default_user, self.default_pass = "user", "pass"
+        self.default_settings = {}
         self.wm_iconphoto(True, tk.PhotoImage(file="Data/Images/firewalliconLight.png"))
         #define what happend on appplication close
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -33,20 +35,19 @@ class Application(ctk.CTk):
             self.create_logs_folder()
             self.create_marker_file()
 
-        #Read Settings
-        self.settings = self.data_manager.read_settings()
         #Set Settings
+        self.settings = self.data_manager.read_settings()
         self.set_settings(self.settings)
-        self.refresh_logs(self.settings["log auto delete interval"])
+        self.data_manager.refresh_logs(self, self.settings["log auto delete interval"])
 
         #Initialise GUI components
-        self.frame_list = self.initiate_frames()
-        self.stack_frames(self.frame_list)
-        self.populate_navbars(self.frame_list)
+        self.frame_list = self.ui_manager.initiate_frames()
+        self.ui_manager.stack_frames()
+        self.ui_manager.populate_navbars()
         if self.settings["bypass login"] == "True":
-            self.raise_frame("Whitelist_Frame")
+            self.ui_manager.raise_frame("Whitelist_Frame")
         else:
-            self.raise_frame("Login_Frame")
+            self.ui_manager.raise_frame("Login_Frame")
 
     def load_managers(self):
         try:
@@ -129,34 +130,10 @@ class Application(ctk.CTk):
         self.settings = self.data_manager.read_settings()
         self.set_settings(self.settings)
 
-        self.frame_list = self.initiate_frames()
-        self.stack_frames(self.frame_list)
-        self.populate_navbars(self.frame_list)
-        self.raise_frame("Settings_Frame")
-
-    def initiate_frames(self):
-        self.login_frame = loginframe.Login_Frame(self, has_navbar=False)
-        self.signup_frame = signupframe.Signup_Frame(self, has_navbar=False)
-        self.whitelist_frame = whitelistframe.Whitelist_Frame(self,has_navbar=True, navbar_name = "Whitelists")
-        self.rule_frame = exceptionframe.Exception_Frame(self, has_navbar=True, navbar_name="Exceptions")
-        self.utilities_frame = utilitiesframe.Utilities_Frame(self, has_navbar=True, navbar_name="Utilities")
-        self.settings_frame = settingsframe.Settings_Frame(self, has_navbar=True, navbar_name = "Settings")
-        self.help_frame = helpframe.Help_Frame(self, has_navbar=True, navbar_name="Help")
-        return[self.login_frame, self.signup_frame, self.whitelist_frame, self.rule_frame, self.settings_frame, self.utilities_frame, self.help_frame]
-    
-    def populate_navbars(self, frame_list):
-        for frame in frame_list:
-            if frame.has_navbar is True:
-                frame.navbar.populate_navbar(frame, self, frame_list)
-
-    def stack_frames(self, frame_list):
-        for frame in frame_list:
-            frame.place(relx=0.5, rely=0.5, anchor="center" ,relwidth = 1, relheight = 1)
-
-    def raise_frame(self, frame_string):
-        for frame in self.frame_list:
-            if frame.__class__.__name__ == frame_string:
-                frame.tkraise()
+        self.frame_list = self.ui_manager.initiate_frames()
+        self.ui_manager.stack_frames()
+        self.ui_manager.populate_navbars()
+        self.ui_manager.raise_frame("Settings_Frame")
     
     def is_first_time_running(self):
         marker_path = "Data/marker_file.txt"  # Define the path for the marker file
@@ -177,39 +154,6 @@ class Application(ctk.CTk):
     def initiate_database(self, default_user, default_pass):
         self.data_manager.create_database(self.conn, self.cur)
         self.data_manager.insert_user(self.conn, self.cur, default_user, default_pass)
-
-    def refresh_logs(self, deletion_interval):
-        log_directory = os.fsencode("Data/Logs")
-        current_time = time.time()
-
-        if deletion_interval != "Never":
-            deletion_interval_seconds = self.time_to_seconds(deletion_interval)
-            for file in os.listdir(log_directory):
-                filepath = "Data/Logs/"+os.fsdecode(file)
-                time_created = os.path.getctime(filepath)
-                time_difference = current_time - time_created
-                if time_difference - deletion_interval_seconds > 0:
-                    os.remove(filepath)
-        self.after(3600000, self.refresh_logs)
-    
-    def time_to_seconds(self, deletion_interval):
-        match deletion_interval:
-            case "1 Day":
-                return 86400
-            case "5 Days":
-                return 432000
-            case "1 Week":
-                return 604800
-            case "2 Weeks":
-                return 1.2096e+6
-            case "1 Month":
-                return 2.6298e+6
-            case "3 Months":
-                return 7.889399e+6
-            case "6 months":
-                return 1.57788e+7
-            case "1 Year":
-                return 3.15576e+7
 
     def on_closing(self):
        if (CTkMessagebox(title="Quit", message="Do you want to quit?, packet filtering will be disabled", option_1="No", option_2="yes")).get() == "yes":

@@ -128,7 +128,7 @@ class Navbar(ctk.CTkFrame):
             if frame_list[i].has_navbar is True or frame_list[i].navbar_name is not None:
                 frame = frame_list[i].__class__.__name__
                 #f frame needs to be used due to a binding issue taking the value of teh wrong iteration of frame.
-                self.buttons.append(ctk.CTkButton(self, text=frame_list[i].navbar_name, height=30, corner_radius=0, command=lambda f=frame: App.raise_frame(f)))
+                self.buttons.append(ctk.CTkButton(self, text=frame_list[i].navbar_name, height=30, corner_radius=0, command=lambda f=frame: App.ui_manager.raise_frame(f)))
                 self.buttons[count].grid(column=count+2, row=0, sticky="nsew")
                 self.grid_columnconfigure(count+2, weight=1)
                 count +=1

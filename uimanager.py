@@ -2,7 +2,16 @@ from UI.Frames import exceptionframe, settingsframe, utilitiesframe, whitelistfr
 class UI_Manager():
     def __init__(self, App):
         self.app = App
-    
+
+    def start_ui(self):
+        self.app.frame_list = self.initiate_frames()
+        self.stack_frames()
+        self.populate_navbars()
+        if self.app.settings["bypass login"] == "True":
+            self.raise_frame("Whitelist_Frame")
+        else:
+            self.raise_frame("Login_Frame")
+
     def initiate_frames(self):
         App = self.app
         App.login_frame = loginframe.Login_Frame(App, has_navbar=False)

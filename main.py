@@ -17,16 +17,19 @@ class Application(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        #load managers
-        self.load_managers()
-
-        
         #Set the default application settings
         self.default_user, self.default_pass = "user", "pass"
-        self.default_settings = {}
         self.wm_iconphoto(True, tk.PhotoImage(file="Data/Images/firewalliconLight.png"))
         #define what happend on appplication close
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
+
+        #load managers
+        self.load_managers()
+
+        #set settings
+        self.settings = self.data_manager.read_settings()
+        self.set_settings(self.settings)
+        self.data_manager.refresh_logs(self, self.settings["log auto delete interval"])
         
         #Check if first time running
         if self.is_first_time_running() is True:
@@ -35,19 +38,8 @@ class Application(ctk.CTk):
             self.create_logs_folder()
             self.create_marker_file()
 
-        #Set Settings
-        self.settings = self.data_manager.read_settings()
-        self.set_settings(self.settings)
-        self.data_manager.refresh_logs(self, self.settings["log auto delete interval"])
-
-        #Initialise GUI components
-        self.frame_list = self.ui_manager.initiate_frames()
-        self.ui_manager.stack_frames()
-        self.ui_manager.populate_navbars()
-        if self.settings["bypass login"] == "True":
-            self.ui_manager.raise_frame("Whitelist_Frame")
-        else:
-            self.ui_manager.raise_frame("Login_Frame")
+        #start UI
+        self.ui_manager.start_ui()
 
     def load_managers(self):
         try:
@@ -82,7 +74,7 @@ class Application(ctk.CTk):
         self.data_manager.update_setting("application whitelist strictness", "Unstrict")
 
     def set_settings(self, settings):
-        #self.minsize("659x332") Broken
+        self.minsize(1000,400) 
         self.geometry(settings["geometry"])
         self.attributes("-fullscreen", settings["fullscreen"])
         self.title(settings["application name"])

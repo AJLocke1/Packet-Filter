@@ -14,6 +14,30 @@ except ModuleNotFoundError:
 program needs to be run with root privlige, on linux hardware while connected to the internet for full functionality.
 """
 class Application(ctk.CTk):
+    """
+    The main application class
+
+    The class is responsible for managing the flow of the Application. It is a
+    subclass ot the tkinter window class.
+
+    Attributes
+    default_user : str
+        The default username for loggin into the applicaiton
+    defult_pass : str
+        The default password for logging into the application
+    defult_settings : dict
+        The default application settings.
+    uniform_padding_x : tuple
+        The uniform x padding when creating widgts
+    uniform_padding_y : tuple
+        The uniform y padding when creating widgets
+    data_manager : Data_Manager
+        The class responsible for any data manipulation in the application
+    packet_manager : Packet_Manager
+        The class responsible for any packet filtering in the application
+    ui_manager : UI_Manager
+        The class responsible for placing and manipulating the UI
+    """ 
     def __init__(self):
         super().__init__()
         #Set the default application settings and any non changing settings.
@@ -122,6 +146,7 @@ class Application(ctk.CTk):
        if (CTkMessagebox(title="Quit", message="Do you want to quit?, packet filtering will be disabled", option_1="No", option_2="yes")).get() == "yes":
            self.data_manager.update_setting("geometry", str(self.winfo_width())+"x"+str(self.winfo_height()))
            self.data_manager.update_setting("fullscreen", str(self.attributes("-fullscreen")))
+           #self.packet_manager.end_pcket_capture()
            self.destroy()
         
 if __name__ == "__main__" :

@@ -287,7 +287,7 @@ class Whitelist_Table(Container):
         self.load_whitelists(App, master.name)
     
     def load_whitelists(self, App, type):
-        whitelists = App.data_manager.fetch_whitelists(type)
+        whitelists = App.data_manager.fetch_whitelists(type, "Both")
         for whitelist in whitelists:
             whitelist = Whitelist(self, App, whitelist[1], whitelist[0], whitelist[2], whitelist[3])
             

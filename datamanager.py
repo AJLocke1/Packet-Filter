@@ -117,9 +117,13 @@ class Data_Manager():
         except sql.IntegrityError() as Exception:
             return("Unique Whitelist is Required", Exception)
         
-    def fetch_whitelists(self, type):
-        self.cursor.execute("SELECT * FROM whitelists WHERE type IS ?", (type,))
-        return self.cursor.fetchall()
+    def fetch_whitelists(self, type, whitelist_type):
+        if whitelist_type == "Both":
+            self.cursor.execute("SELECT * FROM whitelists WHERE type IS ?", (type,))
+            return self.cursor.fetchall()
+        else:
+            self.cursor.execute("SELECT * FROM whitelists WHERE type IS ? AND whitelisttype IS ?", (type, whitelist_type))
+            return self.cursor.fetchall()
     
     def remove_exception(self, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition):
         print("Removing Exception")

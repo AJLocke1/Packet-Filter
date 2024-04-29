@@ -165,7 +165,11 @@ class Settings_Frame(Custom_Frame):
     def toggle_ML(self, App):
         value = self.enable_ML_switch_value.get()
         App.data_manager.update_setting("enable machine learning", value)
-
+        try:
+            App.packet_manager.refresh_settings()
+        except AttributeError:
+            pass
+        
     def populate_set_machine_learning_priority_container(self, App, container):
         self.machine_learning_priority_dropdown_value = ctk.StringVar(value = App.settings["machine learning priority"])
         self.machine_learning_priority_dropdown = ctk.CTkOptionMenu(container, values=["low", "high"], command=lambda value: self.change_machine_learning_priority(App), variable=self.machine_learning_priority_dropdown_value)
@@ -176,6 +180,10 @@ class Settings_Frame(Custom_Frame):
     def change_machine_learning_priority(self, App):
         value = self.machine_learning_priority_dropdown_value.get()
         App.data_manager.update_setting("machine learning priority", value)
+        try:
+            App.packet_manager.refresh_settings()
+        except AttributeError:
+            pass
 
 
     def populate_disable_filter_container(self, App, container):
@@ -191,6 +199,10 @@ class Settings_Frame(Custom_Frame):
     def toggle_filter(self, App):
         value = self.enable_filter_switch_value.get()
         App.data_manager.update_setting("enable filtering", value)
+        try:
+            App.packet_manager.refresh_settings()
+        except AttributeError:
+            pass
 
     def populate_killswitch_container(self, App, container):
         self.disable_killswitch_label = ctk.CTkLabel(container, text="Disable")
@@ -205,6 +217,10 @@ class Settings_Frame(Custom_Frame):
     def toggle_killswitch(self, App):
         value = self.enable_killswitch_switch_value.get()
         App.data_manager.update_setting("enable killswitch", value)
+        try:
+            App.packet_manager.refresh_settings()
+        except AttributeError:
+            pass
 
     def populate_whitelist_strictness_container(self, App, container):
         self.IP_title_label = ctk.CTkLabel(container, text = "IP Address:")
@@ -262,6 +278,10 @@ class Settings_Frame(Custom_Frame):
     def toggle_strictness(self, App, Type):
         value = getattr(self, Type + "_strictness_switch_value").get()
         App.data_manager.update_setting(Type+" whitelist strictness", value)
+        try:
+            App.packet_manager.refresh_settings()
+        except AttributeError:
+            pass
 
     def populate_enable_logs_container(self, App, container):
         self.disable_logs_label = ctk.CTkLabel(container, text="Disable")
@@ -276,6 +296,10 @@ class Settings_Frame(Custom_Frame):
     def toggle_logs(self, App):
         value = self.enable_logs_switch_value.get()
         App.data_manager.update_setting("enable logs", value)
+        try:
+            App.packet_manager.refresh_settings()
+        except AttributeError:
+            pass
     
     def populate_set_log_auto_delete_container(self, App, container):
         self.log_auto_delete_dropdown_value = ctk.StringVar(value = App.settings["log auto delete interval"])

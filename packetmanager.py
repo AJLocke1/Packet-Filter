@@ -141,6 +141,13 @@ class Packet_Manager():
         types = ["ip", "mac", "port", "protocol", "application"]
         packet_info = self.get_packet_info(packet)
 
+        #Check for killswitch or filter disabling
+        if not self.filter_settings["enable filtering"]:
+            return "accept"
+        if self.filter_settings["enable killswitch"]:
+            self.app.data_manager.append_to_or_create_log("Killswitch")
+            return "drop"
+
         #Check if blacklisted or whitelisted in exceptions
         for type in types:
             deny_exception = getattr(self, direction + "_" + type + "_deny_exceptions")

@@ -245,6 +245,10 @@ class Whitelist_Creation_Window(ctk.CTkToplevel):
             if (CTkMessagebox(title="Add Whitelist?", message= "Are you sure you want to "+iswhitelisted+" The "+type+" "+target+" "+direction, option_1="No", option_2="yes")).get() == "yes":
                 Added = App.data_manager.add_whitelist(type, target, iswhitelisted, direction)
                 if Added == "Added":
+                    try:
+                        App.packet_manager.refresh_whitelist(self, type, iswhitelisted, direction)
+                    except AttributeError:
+                        pass
                     Whitelist(master.master.whitelist_table, App, type, target, iswhitelisted, direction)
                 self.destroy()
 class Whitelist(Container):
@@ -274,6 +278,10 @@ class Whitelist(Container):
 
     def remove_whitelist(self, App, type, target, iswhitelisted, direction):
         App.data_manager.remove_whitelist(type, target, iswhitelisted, direction)
+        try:
+            App.packet_manager.refresh_whitelist(self, type, iswhitelisted, direction)
+        except AttributeError:
+            pass
         self.destroy()
 
 
@@ -456,6 +464,10 @@ class Exception_Creation_Window(ctk.CTkToplevel):
             if (CTkMessagebox(title="Add Exception?", message= "Are you sure you want to add this exception?", option_1="No", option_2="yes")).get() == "yes":
                 Added = App.data_manager.add_exception(whitelist_type, direction, target_type, target_condition, allow_type, allow_condition)
                 if Added == "Added":
+                    try:
+                        App.packet_manager.refresh_exceptions(self, target_type, whitelist_type, direction)
+                    except AttributeError:
+                        pass
                     Exception(master.body_container, App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition)
                 self.destroy()
 
@@ -498,6 +510,10 @@ class Exception(Container):
 
     def remove_exception(self, App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition):
         App.data_manager.remove_exception(whitelist_type, direction, target_type, target_condition, allow_type, allow_condition)
+        try:
+            App.packet_manager.refresh_exceptions(self, target_type, whitelist_type, direction)
+        except AttributeError:
+            pass
         self.destroy()
 
 class Result(Container):

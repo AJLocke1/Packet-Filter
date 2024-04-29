@@ -127,9 +127,9 @@ class Data_Manager():
         else:
             self.cursor.execute("SELECT name FROM whitelists WHERE type IS ? AND whitelisttype IS ? AND direction IS ?", (type, whitelist_type, direction))
             whitelists = self.cursor.fetchall()
-            to_return = []
+            to_return = set()
             for whitelist in whitelists:
-                to_return.append(whitelist[0])
+                to_return.add(whitelist[0])
             return to_return
 
     
@@ -160,11 +160,11 @@ class Data_Manager():
         else:
             self.cursor.execute("SELECT targetcondition, allowtype, allowcondition FROM exceptions WHERE targettype = ? AND whitelisttype = ? AND direction = ?", (target_type, whitelist_type, direction))
             exceptions =  self.cursor.fetchall()
-            to_return = []
+            to_return = set()
             for exception in exceptions:
                 exception = list(exception)
                 exception[1] = self.translate_type(exception[1])
-                to_return.append(exception)
+                to_return.add(tuple(exception))
             return to_return
     
     def translate_type(self, type):

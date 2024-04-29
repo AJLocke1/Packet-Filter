@@ -38,7 +38,7 @@ class Exception_Frame(Custom_Frame):
 
     def add_exception(self, App):
         if self.exception_creation_window is None or not self.exception_creation_window.winfo_exists():
-            self.exception_creation_window = Exception_Creation_Window(self, App)  # create window if its None or destroyed
+            self.exception_creation_window = Exception_Creation_Window(self, App)
         else:
             self.exception_creation_window.focus() 
 

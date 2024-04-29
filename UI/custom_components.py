@@ -200,7 +200,7 @@ class Whitelist_Head(Container):
 
     def add_whitelist(self, App, name):
         if self.whitelist_creation_window is None or not self.whitelist_creation_window.winfo_exists():
-            self.whitelist_creation_window = Whitelist_Creation_Window(self, App, name)  # create window if its None or destroyed
+            self.whitelist_creation_window = Whitelist_Creation_Window(self, App, name) 
         else:
             self.whitelist_creation_window.focus() 
 

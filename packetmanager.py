@@ -2,6 +2,7 @@
 import subprocess
 import scapy
 import threading
+import numpy
 from netfilterqueue import NetfilterQueue
 
 class Packet_Manager():
@@ -17,34 +18,34 @@ class Packet_Manager():
         self.outbound_interface = "eth0"
 
 
-        self.incoming_ip_whitelists = []
-        self.incoming_mac_whitelists = []
-        self.incoming_port_whitelists = []
-        self.incoming_protocol_whitelists = []
-        self.incoming_application_whitelists = []
+        self.incoming_ip_whitelists = None
+        self.incoming_mac_whitelists = None
+        self.incoming_port_whitelists = None
+        self.incoming_protocol_whitelists = None
+        self.incoming_application_whitelists = None
 
-        self.outgoing_ip_whitelists = []
-        self.outgoing_mac_whitelists = []
-        self.outgoing_port_whitelists = []
-        self.outgoing_protocol_whitelists = []
-        self.outgoing_application_whitelists = []
+        self.outgoing_ip_whitelists = None
+        self.outgoing_mac_whitelists = None
+        self.outgoing_port_whitelists = None
+        self.outgoing_protocol_whitelists = None
+        self.outgoing_application_whitelists = None
 
-        self.incoming_ip_blacklists = []
-        self.incoming_mac_blacklists = []
-        self.incoming_port_blacklists = []
-        self.incoming_protocol_blacklists = []
-        self.incoming_application_blacklists = []
+        self.incoming_ip_blacklists = None
+        self.incoming_mac_blacklists = None
+        self.incoming_port_blacklists = None
+        self.incoming_protocol_blacklists = None
+        self.incoming_application_blacklists = None
 
-        self.outgoing_ip_blacklists = []
-        self.outgoing_mac_blacklists = []
-        self.outgoing_port_blacklists = []
-        self.outgoing_protocol_blacklists = []
-        self.outgoing_application_blacklists = []
+        self.outgoing_ip_blacklists = None
+        self.outgoing_mac_blacklists = None
+        self.outgoing_port_blacklists = None
+        self.outgoing_protocol_blacklists = None
+        self.outgoing_application_blacklists = None
 
-        self.incoming_exceptions = []
-        self.outgoing_exceptions = []
+        self.incoming_exceptions = None
+        self.outgoing_exceptions = None
 
-        self.filter_settings = {}
+        self.filter_settings = None
 
         self.load_filter()
         self.initiate_packet_capture()
@@ -138,7 +139,9 @@ class Packet_Manager():
         return self.app.settings
     
     def process_packet(self, packet, direction):
+        #used to access the classes filter lists
         types = ["ip", "mac", "port", "protocol", "application"]
+        #get only the neccessary packet info for filtering
         packet_info = self.get_packet_info(packet)
 
         #Check for killswitch or filter disabling

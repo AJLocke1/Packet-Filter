@@ -1,6 +1,7 @@
 #Only works on Linux Systems
 import subprocess
 import scapy
+import threading
 from netfilterqueue import NetfilterQueue
 
 class Packet_Manager():
@@ -50,25 +51,26 @@ class Packet_Manager():
 
     def initiate_packet_capture(self):
         try:
-            # Enable packet forwarding
+            #Enable packet forwarding
             subprocess.run(["sudo", "sysctl", "net.ipv4.ip_forward=1"], check=True)
-            # Add iptables rule to forward packets to NFQUEUE
+            #Add iptables rule to forward packets to NFQUEUE
             subprocess.run(["sudo", "iptables", "-A", "FORWARD", "-i", self.outbound_interface, "-j", "NFQUEUE", "--queue-num", "0"], check=True)
             subprocess.run(["sudo", "iptables", "-A", "FORWARD", "-i", self.inbound_interface, "-j", "NFQUEUE", "--queue-num", "1"], check=True)
-            # Bind NetfilterQueue
-            self.outbound_nfqueue = NetfilterQueue()
-            self.outbound_nfqueue.bind(0, lambda packet, metadata: self.process_packet(packet, "outgoing"))
-
-            self.inbound_nfqueue = NetfilterQueue()
-            self.inbound_nfqueue.bind(1, lambda packet, metadata: self.process_packet(packet, "incoming"))
-
-            self.outbound_nfqueue.run()
-            self.inbound_nfqueue.run()
+           
+            #Bind NetfilterQueue
+            self.outbound_thread = threading.Thread(target=self.bind_nfqueue, args=(0, "outgoing"))
+            self.inbound_thread = threading.Thread(target=self.bind_nfqueue, args=(1, "incoming"))
 
         except KeyboardInterrupt:
             print("Firewall Interrupted")
         except subprocess.CalledProcessError as e:
             print("Error occurred:", e)
+    
+    def bind_nfqueue(self, queue_number, direction):
+        nfqueue = NetfilterQueue()
+        nfqueue.bind(queue_number, lambda packet: self.process_packet(packet, direction))
+        nfqueue.run()
+
     
     def end_packet_capture(self):
         subprocess.run(["sudo", "sysctl", "net.ipv4.ip_forward=0"])

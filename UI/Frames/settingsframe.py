@@ -214,7 +214,7 @@ class Settings_Frame(Custom_Frame):
         self.IP_unstrict_strictness_label.grid(row=container.row_offset, column=1 ,padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
         self.IP_strictness_switch_value = ctk.StringVar(value = App.settings["IP whitelist strictness"])
-        self.IP_strictness_switch = ctk.CTkSwitch(container, text = "Strict", command=lambda:self.toggle_strictness(App, "IP"), variable=self.IP_strictness_switch_value, onvalue="Strict", offvalue="Unstrict")
+        self.IP_strictness_switch = ctk.CTkSwitch(container, text = "Strict", command=lambda:self.toggle_strictness(App, "ip"), variable=self.IP_strictness_switch_value, onvalue="Strict", offvalue="Unstrict")
         self.IP_strictness_switch.grid(row = container.row_offset, column=2,  padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
         self.MAC_title_label = ctk.CTkLabel(container, text = "MAC Address:")
@@ -224,7 +224,7 @@ class Settings_Frame(Custom_Frame):
         self.MAC_unstrict_strictness_label.grid(row=container.row_offset+1, column=1 ,padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
         self.MAC_strictness_switch_value = ctk.StringVar(value = App.settings["MAC whitelist strictness"])
-        self.MAC_strictness_switch = ctk.CTkSwitch(container, text = "Strict", command=lambda:self.toggle_strictness(App, "MAC"), variable=self.MAC_strictness_switch_value, onvalue="Strict", offvalue="Unstrict")
+        self.MAC_strictness_switch = ctk.CTkSwitch(container, text = "Strict", command=lambda:self.toggle_strictness(App, "mac"), variable=self.MAC_strictness_switch_value, onvalue="Strict", offvalue="Unstrict")
         self.MAC_strictness_switch.grid(row = container.row_offset+1, column=2,  padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
         self.port_title_label = ctk.CTkLabel(container, text = "Port:")

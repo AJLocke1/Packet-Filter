@@ -6,6 +6,9 @@ import time
 from datetime import datetime
 
 class Data_Manager():
+    """
+    Responsible for managing any external data not stored in the application class.
+    """
     def __init__(self, App):
         self.app = App
         self.connection, self.cursor = self.connect_to_database()
@@ -117,12 +120,12 @@ class Data_Manager():
         except sql.IntegrityError() as Exception:
             return("Unique Whitelist is Required", Exception)
         
-    def fetch_whitelists(self, type, whitelist_type):
-        if whitelist_type == "Both":
+    def fetch_whitelists(self, type, whitelist_type = "Both", direction = "Both"):
+        if whitelist_type == "Both" and direction == "Both":
             self.cursor.execute("SELECT * FROM whitelists WHERE type IS ?", (type,))
             return self.cursor.fetchall()
         else:
-            self.cursor.execute("SELECT * FROM whitelists WHERE type IS ? AND whitelisttype IS ?", (type, whitelist_type))
+            self.cursor.execute("SELECT name FROM whitelists WHERE type IS ? AND whitelisttype IS ? AND direction IS ?", (type, whitelist_type, direction))
             return self.cursor.fetchall()
     
     def remove_exception(self, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition):
@@ -145,9 +148,13 @@ class Data_Manager():
         except sql.IntegrityError() as Exception:
             return("Unique Exception is Required", Exception)
         
-    def fetch_exceptions(self):
-        self.cursor.execute("SELECT * FROM exceptions")
-        return self.cursor.fetchall()
+    def fetch_exceptions(self, target_type = "All", whitelist_type = "Both", direction="Both"):
+        if target_type == "All" and whitelist_type == "Both" and direction == "Both":
+            self.cursor.execute("SELECT * FROM exceptions")
+            return self.cursor.fetchall()
+        else:
+            self.cursor.execute("SELECT targetcondition, allowcondition, allowtype FROM exceptions WHERE targettype = ? AND whitelisttype = ? AND direction = ?", (target_type, whitelist_type, direction))
+            return self.cursor.fetchall()
     
     def append_to_or_create_log(self, rule_string):
         log_path = datetime.today().strftime("%Y-%m-%d")

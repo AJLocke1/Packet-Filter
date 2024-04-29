@@ -12,8 +12,8 @@
     "enable logs": "True",
     "log auto delete interval": "Never",
     "enable killswitch": "False",
-    "IP whitelist strictness": "Unstrict",
-    "MAC whitelist strictness": "Unstrict",
+    "ip whitelist strictness": "Unstrict",
+    "mac whitelist strictness": "Unstrict",
     "port whitelist strictness": "Unstrict",
     "protocol whitelist strictness": "Unstrict",
     "application whitelist strictness": "Unstrict"

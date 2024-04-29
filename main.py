@@ -54,8 +54,8 @@ class Application(ctk.CTk):
                                     "enable logs": "True",
                                     "log auto delete interval": "Never",
                                     "enable killswitch": "False",
-                                    "IP whitelist strictness": "Unstrict",
-                                    "MAC whitelist strictness": "Unstrict",
+                                    "ip whitelist strictness": "Unstrict",
+                                    "mac whitelist strictness": "Unstrict",
                                     "port whitelist strictness": "Unstrict",
                                     "protocol whitelist strictness": "Unstrict",
                                     "application whitelist strictness": "Unstrict"
@@ -85,6 +85,12 @@ class Application(ctk.CTk):
         #Start Aplication Processes
         self.data_manager.refresh_logs(self, self.settings["log auto delete interval"])
         self.ui_manager.start_ui()
+
+        #Testing
+        self.exceptions =  self.data_manager.fetch_exceptions()
+        print(self.exceptions)
+
+        print(self.data_manager.fetch_whitelists("All", "Both"))
 
     def load_datamanager(self):
         try:
@@ -146,7 +152,10 @@ class Application(ctk.CTk):
        if (CTkMessagebox(title="Quit", message="Do you want to quit?, packet filtering will be disabled", option_1="No", option_2="yes")).get() == "yes":
            self.data_manager.update_setting("geometry", str(self.winfo_width())+"x"+str(self.winfo_height()))
            self.data_manager.update_setting("fullscreen", str(self.attributes("-fullscreen")))
-           #self.packet_manager.end_pcket_capture()
+           try:
+            self.packet_manager.end_pcket_capture()
+           except Exception:
+               pass
            self.destroy()
         
 if __name__ == "__main__" :

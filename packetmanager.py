@@ -150,18 +150,18 @@ class Packet_Manager():
 
         #Check if blacklisted or whitelisted in exceptions
         for type in types:
-            deny_exception = getattr(self, direction + "_" + type + "_deny_exceptions")
-            for exception in deny_exception:
+            deny_exceptions = getattr(self, direction + "_" + type + "_deny_exceptions")
+            for exception in deny_exceptions:
                 if packet_info[type] == exception[0]:
-                    if packet_info[exception[1]] == packet_info[exception[2]]:
+                    if packet_info[exception[1]] == exception[2]:
                         if self.filter_settings["enable logs"]:
                             self.app.data_manager.append_to_or_create_log("Deny Exception:" + exception[0] + exception[1] + exception[2])
                         return "drop"
                     
-            accept_exception = getattr(self, direction + "_" + type + "_accept_exceptions")
-            for exception in accept_exception:
+            accept_exceptions = getattr(self, direction + "_" + type + "_accept_exceptions")
+            for exception in accept_exceptions:
                 if packet_info[type] == exception[0]:
-                    if packet_info[exception[1]] == packet_info[exception[2]]:
+                    if packet_info[exception[1]] == exception[2]:
                         return "accept"
 
         #Check if blacklisted in whitelists 
@@ -201,7 +201,7 @@ class Packet_Manager():
         packet_info["application"] = packet[scapy.Raw].guess_payload_class().__name__
         #Retrun information
         return packet_info
-
+    
 
 
     

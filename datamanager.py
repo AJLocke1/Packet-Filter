@@ -54,7 +54,7 @@ class Data_Manager():
         self.connection.commit()
 
     def insert_user(self, username, password):
-        encrypted_pass = self.encryptPassword(password)
+        encrypted_pass = self.encrypt_password(password)
         try:
             self.cursor.execute("""
             INSERT INTO userdata (username, password) VALUES (?,?)           
@@ -126,7 +126,12 @@ class Data_Manager():
             return self.cursor.fetchall()
         else:
             self.cursor.execute("SELECT name FROM whitelists WHERE type IS ? AND whitelisttype IS ? AND direction IS ?", (type, whitelist_type, direction))
-            return self.cursor.fetchall()
+            whitelists = self.cursor.fetchall()
+            to_return = []
+            for whitelist in whitelists:
+                to_return.append(whitelist[0])
+            return to_return
+
     
     def remove_exception(self, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition):
         print("Removing Exception")
@@ -153,8 +158,28 @@ class Data_Manager():
             self.cursor.execute("SELECT * FROM exceptions")
             return self.cursor.fetchall()
         else:
-            self.cursor.execute("SELECT targetcondition, allowcondition, allowtype FROM exceptions WHERE targettype = ? AND whitelisttype = ? AND direction = ?", (target_type, whitelist_type, direction))
-            return self.cursor.fetchall()
+            self.cursor.execute("SELECT targetcondition, allowtype, allowcondition FROM exceptions WHERE targettype = ? AND whitelisttype = ? AND direction = ?", (target_type, whitelist_type, direction))
+            exceptions =  self.cursor.fetchall()
+            to_return = []
+            for exception in exceptions:
+                exception = list(exception)
+                exception[1] = self.translate_type(exception[1])
+                to_return.append(exception)
+            return to_return
+    
+    def translate_type(self, type):
+        match type:
+            case "IP Address":
+                return "ip"
+            case "MAC Address":
+                return "mac"
+            case "Port":
+                return "port"
+            case "Protocol":
+                return "protocol"
+            case "Application":
+                return "application"
+                
     
     def append_to_or_create_log(self, rule_string):
         log_path = datetime.today().strftime("%Y-%m-%d")

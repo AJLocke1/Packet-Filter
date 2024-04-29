@@ -1,6 +1,6 @@
 {
-    "widget scaling": 0.75,
-    "theme": "blue",
+    "widget scaling": 1,
+    "theme": "green",
     "appearance mode": "Dark",
     "application name": "Packet Filter",
     "geometry": "1000x400",

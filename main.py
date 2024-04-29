@@ -87,10 +87,10 @@ class Application(ctk.CTk):
         self.ui_manager.start_ui()
 
         #Testing
-        self.exceptions =  self.data_manager.fetch_exceptions()
+        self.exceptions =  self.data_manager.fetch_exceptions("Port", "Whitelist", "Incoming")
         print(self.exceptions)
 
-        print(self.data_manager.fetch_whitelists("All", "Both"))
+        print(self.data_manager.fetch_whitelists("IP Address", "Whitelist", "Incoming"))
 
     def load_datamanager(self):
         try:
@@ -122,7 +122,7 @@ class Application(ctk.CTk):
  
     def set_default_settings(self):
         for setting in self.default_settings:
-            self.data_manager.update_setting(setting, setting.value())
+            self.data_manager.update_setting(setting, self.default_settings[setting])
 
     def set_color_theme(self, theme, appearance_mode_string):
         if appearance_mode_string == "Dark":

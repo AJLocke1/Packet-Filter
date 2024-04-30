@@ -1,6 +1,26 @@
 from UI.custom_components import Container, Custom_Frame, Whitelist_Container, Sidebar
 
 class Whitelist_Frame(Custom_Frame):
+    """
+    The UI Page for modifying the whitelists. Functionality is in the custom components.
+
+    Attributes:
+    - main_container (Container):
+        a container for holding the main body of the page.
+    - sidebar_container (Container):
+        a container for chaniging what is displayed on the main container.
+    - whitelist_containers:
+        a container for each of the different types of whitelists.
+    - subcontainers:
+        a llist of all the whitelist containers to be utilized by the sidebar to switch between them.
+    
+    methods:
+    - initialise_containers:
+        required method for creating all the containers to be placed in the frame.
+    - populate_containers:
+        required method for adding extra widgets to custom containers if needed.
+
+    """
     def __init__(self, App, has_navbar, navbar_name = None):
         super().__init__(App, has_navbar=has_navbar, navbar_name=navbar_name)
         self.grid_columnconfigure(0, weight = 1)
@@ -23,3 +43,4 @@ class Whitelist_Frame(Custom_Frame):
 
     def populate_containers(self, App):
        pass
+

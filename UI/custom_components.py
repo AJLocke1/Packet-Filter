@@ -47,6 +47,23 @@ def check_format(type, target):
 
 #_____CUSTOM_FRAME_________________________________________________________________________________
 class Custom_Frame(ctk.CTkFrame):
+    """
+    For creating different UI pages for an application class.
+
+    Attributes:
+    -   has_navbar (bool):
+        a bool for whether the custom frame should have a navbar displayed on it.
+    - navbar_name (str or None):
+        a name for the navbar if it will be availible to switch to by the navbar.
+
+    Methods:
+    -   initialise_containers:
+        a required method to be implemented in each instance of the class to create custom continers.
+    -   populate_container:
+        a required method to be implemented in each instance of the class to add extra widgets to the containers.
+    -   initialise_navbar:
+        a method to automatically crfeate the navbar at the top of the custom frame.
+    """
     def __init__(self, App, has_navbar, navbar_name = None):
         super().__init__(App)
         self.has_navbar = has_navbar
@@ -73,7 +90,6 @@ class Custom_Frame(ctk.CTkFrame):
 class Custom_Container():
     def __init__(self, master, App, isCentered, row=None, column=None, color="transparent", sticky=None, padx=None, pady=None, max_width = None, name=None, placeself = None):
         super().__init__(master, fg_color=color)
-        self.filter_container_head = None
         self.name = name
         self.column = column
         self.row = row
@@ -516,7 +532,7 @@ class Exception(Container):
             pass
         self.destroy()
 
-class Result(Container):
+class Scan_Result(Container):
     def __init__(self, master, App, ip_address, name):
         super().__init__(master, App, isCentered=False, color=App.frame_color, placeself = False)
         self.grid_columnconfigure(0, weight=1, uniform="uniform")

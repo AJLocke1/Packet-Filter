@@ -2,7 +2,6 @@
 import subprocess
 import scapy
 import threading
-import numpy
 from netfilterqueue import NetfilterQueue
 
 class Packet_Manager():

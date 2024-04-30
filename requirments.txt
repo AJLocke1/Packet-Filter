@@ -1,2 +1,8 @@
 customtkinter
 tkinter
+python-namp
+ipaddress
+datetime
+json
+netfilterqueue
+scapy

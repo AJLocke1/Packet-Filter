@@ -1,4 +1,4 @@
-from UI.custom_components import Container, Custom_Frame, Scrolable_Container, Sidebar, Info_Pannel, Log, Result
+from UI.custom_components import Container, Custom_Frame, Scrolable_Container, Sidebar, Log, Scan_Result
 import customtkinter as ctk
 from PIL import Image
 import os
@@ -35,11 +35,9 @@ class Utilities_Frame(Custom_Frame):
         self.log_display = Container(self.log_container, App, isCentered=False, color=App.frame_color, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y, row=5, column=0)
 
         #Currently using a windows command for testing
-        self.ip_display = Info_Pannel(self.network_container, App, title="IP Address", body=self.get_ip(), row=0, column = 0)
-        self.subnet_display = Info_Pannel(self.network_container, App, title="Subnet Mask", body=self.get_subnet(), row=1, column = 0)
-        self.subnet_addresses_display = Info_Pannel(self.network_container, App, title="Subnet Addresses", body=self.get_first_and_last_subnet_addresses(self.ip_display.body.cget("text"), self.subnet_display.body.cget("text")), row=2, column = 0)
-        self.scan_display = Container(self.network_container, App, isCentered=False, row=3, column=0, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
-
+        self.user_network_info = Container(self.network_container, App, isCentered=False, row=0, column=0, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.user_network_info.grid_columnconfigure(1, weight=1)
+        self.scan_display = Container(self.network_container, App, isCentered=False, row=1, column=0, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Utilities", subcontainers=self.subcontainers, loadedcontainer=self.log_container)
 
@@ -73,7 +71,7 @@ class Utilities_Frame(Custom_Frame):
 
         self.scan_display_description = ctk.CTkLabel(self.scan_display_head, text="When the scan button is clicked all ip addresses within the shown subnet are scanned to check for online network devices. On larger subnets this may take some time.", anchor="w")
         self.scan_display_description.grid(row =2, column=0, columnspan = 2, sticky="we")
-        self.scan_display_description.bind("<Configure>", lambda event: self.update_wraplength(self.scan_display_head))
+        self.scan_display_description.bind("<Configure>", lambda event: self.update_wraplength(self.scan_display_description, self.scan_display_head))
 
         self.scan_button = ctk.CTkButton(self.scan_display_head, text="Scan", command=lambda: self.scan_ip_range(self.get_subnet_hosts(self.ip_display.body.cget("text"), self.subnet_display.body.cget("text")), App))
         self.scan_button.grid(row=3, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
@@ -84,9 +82,41 @@ class Utilities_Frame(Custom_Frame):
 
         self.display = Container(self.scan_display, App, isCentered=False, row=1, column=0, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
         
-    def update_wraplength(self, master):
-        self.scan_display_description.update_idletasks()
-        self.scan_display_description.configure(wraplength=master.master.winfo_width() - 150)
+        ip = self.get_ip()
+        subnet = self.get_subnet()
+        subnet_range = self.get_first_and_last_subnet_addresses(ip, subnet)
+
+        self.network_info_title = ctk.CTkLabel(self.user_network_info ,text="Network Information", font=("", 20))
+        self.network_info_title.grid(row=0, column=0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w", columnspan =2)
+
+        self.network_info_seperator = ctk.CTkLabel(self.user_network_info, text="", image=self.seperator_image)
+        self.network_info_seperator.grid(row=1, column=0, sticky="w", columnspan = 2)
+
+        self.network_info_description = ctk.CTkLabel(self.user_network_info, text="Network Information of the packet filter.", anchor="w")
+        self.network_info_description.grid(row =2, column=0, columnspan = 2, sticky="we")
+        self.network_info_description.bind("<Configure>", lambda event: self.update_wraplength(self.network_info_description, self.user_network_info))
+
+        self.ip_label = ctk.CTkLabel(self.user_network_info, text = "IP Address:")
+        self.ip_label.grid(row=3, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
+
+        self.ip_value_label = ctk.CTkLabel(self.user_network_info, text = ip)
+        self.ip_value_label.grid(row=3, column=1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
+
+        self.subnet_label = ctk.CTkLabel(self.user_network_info, text = "Subnet Mask:")
+        self.subnet_label.grid(row=4, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
+
+        self.subnet_value_label = ctk.CTkLabel(self.user_network_info, text = subnet)
+        self.subnet_value_label.grid(row=4, column=1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
+
+        self.subnet_range_label = ctk.CTkLabel(self.user_network_info, text = "Host Range:")
+        self.subnet_range_label.grid(row=5, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
+
+        self.subnet_range_value_label = ctk.CTkLabel(self.user_network_info, text = subnet_range)
+        self.subnet_range_value_label.grid(row=5, column=1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
+
+    def update_wraplength(self, description, master):
+        description.update_idletasks()
+        description.configure(wraplength=master.master.winfo_width() - 150)
 
     def get_ip(self): #MAC and Linux Versions here for testing only
         try:
@@ -162,7 +192,7 @@ class Utilities_Frame(Custom_Frame):
 
     def display_scan_results(self, results, App):
         for result in results:
-            self.display.result = Result(self.display, App, result[0] ,result[1])
+            self.display.result = Scan_Result(self.display, App, result[0] ,result[1])
             self.display.result.pack(padx = App.uniform_padding_x, pady= App.uniform_padding_y, anchor="w")
         self.scan_status_label.grid_remove()
 

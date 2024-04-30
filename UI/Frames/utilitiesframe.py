@@ -173,10 +173,11 @@ class ScannerMaster(threading.Thread):
         self.scanner_threads = []
         self.hosts = hosts
         self.app = App
+        self.scan_aggressivness = App.settings["scan aggressivness"]
 
     def run(self):
         for host in self.hosts:
-            scanner_thread = ScannerThread(host)
+            scanner_thread = ScannerThread(host, self.scan_aggressivness)
             scanner_thread.start()
             self.scanner_threads.append(scanner_thread)
 
@@ -188,10 +189,11 @@ class ScannerMaster(threading.Thread):
         self.app.utilities_frame.display_scan_results(self.results, self.app)
 
 class ScannerThread(threading.Thread):
-    def __init__(self, host):
+    def __init__(self, host, scan_aggressivness):
         super().__init__()
         self.host = host
         self.result = None
+        self.scan_aggressivness = scan_aggressivness
 
     def run(self):
         scanner = nmap.PortScanner()
@@ -199,18 +201,21 @@ class ScannerThread(threading.Thread):
 
         timer = threading.Timer(240, self.timeout)
         timer.start()
-                            
+        print(self.scan_aggressivness)           
         try:
-            scan_result = scanner.scan(hosts=host_str, arguments="-O")
-            if "osmatch" in scan_result["scan"][host_str]: 
-                if len(scan_result["scan"][host_str]["osmatch"]) > 0:
-                    os_match = scan_result["scan"][host_str]["osmatch"][0]
-                else:
-                    os_match = scan_result["scan"][host_str]["osmatch"]
-            print(os_match)
-            name = os_match["name"] if os_match["name"] is not None else "Unkown Name"
-            self.result = [host_str, name]
-            print(self.result)
+            if self.scan_aggressivness == "Aggressive":
+                scan_result = scanner.scan(hosts=host_str, arguments="-O")
+                if "osmatch" in scan_result["scan"][host_str]: 
+                    if len(scan_result["scan"][host_str]["osmatch"]) > 0:
+                        os_match = scan_result["scan"][host_str]["osmatch"][0]
+                    else:
+                        os_match = scan_result["scan"][host_str]["osmatch"]
+                name = os_match["name"] if os_match["name"] is not None else "Unkown Name"
+                self.result = [host_str, name]
+            else:
+                scan_result = scanner.scan(hosts=host_str, arguments="-sV")
+                if host_str in scan_result['scan']:
+                    self.result = [host_str, "Unkown Name"]
         except Exception:
             pass
         finally:

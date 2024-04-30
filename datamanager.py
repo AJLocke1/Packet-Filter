@@ -91,6 +91,7 @@ class Data_Manager():
         return settings
     
     def update_setting(self, setting, new_value):
+        self.app.settings[setting] = new_value
         file = open("Data/settings.json", "r+")
         settings = json.load(file)
         settings[setting] = new_value

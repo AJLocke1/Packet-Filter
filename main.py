@@ -58,7 +58,8 @@ class Application(ctk.CTk):
                                     "mac whitelist strictness": "Unstrict",
                                     "port whitelist strictness": "Unstrict",
                                     "protocol whitelist strictness": "Unstrict",
-                                    "application whitelist strictness": "Unstrict"
+                                    "application whitelist strictness": "Unstrict",
+                                    "scan aggressivness": "Aggressive"
                                 }
         self.wm_iconphoto(True, tk.PhotoImage(file="Data/Images/firewalliconLight.png"))
         self.protocol("WM_DELETE_WINDOW", self.on_closing)

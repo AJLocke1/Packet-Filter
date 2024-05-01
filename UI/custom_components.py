@@ -256,17 +256,29 @@ class Whitelist_Creation_Window(ctk.CTkToplevel):
         self.enter_whitelist = ctk.CTkButton(self, text = "Enter Whitelist", command=lambda: self.add_whitelist(master, App, self.type, self.Entry.get(), self.is_whitlisted.get(), self.direction.get()))
         self.enter_whitelist.grid(row=2, column=3, padx=App.uniform_padding_x, pady=App.uniform_padding_y, columnspan =3, sticky="ew")
 
+        self.label_4 = ctk.CTkLabel(self, text="Error", text_color="red")
+        self.label_4.grid(row = 3, column = 0, columnspan=4, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.label_4.grid_remove()
+
     def add_whitelist(self, master, App, type, target, iswhitelisted, direction):
         if check_format(type, target) is True:
             if (CTkMessagebox(title="Add Whitelist?", message= "Are you sure you want to "+iswhitelisted+" The "+type+" "+target+" "+direction, option_1="No", option_2="yes")).get() == "yes":
                 Added = App.data_manager.add_whitelist(type, target, iswhitelisted, direction)
+                print(Added)
                 if Added == "Added":
                     try:
                         App.packet_manager.refresh_whitelist(self, type, iswhitelisted, direction)
                     except AttributeError:
                         pass
                     Whitelist(master.master.whitelist_table, App, type, target, iswhitelisted, direction)
-                self.destroy()
+                    self.label_4.grid_remove()
+                    self.destroy()
+                else:
+                    self.label_4.configure(text="Error "+ Added)
+                    self.label_4.grid()
+        else:
+            self.label_4.configure(text="Formatting Error for whitelist target")
+            self.label_4.grid()
 class Whitelist(Container):
     def __init__(self, master, App, type, target, iswhitelisted, direction):
         super().__init__(master, App, isCentered=False, color=App.frame_color, placeself = False)
@@ -472,6 +484,10 @@ class Exception_Creation_Window(ctk.CTkToplevel):
         self.enter_button = ctk.CTkButton(self, text="Add Exception", command=lambda: self.add_exception(master, App, self.whitelist_type_value.get(), self.direction_value.get(), self.target_type_value.get(), self.target_condition_entry.get(), self.allow_type_value.get(), self.allow_condition_entry.get()))
         self.enter_button.grid(row=7, column = 0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, columnspan=2)
 
+        self.label_5 = ctk.CTkLabel(self, text="Error", text_color="red")
+        self.label_5.grid(row=8, column =0, columnspan =2, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+        self.label_5.grid_remove()
+
         for row in range(0, self.grid_size()[1]):
             self.grid_rowconfigure(row, uniform="uniform")
 
@@ -485,7 +501,14 @@ class Exception_Creation_Window(ctk.CTkToplevel):
                     except AttributeError:
                         pass
                     Exception(master.body_container, App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition)
-                self.destroy()
+                    self.label_5.grid_remove()
+                    self.destroy()
+                else:
+                    self.label_5.grid()
+                    self.label_5.configure(text="Error "+ Added)
+        else:
+            self.label_5.grid()
+            self.label_5.configure(text="Formatting error with target or allow condition.")
 
 class Exception(Container):
     def __init__(self, master, App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition):

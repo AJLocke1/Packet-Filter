@@ -118,8 +118,8 @@ class Data_Manager():
             self.connection.commit()
             print("Whitelist Added")
             return("Added")
-        except sql.IntegrityError() as Exception:
-            return("Unique Whitelist is Required", Exception)
+        except Exception:
+            return("Unique or non-conflicting whitelist Required")
         
     def fetch_whitelists(self, type, whitelist_type = "Both", direction = "Both"):
         if whitelist_type == "Both" and direction == "Both":
@@ -151,8 +151,8 @@ class Data_Manager():
             self.connection.commit()
             print("Excpetion Added")
             return("Added")
-        except sql.IntegrityError() as Exception:
-            return("Unique Exception is Required", Exception)
+        except Exception:
+            return("Unique or non-conflicting Exception is Required")
         
     def fetch_exceptions(self, target_type = "All", whitelist_type = "Both", direction="Both"):
         if target_type == "All" and whitelist_type == "Both" and direction == "Both":

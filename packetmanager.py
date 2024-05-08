@@ -56,25 +56,29 @@ class Packet_Manager():
             #Add iptables rule to forward packets to NFQUEUE
             subprocess.run(["sudo", "iptables", "-A", "FORWARD", "-i", self.outbound_interface, "-j", "NFQUEUE", "--queue-num", "0"], check=True)
             subprocess.run(["sudo", "iptables", "-A", "FORWARD", "-i", self.inbound_interface, "-j", "NFQUEUE", "--queue-num", "1"], check=True)
-           
+            print(1)
             #Bind NetfilterQueue
             self.outbound_thread = threading.Thread(target=self.bind_nfqueue, args=(0, "outgoing"))
             self.inbound_thread = threading.Thread(target=self.bind_nfqueue, args=(1, "incoming"))
-
+            print(2)
         except KeyboardInterrupt:
             print("Firewall Interrupted")
         except subprocess.CalledProcessError as e:
             print("Error occurred:", e)
     
     def bind_nfqueue(self, queue_number, direction):
-        nfqueue = NetfilterQueue()
-        nfqueue.bind(queue_number, lambda packet: self.process_packet(packet, direction))
-        nfqueue.run()
-
+        try:
+            nfqueue = NetfilterQueue()
+            nfqueue.bind(queue_number, lambda packet: self.process_packet(packet, direction))
+            nfqueue.run()
+        except Exception as e:
+            print(e)
+    
     
     def end_packet_capture(self):
         subprocess.run(["sudo", "sysctl", "net.ipv4.ip_forward=0"])
         subprocess.run(["sudo", "iptables", "-D", "FORWARD", "-j", "NFQUEUE", "--queue-num", "1"])
+        subprocess.run(["sudo", "iptables", "-D", "FORWARD", "-j", "NFQUEUE", "--queue-num", "0"])
 
     def load_filter(self):
         self.incoming_ip_whitelists = self.refresh_whitelist("IP Address", "Whitelist", "Incoming")
@@ -128,7 +132,7 @@ class Packet_Manager():
         self.filter_settings = self.refresh_settings()
 
     def refresh_whitelist(self, type, whitelist_type, direction):
-        return self.app.data_manager.fetch_whitelist(type, whitelist_type, direction)
+        return self.app.data_manager.fetch_whitelists(type, whitelist_type, direction)
 
       
     def refresh_exceptions(self, type, whitelist_type, direction):
@@ -203,8 +207,5 @@ class Packet_Manager():
         packet_info["application"] = packet[scapy.Raw].guess_payload_class().__name__
         #Retrun information
         return packet_info
-    
-
-
     
         

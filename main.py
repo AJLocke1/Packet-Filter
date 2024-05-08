@@ -68,8 +68,14 @@ class Application(ctk.CTk):
         self.uniform_padding_x = (5,5)
         self.uniform_padding_y = (5,5)
 
-        #load managers
+        #load data manager
         self.data_manager = self.load_datamanager()
+
+        #set any cahngeable settings
+        self.settings = self.data_manager.read_settings()
+        self.set_settings(self.settings)
+
+        #Load other managers
         self.packet_manager = self.load_packetmanager()
         self.ui_manager = self.load_uimanager()
         
@@ -78,10 +84,6 @@ class Application(ctk.CTk):
             self.data_manager.initiate_database(self.default_user, self.default_pass)
             self.set_default_settings()
             self.create_marker_file()
-
-        #set any cahngeable settings
-        self.settings = self.data_manager.read_settings()
-        self.set_settings(self.settings)
 
         #Start Aplication Processes
         self.data_manager.refresh_logs(self, self.settings["log auto delete interval"])

@@ -156,9 +156,9 @@ class Application(ctk.CTk):
            self.data_manager.update_setting("geometry", str(self.winfo_width())+"x"+str(self.winfo_height()))
            self.data_manager.update_setting("fullscreen", str(self.attributes("-fullscreen")))
            try:
-            self.packet_manager.end_pcket_capture()
-           except Exception:
-               print("Capture not ended properly")
+            self.packet_manager.end_packet_capture()
+           except Exception as e:
+               print("Capture not ended properly", e)
            self.destroy()
         
 if __name__ == "__main__" :

@@ -58,11 +58,11 @@ class Packet_Manager():
             #Add iptables rule to forward packets to NFQUEUE
             subprocess.run(["sudo", "iptables", "-A", "FORWARD", "-i", self.outbound_interface, "-j", "NFQUEUE", "--queue-num", "0"], check=True)
             subprocess.run(["sudo", "iptables", "-A", "FORWARD", "-i", self.inbound_interface, "-j", "NFQUEUE", "--queue-num", "1"], check=True)
-            print(1)
+
             #Bind NetfilterQueue
             self.outbound_thread = threading.Thread(target=self.bind_nfqueue, args=(0, "outgoing"))
             self.inbound_thread = threading.Thread(target=self.bind_nfqueue, args=(1, "incoming"))
-            print(2)
+
         except KeyboardInterrupt:
             print("Firewall Interrupted")
         except subprocess.CalledProcessError as e:
@@ -74,7 +74,7 @@ class Packet_Manager():
             nfqueue.bind(queue_number, lambda packet: self.process_packet(packet, direction))
             nfqueue.run()
         except Exception as e:
-            print(e)
+            print("error binding nfqueue",e)
     
     
     def end_packet_capture(self):

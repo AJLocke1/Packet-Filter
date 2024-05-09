@@ -2,6 +2,9 @@
 import subprocess
 import scapy
 import threading
+import random
+
+import scapy.packet
 from netfilterqueue import NetfilterQueue
 
 class Packet_Manager():
@@ -207,5 +210,39 @@ class Packet_Manager():
         packet_info["application"] = packet[scapy.Raw].guess_payload_class().__name__
         #Retrun information
         return packet_info
+    
+    def test_filter_logic(self, num_tests):
+        test_results = []
+        for test in range(num_tests):
+            packet = self.generate_packet()
+            test_result = self.process_packet(packet)
+            packet_info = self.get_packet_info(packet)
+            test_results.append(test_result, packet_info)
+        return test_results
+ 
+    def generate_packet(self):
+        src_ip = scapy.RandIP()
+        dst_ip = scapy.RandIP()
+        ip_packet = scapy.IP(src=src_ip, dst=dst_ip)
+
+        src_mac = scapy.RandMAC()
+        dst_mac = scapy.RandMAC()
+        ether_packet = scapy.Ether(src=src_mac, dst=dst_mac)
+
+        protocol = ["UDP", "TCP", "ICMP"]
+        src_port = scapy.RandNum(1, 1024)
+        dst_port = scapy.RandNum(1024, 65535)
+        match protocol:
+            case "UDP":
+                transport_layer = scapy.UPD(src=src_port, dst=dst_port)
+            case "ICMP":
+                transport_layer = scapy.TCP(src=src_port, dst=dst_port)
+            case "TCP":
+                transport_layer = scapy.ICMP(src=src_port, dst=dst_port)
+        
+
+        packet = ether_packet / ip_packet / transport_layer
+
+        return packet
     
         

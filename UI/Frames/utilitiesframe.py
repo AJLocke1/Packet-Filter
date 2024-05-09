@@ -42,6 +42,9 @@ class Utilities_Frame(Custom_Frame):
         self.sidebar_container = Sidebar(self, App, padx=App.uniform_padding_x, pady=App.uniform_padding_y, title="Utilities", subcontainers=self.subcontainers, loadedcontainer=self.log_container)
 
     def populate_containers(self, App):
+        self.ip = self.get_ip()
+        self.subnet = self.get_subnet()
+        self.subnet_range = self.get_first_and_last_subnet_addresses(self.ip, self.subnet)
 
         self.log_title = ctk.CTkLabel(self.log_container, text="Select A Log", font=("", 20))
         self.log_title.grid(row=0, column = 0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w", columnspan=self.grid_size()[0])
@@ -73,7 +76,7 @@ class Utilities_Frame(Custom_Frame):
         self.scan_display_description.grid(row =2, column=0, columnspan = 2, sticky="we")
         self.scan_display_description.bind("<Configure>", lambda event: self.update_wraplength(self.scan_display_description, self.scan_display_head))
 
-        self.scan_button = ctk.CTkButton(self.scan_display_head, text="Scan", command=lambda: self.scan_ip_range(self.get_subnet_hosts(self.ip_display.body.cget("text"), self.subnet_display.body.cget("text")), App))
+        self.scan_button = ctk.CTkButton(self.scan_display_head, text="Scan", command=lambda: self.scan_ip_range(self.get_subnet_hosts(self.ip, self.subnet), App))
         self.scan_button.grid(row=3, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.scan_status_label = ctk.CTkLabel(self.scan_display_head, text="Scanning", text_color="green")
@@ -81,10 +84,6 @@ class Utilities_Frame(Custom_Frame):
         self.scan_status_label.grid_remove()
 
         self.display = Container(self.scan_display, App, isCentered=False, row=1, column=0, sticky="nsew", padx=App.uniform_padding_x, pady=App.uniform_padding_y)
-        
-        ip = self.get_ip()
-        subnet = self.get_subnet()
-        subnet_range = self.get_first_and_last_subnet_addresses(ip, subnet)
 
         self.network_info_title = ctk.CTkLabel(self.user_network_info ,text="Network Information", font=("", 20))
         self.network_info_title.grid(row=0, column=0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w", columnspan =2)
@@ -99,19 +98,19 @@ class Utilities_Frame(Custom_Frame):
         self.ip_label = ctk.CTkLabel(self.user_network_info, text = "IP Address:")
         self.ip_label.grid(row=3, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
 
-        self.ip_value_label = ctk.CTkLabel(self.user_network_info, text = ip)
+        self.ip_value_label = ctk.CTkLabel(self.user_network_info, text = self.ip)
         self.ip_value_label.grid(row=3, column=1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
 
         self.subnet_label = ctk.CTkLabel(self.user_network_info, text = "Subnet Mask:")
         self.subnet_label.grid(row=4, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
 
-        self.subnet_value_label = ctk.CTkLabel(self.user_network_info, text = subnet)
+        self.subnet_value_label = ctk.CTkLabel(self.user_network_info, text = self.subnet)
         self.subnet_value_label.grid(row=4, column=1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
 
         self.subnet_range_label = ctk.CTkLabel(self.user_network_info, text = "Host Range:")
         self.subnet_range_label.grid(row=5, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
 
-        self.subnet_range_value_label = ctk.CTkLabel(self.user_network_info, text = subnet_range)
+        self.subnet_range_value_label = ctk.CTkLabel(self.user_network_info, text = self.subnet_range)
         self.subnet_range_value_label.grid(row=5, column=1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
 
     def update_wraplength(self, description, master):

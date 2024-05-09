@@ -46,7 +46,7 @@ class Application(ctk.CTk):
                                     "widget scaling": 1,
                                     "theme": "green",
                                     "appearance mode": "Dark",
-                                    "fullscreen": "0",
+                                    "fullscreen": "1",
                                     "bypass login": "False",
                                     "enable filtering": "True",
                                     "enable machine learning": "True",

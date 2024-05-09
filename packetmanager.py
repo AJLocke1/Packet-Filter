@@ -2,7 +2,6 @@
 import subprocess
 import scapy
 import threading
-import random
 
 import scapy.packet
 from netfilterqueue import NetfilterQueue

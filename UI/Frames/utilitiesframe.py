@@ -120,9 +120,8 @@ class Utilities_Frame(Custom_Frame):
     def get_ip(self): #MAC and Linux Versions here for testing only
         try:
             ip_regex = r"inet (\d+\.\d+\.\d+\.\d+)"
-            result = subprocess.run(["ip", "addr", "show"], capture_output=True, text=True)
+            result = subprocess.run(["ifconfig", "eth0"], capture_output=True, text=True)
             output = result.stdout
-
             # Find the first match of IP address
             match = re.search(ip_regex, output)
             if match:
@@ -132,9 +131,8 @@ class Utilities_Frame(Custom_Frame):
                 return None
         except Exception:
             ip_regex = r"inet (\d+\.\d+\.\d+\.\d+)"
-            result = subprocess.run(["ifconfig", "en0"], capture_output=True, text=True)
+            result = subprocess.run(["ip", "addr", "show"], capture_output=True, text=True)
             output = result.stdout
-
             # Find the first match of IP address
             match = re.search(ip_regex, output)
             if match:
@@ -142,9 +140,24 @@ class Utilities_Frame(Custom_Frame):
                 return ip_address
             else:
                 return None
+            
 
     def get_subnet(self): #MAC and Linux Versions here for testing only
         try:
+            subnet_regex = r"netmask (\d+\.\d+\.\d+\.\d+)"
+            result = subprocess.run(['ifconfig', 'eth0'], capture_output=True, text=True)
+            output = result.stdout
+            print(output)
+
+            # Find the first match of subnet mask
+            match = re.search(subnet_regex, output)
+            if match:
+                subnet_mask_str = match.group(1)
+                print(subnet_mask_str)
+                return subnet_mask_str
+            else:
+                return None
+        except Exception:
             subnet_regex = r"netmask (\S+)"
             result = subprocess.run(["ip", "addr", "show"], capture_output=True, text=True)
             output = result.stdout
@@ -156,23 +169,10 @@ class Utilities_Frame(Custom_Frame):
                 return subnet_mask
             else:
                 return None
-        except Exception:
-            subnet_regex = r"inet \d+\.\d+\.\d+\.\d+ netmask (\S+)"
-            result = subprocess.run(['ifconfig', 'en0'], capture_output=True, text=True)
-            output = result.stdout
-
-            # Find the first match of subnet mask
-            match = re.search(subnet_regex, output)
-            if match:
-                subnet_mask_str = match.group(1)
-                subnet_mask_int = int(subnet_mask_str, 16)  # Convert hexadecimal string to integer
-                subnet_mask = ipaddress.IPv4Address(subnet_mask_int)  # Convert integer to IPv4Address object
-                return str(subnet_mask)
-            else:
-                print(output)
-                return None
+            
     
     def get_subnet_hosts(self, ip, subnet):
+        print(ip, subnet)
         return ipaddress.IPv4Network(ip + "/" + subnet, strict=False)
             
     def get_first_and_last_subnet_addresses(self, ip, subnet):

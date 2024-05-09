@@ -74,10 +74,6 @@ class Utilities_Frame(Custom_Frame):
 
         self.scan_display_description = ctk.CTkLabel(self.scan_display_head, text="When the scan button is clicked all ip addresses within the shown subnet are scanned to check for online network devices. On larger subnets this may take some time.", anchor="w")
         self.scan_display_description.grid(row =2, column=0, columnspan = 2, sticky="we")
-        self.scan_display_description.bind("<Configure>", lambda event: self.update_wraplength(self.scan_display_description, self.scan_display_head))
-
-        self.scan_button = ctk.CTkButton(self.scan_display_head, text="Scan", command=lambda: self.scan_ip_range(self.get_subnet_hosts(self.ip, self.subnet), App))
-        self.scan_button.grid(row=3, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
 
         self.scan_status_label = ctk.CTkLabel(self.scan_display_head, text="Scanning", text_color="green")
         self.scan_status_label.grid(row=3, column=1, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
@@ -93,7 +89,7 @@ class Utilities_Frame(Custom_Frame):
 
         self.network_info_description = ctk.CTkLabel(self.user_network_info, text="Network Information of the packet filter.", anchor="w")
         self.network_info_description.grid(row =2, column=0, columnspan = 2, sticky="we")
-        self.network_info_description.bind("<Configure>", lambda event: self.update_wraplength(self.network_info_description, self.user_network_info))
+        self.network_info_description.bind("<Configure>", lambda event: self.update_wraplength())
 
         self.ip_label = ctk.CTkLabel(self.user_network_info, text = "IP Address:")
         self.ip_label.grid(row=3, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
@@ -113,9 +109,14 @@ class Utilities_Frame(Custom_Frame):
         self.subnet_range_value_label = ctk.CTkLabel(self.user_network_info, text = self.subnet_range)
         self.subnet_range_value_label.grid(row=5, column=1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
 
-    def update_wraplength(self, description, master):
-        description.update_idletasks()
-        description.configure(wraplength=master.master.winfo_width() - 150)
+        self.scan_button = ctk.CTkButton(self.scan_display_head, text="Scan", command=lambda: self.scan_ip_range(self.get_subnet_hosts(self.ip, self.subnet), App))
+        self.scan_button.grid(row=3, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y)
+
+    def update_wraplength(self):
+        self.scan_display_description.update_idletasks()
+        self.scan_display_description.configure(wraplength=self.network_container.winfo_width() - 150)
+        self.network_info_description.update_idletasks()
+        self.scan_display_description.configure(wraplength=self.network_container.winfo_width() - 150)
 
     def get_ip(self): #MAC and Linux Versions here for testing only
         try:
@@ -147,13 +148,11 @@ class Utilities_Frame(Custom_Frame):
             subnet_regex = r"netmask (\d+\.\d+\.\d+\.\d+)"
             result = subprocess.run(['ifconfig', 'eth0'], capture_output=True, text=True)
             output = result.stdout
-            print(output)
 
             # Find the first match of subnet mask
             match = re.search(subnet_regex, output)
             if match:
                 subnet_mask_str = match.group(1)
-                print(subnet_mask_str)
                 return subnet_mask_str
             else:
                 return None
@@ -172,7 +171,6 @@ class Utilities_Frame(Custom_Frame):
             
     
     def get_subnet_hosts(self, ip, subnet):
-        print(ip, subnet)
         return ipaddress.IPv4Network(ip + "/" + subnet, strict=False)
             
     def get_first_and_last_subnet_addresses(self, ip, subnet):

@@ -7,8 +7,8 @@ from datamanager import Data_Manager
 from uimanager import UI_Manager
 try:
     from packetmanager import Packet_Manager
-except ModuleNotFoundError:
-    print("Must be run on Linux for filtering functionality")
+except ModuleNotFoundError as e:
+    print("Must be run on Linux for filtering functionality", e)
 
 """
 program needs to be run with root privlige, on linux hardware while connected to the internet for full functionality.
@@ -158,7 +158,7 @@ class Application(ctk.CTk):
            try:
             self.packet_manager.end_pcket_capture()
            except Exception:
-               pass
+               print("Capture not ended properly")
            self.destroy()
         
 if __name__ == "__main__" :

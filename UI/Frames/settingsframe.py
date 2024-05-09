@@ -73,7 +73,7 @@ class Settings_Frame(Custom_Frame):
         self.theme_dropdown = ctk.CTkOptionMenu(container, values=[f.split(".", 1)[0] for f in listdir("Data/Themes/") if isfile(join("Data/Themes/", f))], command=lambda value: self.change_theme(App), variable=self.theme_dropdown_value)
         self.theme_dropdown.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky = "w")
 
-        container.instantiate_components(container.master, App, container.title, container.description)
+        container.instantiate_components(container.master, App)
 
     def change_theme(self, App):
         value = self.theme_dropdown_value.get()
@@ -88,7 +88,7 @@ class Settings_Frame(Custom_Frame):
         self.appearance_mode_switch = ctk.CTkSwitch(container, text="Light Mode", command= lambda: self.toggle_appearance_mode(App), variable=self.appearance_mode_switch_value, onvalue="Light", offvalue="Dark")
         self.appearance_mode_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        container.instantiate_components(container.master, App, container.title, container.description)
+        container.instantiate_components(container.master, App)
 
     def toggle_appearance_mode(self, App):
         value = self.appearance_mode_switch_value.get()
@@ -100,7 +100,7 @@ class Settings_Frame(Custom_Frame):
         self.widget_scale_dropdown = ctk.CTkOptionMenu(container, values=["25","50","65","75","85","100","115","125","150"], command=lambda value: self.change_scale(App), variable=self.widget_scale_dropdown_value)
         self.widget_scale_dropdown.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        container.instantiate_components(container.master, App, container.title, container.description)
+        container.instantiate_components(container.master, App)
     
     def change_scale(self, App):
         value = int((self.widget_scale_dropdown_value.get()))/100
@@ -124,7 +124,7 @@ class Settings_Frame(Custom_Frame):
         self.loginButton = ctk.CTkButton(container, text="Change", command=lambda : self.change_user_details(App, self.userEntry.get(), self.passEntry.get(), self.passConfirmationEntry.get()))
         self.loginButton.grid(pady=12, padx=10, row=container.row_offset+5, column=0, sticky = "w")
 
-        container.instantiate_components(container.master, App, container.title, container.description)
+        container.instantiate_components(container.master, App)
 
     def change_user_details(self, App, username, password, passsword_confirmation):
         if password == passsword_confirmation:
@@ -148,7 +148,7 @@ class Settings_Frame(Custom_Frame):
         self.bypass_login_switch = ctk.CTkSwitch(container, text="Allow", command= lambda: self.toggle_bypass_login(App), variable=self.bypass_login_switch_value, onvalue="True", offvalue="False")
         self.bypass_login_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        container.instantiate_components(container.master, App, container.title, container.description)
+        container.instantiate_components(container.master, App)
 
     def toggle_bypass_login(self, App):
         value = self.bypass_login_switch_value.get()
@@ -162,7 +162,7 @@ class Settings_Frame(Custom_Frame):
         self.enable_ML_switch = ctk.CTkSwitch(container, text="Enable", command= lambda: self.toggle_ML(App), variable=self.enable_ML_switch_value, onvalue="True", offvalue="False")
         self.enable_ML_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        container.instantiate_components(container.master, App, container.title, container.description)
+        container.instantiate_components(container.master, App)
 
     def toggle_ML(self, App):
         value = self.enable_ML_switch_value.get()
@@ -177,7 +177,7 @@ class Settings_Frame(Custom_Frame):
         self.machine_learning_priority_dropdown = ctk.CTkOptionMenu(container, values=["low", "high"], command=lambda value: self.change_machine_learning_priority(App), variable=self.machine_learning_priority_dropdown_value)
         self.machine_learning_priority_dropdown.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        container.instantiate_components(container.master, App, container.title, container.description)
+        container.instantiate_components(container.master, App)
         
     def change_machine_learning_priority(self, App):
         value = self.machine_learning_priority_dropdown_value.get()
@@ -196,7 +196,7 @@ class Settings_Frame(Custom_Frame):
         self.enable_filter_switch = ctk.CTkSwitch(container, text="Enable", command= lambda: self.toggle_filter(App), variable=self.enable_filter_switch_value, onvalue="True", offvalue="False")
         self.enable_filter_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        container.instantiate_components(container.master, App, container.title, container.description)
+        container.instantiate_components(container.master, App)
 
     def toggle_filter(self, App):
         value = self.enable_filter_switch_value.get()
@@ -214,7 +214,7 @@ class Settings_Frame(Custom_Frame):
         self.enable_killswitch_switch = ctk.CTkSwitch(container, text = "Enable", command= lambda:self.toggle_killswitch(App), variable=self.enable_killswitch_switch_value, onvalue="True", offvalue="False")
         self.enable_killswitch_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        container.instantiate_components(container.master, App, container.title, container.description)
+        container.instantiate_components(container.master, App)
 
     def toggle_killswitch(self, App):
         value = self.enable_killswitch_switch_value.get()
@@ -275,7 +275,7 @@ class Settings_Frame(Custom_Frame):
         self.application_strictness_switch = ctk.CTkSwitch(container, text = "Strict", command=lambda:self.toggle_strictness(App, "application"), variable=self.application_strictness_switch_value, onvalue="Strict", offvalue="Unstrict")
         self.application_strictness_switch.grid(row = container.row_offset+4, column=2,  padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        container.instantiate_components(container.master, App, container.title, container.description)
+        container.instantiate_components(container.master, App)
 
     def toggle_strictness(self, App, Type):
         value = getattr(self, Type + "_strictness_switch_value").get()
@@ -293,7 +293,7 @@ class Settings_Frame(Custom_Frame):
         self.enable_logs_switch = ctk.CTkSwitch(container, text="Enable", command= lambda: self.toggle_logs(App), variable=self.enable_logs_switch_value, onvalue="True", offvalue="False")
         self.enable_logs_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        container.instantiate_components(container.master, App, container.title, container.description)
+        container.instantiate_components(container.master, App)
 
     def toggle_logs(self, App):
         value = self.enable_logs_switch_value.get()
@@ -308,7 +308,7 @@ class Settings_Frame(Custom_Frame):
         self.log_auto_delete_dropdown = ctk.CTkOptionMenu(container, values=["1 Day", "5 Days", "1 Week", "2 Weeks", "1 Month", "3 Months", "6 Months", "1 Year", "Never"], command=lambda value: self.change_log_auto_delete_time(App), variable=self.log_auto_delete_dropdown_value)
         self.log_auto_delete_dropdown.grid(row=container.row_offset, column=0, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        container.instantiate_components(container.master, App, container.title, container.description)
+        container.instantiate_components(container.master, App)
         
     def change_log_auto_delete_time(self, App):
         value = self.log_auto_delete_dropdown_value.get()
@@ -322,7 +322,7 @@ class Settings_Frame(Custom_Frame):
         self.scan_aggressivness_switch = ctk.CTkSwitch(container, text="Aggressive", command= lambda: self.toggle_scan_aggressivness(App), variable=self.scan_aggressivness_switch_value, onvalue="Aggressive", offvalue="Passive")
         self.scan_aggressivness_switch.grid(row=container.row_offset, column = 1, padx=App.uniform_padding_x, pady=App.uniform_padding_y, sticky="w")
 
-        container.instantiate_components(container.master, App, container.title, container.description)
+        container.instantiate_components(container.master, App)
 
     def toggle_scan_aggressivness(self, App):
         value = self.scan_aggressivness_switch_value.get()

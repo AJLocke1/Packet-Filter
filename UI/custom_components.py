@@ -267,7 +267,7 @@ class Whitelist_Creation_Window(ctk.CTkToplevel):
                 print(Added)
                 if Added == "Added":
                     try:
-                        App.packet_manager.refresh_whitelist(self, type, iswhitelisted, direction)
+                        App.packet_manager.refresh_whitelist(type, iswhitelisted, direction)
                     except AttributeError:
                         pass
                     Whitelist(master.master.whitelist_table, App, type, target, iswhitelisted, direction)
@@ -279,6 +279,7 @@ class Whitelist_Creation_Window(ctk.CTkToplevel):
         else:
             self.label_4.configure(text="Formatting Error for whitelist target")
             self.label_4.grid()
+
 class Whitelist(Container):
     def __init__(self, master, App, type, target, iswhitelisted, direction):
         super().__init__(master, App, isCentered=False, color=App.frame_color, placeself = False)
@@ -307,7 +308,7 @@ class Whitelist(Container):
     def remove_whitelist(self, App, type, target, iswhitelisted, direction):
         App.data_manager.remove_whitelist(type, target, iswhitelisted, direction)
         try:
-            App.packet_manager.refresh_whitelist(self, type, iswhitelisted, direction)
+            App.packet_manager.refresh_whitelist(type, iswhitelisted, direction)
         except AttributeError:
             pass
         self.destroy()
@@ -343,28 +344,28 @@ class Whitelist_Container(Scrolable_Container):
 class Options_Container(Container):
     def __init__(self, master, App, title, description, column, row):
         super().__init__(master, App, isCentered=False, column = column, row = row, sticky="nsew", color=App.frame_color_2, padx=App.uniform_padding_x, pady=(App.uniform_padding_y[0], App.uniform_padding_y[1]*6)) 
-        self.title = title
-        self.description = description
+        self.title_text = title
+        self.description_text = description
         self.row_offset = 3
-        master.grid_columnconfigure(0, weight=1)
+        self.master = master
     
-    def instantiate_components(self, master, App, title, description):
-        self.title = ctk.CTkLabel(self, text=title, font=("", 20))
+    def instantiate_components(self, master, App):
+        self.grid_columnconfigure(self.grid_size()[0]-1, weight = 1)
+
+        self.title = ctk.CTkLabel(self, text=self.title_text, font=("", 20))
         self.title.grid(row=0, column = 0, pady=(App.uniform_padding_y[0]*2,App.uniform_padding_y[1]*2), sticky="w", columnspan=self.grid_size()[0])
 
         self.seperator_image = ctk.CTkImage(light_image=Image.open("Data/Images/seperator.png"),dark_image=Image.open("Data/Images/seperatorLight.png"), size=(250,10))
         self.seperator = ctk.CTkLabel(self, text="", image=self.seperator_image)
         self.seperator.grid(row=1, column=0, columnspan = self.grid_size()[0], sticky ="w")
 
-        self.description = ctk.CTkLabel(self, text=description, anchor = "w", justify = "left")
+        self.description = ctk.CTkLabel(self, text=self.description_text, anchor = "w", justify = "left")
         self.description.grid(row=2, column = 0, sticky="we", columnspan = self.grid_size()[0], padx=[5,5], pady = [5,5])
-        self.description.bind("<Configure>", lambda event: self.update_wraplength(master))
+        self.description.bind("<Configure>", lambda event: self.update_wraplength())
 
-        self.grid_columnconfigure(self.grid_size()[0]-1, weight = 1)
-
-    def update_wraplength(self, master):
+    def update_wraplength(self):
         self.description.update_idletasks()
-        self.description.configure(wraplength=master.master.winfo_width() - 100)
+        self.description.configure(wraplength=self.winfo_width() - 100)
 
 class Info_Pannel(Container):
     def __init__(self, master, App, title, body, column, row):
@@ -497,7 +498,7 @@ class Exception_Creation_Window(ctk.CTkToplevel):
                 Added = App.data_manager.add_exception(whitelist_type, direction, target_type, target_condition, allow_type, allow_condition)
                 if Added == "Added":
                     try:
-                        App.packet_manager.refresh_exceptions(self, target_type, whitelist_type, direction)
+                        App.packet_manager.refresh_exceptions(target_type, whitelist_type, direction)
                     except AttributeError:
                         pass
                     Exception(master.body_container, App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition)
@@ -550,7 +551,7 @@ class Exception(Container):
     def remove_exception(self, App, whitelist_type, direction, target_type, target_condition, allow_type, allow_condition):
         App.data_manager.remove_exception(whitelist_type, direction, target_type, target_condition, allow_type, allow_condition)
         try:
-            App.packet_manager.refresh_exceptions(self, target_type, whitelist_type, direction)
+            App.packet_manager.refresh_exceptions(target_type, whitelist_type, direction)
         except AttributeError:
             pass
         self.destroy()

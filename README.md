@@ -6,16 +6,16 @@ this should run on any system but has only been tested on MAC and Linux. To run 
 full functionality all requirements must be met.
 
 python library requirements
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
  scapy
  netfilterqueue
  python-namp
  customtkinter
  CTKMessageBox
  PIL
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-Linux apt-get requireements
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+Linux apt-get requirements
+
  namp
  scapy
  iptables 
@@ -23,9 +23,8 @@ Linux apt-get requireements
  libnfnetlink-dev
  bridge-utils
 
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 Hardware requirements
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
  Raspberry PI 5 with debian os install
  
 

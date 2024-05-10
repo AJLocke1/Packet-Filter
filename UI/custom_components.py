@@ -267,7 +267,8 @@ class Whitelist_Creation_Window(ctk.CTkToplevel):
                 print(Added)
                 if Added == "Added":
                     try:
-                        App.packet_manager.refresh_whitelist(type, iswhitelisted, direction)
+                        whitelist_to_change = direction + "_" + type + "_" + iswhitelisted
+                        setattr(App.packet_manager, whitelist_to_change, App.packet_manager.refresh_whitelist(type, iswhitelisted, direction))
                     except AttributeError:
                         pass
                     Whitelist(master.master.whitelist_table, App, type, target, iswhitelisted, direction)
@@ -308,7 +309,8 @@ class Whitelist(Container):
     def remove_whitelist(self, App, type, target, iswhitelisted, direction):
         App.data_manager.remove_whitelist(type, target, iswhitelisted, direction)
         try:
-            App.packet_manager.refresh_whitelist(type, iswhitelisted, direction)
+            whitelist_to_change = direction + "_" + type + "_" + iswhitelisted
+            setattr(App.packet_manager, whitelist_to_change, App.packet_manager.refresh_whitelist(type, iswhitelisted, direction))
         except AttributeError:
             pass
         self.destroy()
@@ -421,9 +423,8 @@ class Log(Container):
             
         data = self.get_log_data(log_name)
 
-        for entry in data:
-            self.entry = ctk.CTkLabel(log_display, text=entry, anchor="w")
-            self.entry.pack(fill = "x", pady = App.uniform_padding_y, padx = App.uniform_padding_x)
+        self.entry = ctk.CTkLabel(log_display, text=data, anchor="w")
+        self.entry.pack(fill = "x", pady = App.uniform_padding_y, padx = App.uniform_padding_x)
 
     def get_log_data(self, log_name):
         log_path = "Data/Logs/"+log_name

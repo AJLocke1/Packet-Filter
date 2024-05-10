@@ -89,12 +89,6 @@ class Application(ctk.CTk):
         self.data_manager.refresh_logs(self, self.settings["log auto delete interval"])
         self.ui_manager.start_ui()
 
-        #Testing
-        self.exceptions =  self.data_manager.fetch_exceptions("Port", "Whitelist", "Incoming")
-        print(self.exceptions)
-
-        print(self.data_manager.fetch_whitelists("IP Address", "Whitelist", "Incoming"))
-
     def load_datamanager(self):
         try:
             return Data_Manager(self)

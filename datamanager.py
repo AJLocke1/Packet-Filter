@@ -183,9 +183,9 @@ class Data_Manager():
                 
     
     def append_to_or_create_log(self, rule_string):
-        log_path = datetime.today().strftime("%Y-%m-%d")
+        log_path = "Data/Logs/"+datetime.today().strftime("%Y-%m-%d")+".txt"
         with open(log_path, "a+") as log_file:
-            log_file.write(datetime.today().strftime("%H:%M:%S") + rule_string)
+            log_file.write(datetime.today().strftime("%H:%M:%S") + " " + rule_string + "\n")
 
     def remove_log(self, log_name):
         filepath = "Data/Logs/"+os.fsdecode(log_name)

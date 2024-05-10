@@ -2,7 +2,6 @@
 import multiprocessing.process
 import subprocess
 import scapy.all as sc
-import threading
 import multiprocessing
 from netfilterqueue import NetfilterQueue
 

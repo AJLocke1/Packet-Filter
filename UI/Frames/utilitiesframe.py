@@ -170,7 +170,6 @@ class Utilities_Frame(Custom_Frame):
             
     
     def get_subnet_hosts(self, ip, subnet):
-        print(ip, subnet)
         return ipaddress.IPv4Network(ip + "/" + subnet, strict=False)
             
     def get_first_and_last_subnet_addresses(self, ip, subnet):

@@ -56,8 +56,8 @@ class Packet_Manager():
             #Enable packet forwarding
             subprocess.run(["sudo", "sysctl", "net.ipv4.ip_forward=1"], check=True)
             #Add iptables rule to forward packets to NFQUEUE
-            subprocess.run(["sudo", "iptables", "-A", "FORWARD", "-i", self.outbound_interface, "-j", "NFQUEUE", "--queue-num", "0"], check=True)
-            subprocess.run(["sudo", "iptables", "-A", "FORWARD", "-i", self.inbound_interface, "-j", "NFQUEUE", "--queue-num", "1"], check=True)
+            subprocess.run(["sudo", "iptables", "-A", "FORWARD", "-o", "br0", "-m", "physdev", "--physdev-out", self.outbound_interface, "-j", "NFQUEUE", "--queue-num", "1"], check=True)
+            subprocess.run(["sudo", "iptables", "-A", "FORWARD", "-o", "br0", "-m", "physdev", "--physdev-out", self.inbound_interface, "-j", "NFQUEUE", "--queue-num", "0"], check=True)
 
             #Bind NetfilterQueue
             self.outbound_thread = threading.Thread(target=self.bind_nfqueue, args=(0, "outgoing"))
@@ -79,8 +79,8 @@ class Packet_Manager():
     
     def end_packet_capture(self):
         subprocess.run(["sudo", "sysctl", "net.ipv4.ip_forward=0"])
-        subprocess.run(["sudo", "iptables", "-D", "FORWARD", "-j", "NFQUEUE", "--queue-num", "1"])
-        subprocess.run(["sudo", "iptables", "-D", "FORWARD", "-j", "NFQUEUE", "--queue-num", "0"])
+        subprocess.run(["sudo", "iptables", "-D", "FORWARD", "-o", "br0", "-m", "physdev", "--physdev-out", self.outbound_interface, "-j", "NFQUEUE", "--queue-num", "1"], check=True)
+        subprocess.run(["sudo", "iptables", "-D", "FORWARD", "-o", "br0", "-m", "physdev", "--physdev-out", self.inbound_interface, "-j", "NFQUEUE", "--queue-num", "0"], check=True)
 
     def load_filter(self):
         self.incoming_ip_whitelists = self.refresh_whitelist("IP Address", "Whitelist", "Incoming")
@@ -144,6 +144,7 @@ class Packet_Manager():
         return self.app.settings
     
     def process_packet(self, packet, direction):
+        print(1)
         #used to access the classes filter lists
         types = ["ip", "mac", "port", "protocol", "application"]
         #get only the neccessary packet info for filtering

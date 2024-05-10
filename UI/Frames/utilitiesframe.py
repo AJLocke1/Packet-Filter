@@ -121,7 +121,7 @@ class Utilities_Frame(Custom_Frame):
     def get_ip(self): #MAC and Linux Versions here for testing only
         try:
             ip_regex = r"inet (\d+\.\d+\.\d+\.\d+)"
-            result = subprocess.run(["ifconfig", "eth0"], capture_output=True, text=True)
+            result = subprocess.run(["ifconfig", "br0"], capture_output=True, text=True)
             output = result.stdout
             # Find the first match of IP address
             match = re.search(ip_regex, output)
@@ -146,7 +146,7 @@ class Utilities_Frame(Custom_Frame):
     def get_subnet(self): #MAC and Linux Versions here for testing only
         try:
             subnet_regex = r"netmask (\d+\.\d+\.\d+\.\d+)"
-            result = subprocess.run(['ifconfig', 'eth0'], capture_output=True, text=True)
+            result = subprocess.run(["ifconfig", "br0"], capture_output=True, text=True)
             output = result.stdout
 
             # Find the first match of subnet mask

@@ -204,38 +204,5 @@ class Packet_Manager():
         #Retrun information
         return packet_info
     
-    def test_filter_logic(self, num_tests):
-        test_results = []
-        for test in range(num_tests):
-            packet = self.generate_packet()
-            test_result = self.process_packet(packet)
-            packet_info = self.get_packet_info(packet)
-            test_results.append(test_result, packet_info)
-        return test_results
- 
-    def generate_packet(self):
-        src_ip = sc.RandIP()
-        dst_ip = sc.RandIP()
-        ip_packet = sc.IP(src=src_ip, dst=dst_ip)
-
-        src_mac = sc.RandMAC()
-        dst_mac = sc.RandMAC()
-        ether_packet = sc.Ether(src=src_mac, dst=dst_mac)
-
-        protocol = ["UDP", "TCP", "ICMP"]
-        src_port = sc.RandNum(1, 1024)
-        dst_port = sc.RandNum(1024, 65535)
-        match protocol:
-            case "UDP":
-                transport_layer = sc.UPD(src=src_port, dst=dst_port)
-            case "ICMP":
-                transport_layer = sc.TCP(src=src_port, dst=dst_port)
-            case "TCP":
-                transport_layer = sc.ICMP(src=src_port, dst=dst_port)
-        
-
-        packet = ether_packet / ip_packet / transport_layer
-
-        return packet
     
         

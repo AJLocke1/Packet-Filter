@@ -367,7 +367,7 @@ class Options_Container(Container):
 
     def update_wraplength(self):
         self.description.update_idletasks()
-        self.description.configure(wraplength=self.master.winfo_width() - 100)
+        self.description.configure(wraplength=self.master.master.winfo_width() - 100)
 
 class Info_Pannel(Container):
     def __init__(self, master, App, title, body, column, row):

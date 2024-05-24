@@ -132,14 +132,13 @@ class Packet_Manager():
         drop = 0
         accept = 0
         for type in types:
-            deny_exceptions = getattr(self, direction + "_" + type + "_deny_exceptions")
-            for exception in deny_exceptions:
+            for exception in getattr(self, direction + "_" + type + "_deny_exceptions"):
                 if packet_info[type] == exception[0]:
                     if packet_info[exception[1]] == exception[2]:
                         drop +=1
+                        deny_exception = exception[0] + exception[1] + exception[2]
                       
-            accept_exceptions = getattr(self, direction + "_" + type + "_accept_exceptions")
-            for exception in accept_exceptions:
+            for exception in getattr(self, direction + "_" + type + "_accept_exceptions"):
                 if packet_info[type] == exception[0]:
                     if packet_info[exception[1]] == exception[2]:
                         accept += 1
@@ -149,7 +148,7 @@ class Packet_Manager():
         else:
             if drop > accept:
                 if self.filter_settings["enable logs"] == "True":
-                    self.app.data_manager.append_to_or_create_log("Deny Exception: " + exception[0] + exception[1] + exception[2])
+                    self.app.data_manager.append_to_or_create_log("Deny Exception: " + deny_exception)
                 return "drop"
             else:
                 return "allow"
